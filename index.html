@@ -199,15 +199,15 @@
   .wc:hover .wc-cover{transform:scale(1.06)}
   .wc:hover .wc-hd img{animation:popnod .5s ease}
   /* «Show more» — такая же карточка в колесе: чёрная, огромная надпись */
-  .wc-more{display:flex;flex-direction:row;justify-content:space-between;align-items:center;gap:6%;padding:0 9%;background:#0b0b0c;color:#fff}
+  .wc-more{display:flex;flex-direction:column;justify-content:center;align-items:center;gap:14px;background:#0b0b0c;color:#fff}
   .wc-more::after{display:none}
-  .wc-more-l{display:flex;flex-direction:column;align-items:flex-start;gap:14px;text-align:left}
-  .wc-more-t{font-family:var(--display);text-transform:uppercase;font-size:calc(var(--w) * .2);line-height:.82;text-align:left}
-  .wc-more-n{padding:4px 8px;background:#ff6a13;color:#000;font-size:12px;letter-spacing:.08em;text-transform:uppercase}
-  /* огромная стрелка справа от заголовка; при наведении выезжает вперёд */
-  .wc-more-a{flex:none;width:calc(var(--w) * .3);height:auto;color:#ff6a13;transition:transform .45s cubic-bezier(.2,.8,.2,1)}
-  .wc-more:hover .wc-more-a{transform:translateX(14%)}
-  .wc-more:hover .wc-more-t{animation:coverwhoosh .55s cubic-bezier(.2,.8,.2,1)}
+  /* по центру — большая стрелка в кружке, под ней подпись «Смотреть ещё» и счётчик */
+  .wc-more-c{display:grid;place-items:center;width:calc(var(--w) * .3);aspect-ratio:1;border-radius:50%;background:#ff6a13;color:#0b0b0c;transition:transform .45s cubic-bezier(.2,.8,.2,1), background .25s}
+  .wc-more-a{width:52%;height:auto;transition:transform .45s cubic-bezier(.2,.8,.2,1)}
+  .wc-more:hover .wc-more-c{transform:scale(1.08);background:#fff}
+  .wc-more:hover .wc-more-a{transform:translateX(10%)}
+  .wc-more-s{font-size:clamp(13px,1.1vw,16px);font-weight:600;letter-spacing:.08em;text-transform:uppercase}
+  .wc-more-n{padding:3px 7px;background:#fff;color:#000;font-size:11px;letter-spacing:.08em;text-transform:uppercase}
   .wc:hover{box-shadow:0 0 0 4px #fff,0 0 0 7px #000,0 40px 70px -30px rgba(0,0,0,.55)}
   @media (max-width:800px){
     .s2-head{top:11svh}
@@ -860,7 +860,7 @@
             '<img class="wc-cover" src="' + esc(it.cover) + '" alt="" loading="lazy">' +
             '<span class="wc-num">' + pad2(i + 1) + '</span>' +
             '<span class="wc-meta mono"><span class="wc-t"><span class="wc-hd">' + heads + '</span><b>' + esc(it.title) + '</b></span><i>' + esc(it.meta) + '</i></span></button>';
-        }).join('') + (rest > 0 ? '<button class="wc wc-more" type="button" data-more="1" aria-label="Показать ещё кейсы"><span class="wc-more-l"><span class="wc-more-t">Show<br>more</span><span class="wc-more-n mono">+' + rest + ' ' + (rest === 1 ? 'кейс' : rest < 5 ? 'кейса' : 'кейсов') + '</span></span><svg class="wc-more-a" viewBox="0 0 48 48" aria-hidden="true"><path d="M6 24h32M24 9l15 15-15 15" fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="square"/></svg></button>' : '');
+        }).join('') + (rest > 0 ? '<button class="wc wc-more" type="button" data-more="1" aria-label="Смотреть ещё кейсы"><span class="wc-more-c"><svg class="wc-more-a" viewBox="0 0 48 48" aria-hidden="true"><path d="M9 24h28M24 11l13 13-13 13" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="square"/></svg></span><span class="wc-more-s mono">Смотреть ещё</span><span class="wc-more-n mono">+' + rest + ' ' + (rest === 1 ? 'кейс' : rest < 5 ? 'кейса' : 'кейсов') + '</span></button>' : '');
         cards = [].slice.call(wheel.querySelectorAll('.wc'));
         cards.forEach(function(c, i){
           c._lift = 0;
