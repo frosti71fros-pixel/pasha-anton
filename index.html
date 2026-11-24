@@ -362,7 +362,7 @@
      Фон — сетка точек, как на первом экране; колонки разделены чёрной линией, как рамки карточек */
   .aw{display:flex;flex-direction:column}
   .aw::before{content:"";position:absolute;inset:0;pointer-events:none;opacity:.24;background-image:radial-gradient(circle,#0b0b0c 1.1px,transparent 1.6px);background-size:16px 16px;background-position:-8px 0}
-  .aw-top{position:relative;z-index:1;flex:none;display:flex;flex-direction:column;align-items:center;gap:1.6svh;padding:6svh var(--pad) 3svh;text-align:center}
+  .aw-top{position:relative;z-index:1;flex:none;display:flex;flex-direction:column;align-items:center;gap:1.4svh;padding:4.5svh var(--pad) 2svh;text-align:center}
   .aw .s3-num{padding-top:3.4svh;gap:1.4vw;align-items:flex-end}
   .aw .s3-num b{font-size:min(25svh,19vw)}
   .aw .s3-num span{display:flex;flex-direction:column;align-items:flex-start;gap:1.6svh;font-size:min(11svh,8vw);padding-bottom:.6svh;text-align:left}
@@ -371,14 +371,15 @@
   .aw .s4{position:relative;z-index:1;flex:1;min-height:0;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:none;row-gap:0}
   /* колонка: большая голова и рядом роль, имя, число наград и кнопка; голова смотрит на свой текст —
      Паша (на исходнике смотрит влево) справа от текста, Антон (смотрит вправо) — слева */
-  .aw .s4-col{grid-row:auto;display:flex;align-items:center;justify-content:flex-start;gap:clamp(20px,3vw,56px);padding:3svh clamp(24px,3.5vw,56px) 3svh clamp(12px,2vw,32px)}
+  .aw .s4-col{grid-row:auto;display:flex;align-items:flex-start;justify-content:flex-start;gap:clamp(20px,3vw,56px);padding:1svh clamp(24px,3.5vw,56px) 3svh clamp(12px,2vw,32px)}
   /* головы прижаты к центру экрана: у Паши колонка идёт справа налево, у Антона — слева направо */
-  .aw .s4-col[data-who="pasha"]{padding:3svh clamp(12px,2vw,32px) 3svh clamp(24px,3.5vw,56px)}
+  .aw .s4-col[data-who="pasha"]{padding:1svh clamp(12px,2vw,32px) 3svh clamp(24px,3.5vw,56px)}
+  .aw .s4-info{padding-top:3svh}
   .aw .s4-col > *{grid-row:auto}
   .aw .s4-col + .s4-col{border-left:0}
   .aw .s4-col[data-who="pasha"]{flex-direction:row-reverse}
   .aw .s4-col[data-who="pasha"] .s4-info{align-items:flex-end;text-align:right}
-  .s4-head{position:relative;flex:none;height:min(34svh,20vw)}   /* не кнопка: обычный курсор, без подсказки */
+  .s4-head{position:relative;display:block;flex:none;height:min(32svh,19vw)}   /* голова — ссылка на сайт героя */
   .s4-head img{display:block;height:100%;width:auto;transition:transform .45s cubic-bezier(.2,.8,.2,1)}
   .s4-head .hint{position:absolute;left:50%;bottom:2%;transform:translate(-50%,8px);padding:7px 11px;background:var(--ink);color:#fff;font-size:11px;letter-spacing:.06em;white-space:nowrap;opacity:0;transition:opacity .25s ease, transform .25s ease;pointer-events:none}
   .s4-head:hover .hint{opacity:1;transform:translate(-50%,0)}
@@ -724,7 +725,7 @@
     <div class="s4" id="s4">
       <div class="s4-col" data-who="pasha" style="--c:#ff6a13">
         <div class="s4-bg" aria-hidden="true"><img class="s4-shot" src="img/site-pasha.jpg" alt="" loading="lazy"></div>
-        <div class="s4-head"><img src="img/head-pasha.png" width="1257" height="1400" alt="Паша — 3D-голова в розовой шапке с рыжей бородой"></div>
+        <a class="s4-head" href="https://pavel-cherkun.github.io/cherkun/" target="_blank" rel="noopener" aria-label="Сайт Паши"><img src="img/head-pasha.png" width="1257" height="1400" alt="Паша — 3D-голова в розовой шапке с рыжей бородой"></a>
         <div class="s4-info">
           <span class="mono s4-k s4-role">[ <b>CREATIVE_</b> ]</span>
           <h2 class="s4-name">Pasha</h2>
@@ -734,7 +735,7 @@
       </div>
       <div class="s4-col" data-who="anton" style="--c:#ff2b2b">
         <div class="s4-bg" aria-hidden="true"><img class="s4-shot" src="img/site-anton.jpg" alt="" loading="lazy"></div>
-        <div class="s4-head"><img src="img/head-anton.png" width="1378" height="1400" alt="Антон — 3D-голова в чёрной шапке с усами"></div>
+        <a class="s4-head" href="https://frosti71fros-pixel.github.io/anton-fros/" target="_blank" rel="noopener" aria-label="Сайт Антона"><img src="img/head-anton.png" width="1378" height="1400" alt="Антон — 3D-голова в чёрной шапке с усами"></a>
         <div class="s4-info">
           <span class="mono s4-k s4-role">[ <b>ART DIRECTOR_</b> ]</span>
           <h2 class="s4-name">Anton</h2>
@@ -1583,12 +1584,14 @@
       var s4 = document.getElementById('s4'); if (!s4) return;
       // наведение на голову — за колонкой прокручивается сайт героя (головы не кликабельные)
       s4.querySelectorAll('.s4-col').forEach(function(col){
-        var hd = col.querySelector('.s4-head');
-        hd.addEventListener('mouseenter', function(){
-          if (!matchMedia('(hover:hover)').matches) return;
-          col.classList.add('on'); s4.classList.add('has-on');
+        // голова и кнопка «Сайт …»: наведение — за колонкой прокручивается сайт героя, клик — открывает сайт
+        col.querySelectorAll('.s4-head, .s4-site').forEach(function(hd){
+          hd.addEventListener('mouseenter', function(){
+            if (!matchMedia('(hover:hover)').matches) return;
+            col.classList.add('on'); s4.classList.add('has-on');
+          });
+          hd.addEventListener('mouseleave', function(){ col.classList.remove('on'); s4.classList.remove('has-on'); });
         });
-        hd.addEventListener('mouseleave', function(){ col.classList.remove('on'); s4.classList.remove('has-on'); });
       });
     })();
 
