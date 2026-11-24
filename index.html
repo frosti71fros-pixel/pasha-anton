@@ -133,6 +133,9 @@
   .close{position:absolute;top:24px;right:var(--pad);display:flex;align-items:center;gap:10px;padding:12px 16px;border:1px solid var(--ink);background:var(--bg);color:var(--ink);font:500 12px/1 var(--mono);letter-spacing:.06em;text-transform:uppercase;cursor:pointer}
   .close:hover{background:var(--ink);color:#fff}
   body.lb-lock{overflow:hidden}
+  /* открыто меню или автомат — фон не прокручивается (позиция прокрутки сохраняется) */
+  html:has(#burger[aria-expanded="true"]),html:has(#arcadeBtn[aria-expanded="true"]),html:has(body.lb-lock){overflow:hidden}
+  .menu,.arcade{overscroll-behavior:contain}
   @media (max-width:900px){
     .lb,.lb.is-pasha{flex-direction:column;justify-content:center;gap:20px}
     .lb-head{height:30vh}
