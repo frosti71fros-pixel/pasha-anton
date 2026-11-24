@@ -1316,6 +1316,7 @@
       addEventListener('resize', function(){ if ((reduce || matchMedia('(max-width:800px)').matches) !== flat) location.reload(); });
       var counted = false;
       function countAwards(){
+        return;   // число наград показываем сразу, без счётчика
         if (counted) return; counted = true;
         var el = document.getElementById('awardsNum'), to = 21, t0 = performance.now();
         if (reduce) { el.textContent = to; return; }
@@ -1330,7 +1331,6 @@
         window.s2Changed = function(){};
         return;
       }
-      document.getElementById('awardsNum').textContent = '0';
       // таймлайн (в «экранах» прокрутки): каждый следующий экран собирается «лесенкой» из полос,
       // предыдущий уходит в расфокус; первый экран к тому же рассыпается на квадраты.
       // Колесо/тачпад/клавиши не прокручивают свободно: один жест — переход целиком до следующего экрана (snap),
