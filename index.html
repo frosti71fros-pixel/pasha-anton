@@ -378,6 +378,12 @@
   .aw .s3-num em b{font-size:inherit;line-height:inherit;color:#ff6a13;font-weight:700}
   .aw .s3-num em{font-style:normal;font-size:13px;font-weight:700;letter-spacing:.08em;color:#0b0b0c;line-height:1}
   .aw .s3-num small{font:700 13px/1.45 var(--mono);letter-spacing:.06em;color:#0b0b0c;text-transform:uppercase}
+  /* надзаголовок одной строкой и «21 AWARDS» — одним размером, очень крупно */
+  .aw-over{margin:0 0 1svh;font-size:14px;font-weight:700;letter-spacing:.08em;color:#0b0b0c;text-transform:uppercase}
+  .aw-over b{color:#ff6a13}
+  .aw-big{margin:0;font-family:var(--display);font-weight:400;text-transform:uppercase;font-size:min(24svh,15vw);line-height:.82;white-space:nowrap;color:#0b0b0c}
+  .aw.on-pasha .aw-over,.aw.on-anton .aw-over,.aw.on-pasha .aw-over b,.aw.on-anton .aw-over b{color:#0b0b0c}
+  @media (max-width:800px){.aw-big{font-size:26vw}.aw-over{font-size:12px}}
   .aw .s3-fests li{background:#0b0b0c;color:#fff;border:2px solid #0b0b0c;font-weight:600}
   .aw .s4{position:relative;z-index:1;flex:1;min-height:0;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:none;row-gap:0}
   /* колонка: большая голова и рядом роль, имя, число наград и кнопка; голова смотрит на свой текст —
@@ -842,7 +848,8 @@
   <section class="scr s3 aw" id="s3" aria-label="Награды">
     <div class="aw-fit">
     <div class="aw-top">
-      <div class="s3-num"><b id="awardsNum">21</b><span><em class="mono s3-k">[ <b>AWARDS_</b> на двоих ]</em>Awards<small>фестивальная награда на двоих<br>и ещё 12 шорт-листов</small></span></div>
+      <p class="aw-over mono s3-k">[ <b>AWARDS_</b> ] фестивальная награда на&nbsp;двоих и&nbsp;ещё 12&nbsp;шорт-листов</p>
+      <h2 class="aw-big"><span id="awardsNum">21</span> Awards</h2>
       <ul class="s3-fests mono"><li>Silver Mercury</li><li>Red Apple</li><li>Marspo Awards</li><li>Нейротренд</li><li>Sreda</li><li>Dprofile Award</li><li>White Square</li></ul>
     </div>
     <!-- ниже — личные награды: голова и список рядом; наведение — за колонкой прокручивается сайт героя -->
