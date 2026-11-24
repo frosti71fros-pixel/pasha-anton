@@ -297,6 +297,12 @@
   /* головы летают по меню, как логотип DVD */
   .dvd{position:absolute;inset:0;overflow:hidden;pointer-events:none}
   .dvd-h{position:absolute;left:0;top:0;height:min(26svh,22vw);width:auto;will-change:transform}
+  /* реплика убегающей головы: белая карточка с чёрным контуром, как на первом экране */
+  .dvd-say{position:absolute;left:0;top:0;z-index:2;padding:10px 14px;background:#fff;color:#000;outline:3px solid #000;outline-offset:-3px;font:500 15px/1.15 var(--mono);letter-spacing:.03em;text-transform:uppercase;white-space:nowrap;opacity:0;transition:opacity .15s ease;will-change:transform}
+  .dvd-say::before,.dvd-say::after{content:"";position:absolute;top:-4px;width:8px;height:8px;background:#000;box-shadow:0 0 0 1.5px #fff}
+  .dvd-say::before{left:-4px}.dvd-say::after{right:-4px}
+  .dvd-say b{color:var(--c);font-weight:600}
+  .dvd-say.on{opacity:1}
   .menu a{opacity:.7;transition:opacity .2s}
   .menu a:hover{opacity:1}
   .menu-list,.menu-foot{position:relative;z-index:1}
@@ -464,7 +470,8 @@
   </div>
 </section>
 <nav class="menu" id="menu" aria-label="Меню" hidden>
-  <div class="dvd" aria-hidden="true"><img class="dvd-h" src="img/head-pasha.png" alt=""><img class="dvd-h" src="img/head-anton.png" alt=""></div>
+  <div class="dvd" aria-hidden="true"><img class="dvd-h" src="img/head-pasha.png" alt=""><img class="dvd-h" src="img/head-anton.png" alt="">
+    <div class="dvd-say" style="--c:#ff6a13"><b>PASHA_:</b> <span></span></div><div class="dvd-say" style="--c:#ff2b2b"><b>ANTON_:</b> <span></span></div></div>
   <ol class="menu-list">
     <li><a href="#top" data-i="0"><span class="mono">01</span>Creative Couple</a></li>
     <li><a href="#s2" data-i="1"><span class="mono">02</span>Selected works</a></li>
@@ -1106,23 +1113,52 @@
     // 4. Бургер-меню: пункты прокручивают к нужному экрану
     var burger = document.getElementById('burger'), menu = document.getElementById('menu');
     // DVD-головы: летят по прямой, отскакивают от краёв и друг от друга, при ударе сплющиваются
+    var says = menu.querySelectorAll('.dvd-say');
     var dvd = [].map.call(menu.querySelectorAll('.dvd-h'), function(el, i){
-      return {el: el, x: 0, y: 0, vx: (i ? -1 : 1) * 2.6, vy: (i ? 1 : -1) * 2.1, squash: 0, rot: 0};
+      return {el: el, x: 0, y: 0, vx: (i ? -1 : 1) * 2.6, vy: (i ? 1 : -1) * 2.1, squash: 0, rot: 0, say: says[i], sayT: 0, cool: 0, last: -1};
     });
     var dvdRaf = 0;
+    // курсор рядом — голова убегает и дразнится
+    var TEASE = [
+      ['Не поймаешь!', 'Мимо!', 'Ха, промах!', 'Я быстрее дедлайна', 'Сначала бриф, потом лови', 'Руки прочь от креатива', 'Догоняй!'],
+      ['Не поймаешь!', 'Даже не пытайся', 'Слишком медленно!', 'Арт-директора не ловят', 'Не трогай причёску!', 'Сначала ТЗ!', 'Мимо, мимо!']
+    ];
+    var mouse = null;
+    menu.addEventListener('mousemove', function(e){ mouse = {x: e.clientX, y: e.clientY}; });
+    menu.addEventListener('mouseleave', function(){ mouse = null; });
+    function tease(h, i){
+      var n; do { n = Math.floor(Math.random() * TEASE[i].length); } while (n === h.last);
+      h.last = n; h.say.querySelector('span').textContent = TEASE[i][n];
+      h.say.classList.add('on'); h.sayT = 100; h.cool = 70;
+    }
     function dvdStart(){
       var W = innerWidth, H = innerHeight;
       dvd.forEach(function(h, i){
         var w = h.el.offsetWidth || 200, hh = h.el.offsetHeight || 220;
         h.x = W * (i ? .7 : .45) - w / 2; h.y = H * (i ? .55 : .25) - hh / 2;
+        h.sayT = 0; h.cool = 0; h.say.classList.remove('on');
       });
       if (!dvdRaf && !reduce) dvdRaf = requestAnimationFrame(dvdTick);
       else if (reduce) dvdTick();
     }
     function dvdTick(){
       var W = innerWidth, H = innerHeight;
-      dvd.forEach(function(h){
+      dvd.forEach(function(h, i){
         var w = h.el.offsetWidth, hh = h.el.offsetHeight;
+        // убегание: чем ближе курсор, тем сильнее толчок от него; потом скорость плавно возвращается к обычной
+        if (mouse) {
+          var dx = h.x + w / 2 - mouse.x, dy = h.y + hh / 2 - mouse.y, d = Math.hypot(dx, dy) || 1, R = w * .95;
+          if (d < R) {
+            var f = (1 - d / R) * 2.4;
+            h.vx += dx / d * f; h.vy += dy / d * f; h.squash = .5;
+            if (h.cool <= 0) tease(h, i);
+          }
+        }
+        var sp = Math.hypot(h.vx, h.vy);
+        if (sp > 24) { h.vx *= 24 / sp; h.vy *= 24 / sp; }
+        else if (sp > 3.4) { h.vx *= .975; h.vy *= .975; }
+        if (h.cool > 0) h.cool--;
+        if (h.sayT > 0 && --h.sayT === 0) h.say.classList.remove('on');
         h.x += h.vx; h.y += h.vy;
         if (h.x < 0) { h.x = 0; h.vx = Math.abs(h.vx); h.squash = 1; }
         if (h.x + w > W) { h.x = W - w; h.vx = -Math.abs(h.vx); h.squash = 1; }
@@ -1144,6 +1180,13 @@
         var s = h.squash, sx = 1 + (s > 0 ? -.12 : .08) * Math.abs(s), sy = 1 + (s > 0 ? .08 : -.12) * Math.abs(s);
         h.el.style.transform = 'translate(' + h.x + 'px,' + h.y + 'px) rotate(' + (Math.sin(h.rot) * 8).toFixed(2) + 'deg) scale(' + sx + ',' + sy + ')';
         h.squash *= .85; if (Math.abs(h.squash) < .01) h.squash = 0;
+        // реплика едет над головой и не вылезает за экран
+        if (h.sayT > 0) {
+          var sw = h.say.offsetWidth, sh = h.say.offsetHeight;
+          var px = Math.min(Math.max(8, h.x + h.el.offsetWidth / 2 - sw / 2), W - sw - 8);
+          var py = h.y - sh - 10; if (py < 8) py = h.y + h.el.offsetHeight + 10;
+          h.say.style.transform = 'translate(' + px.toFixed(1) + 'px,' + py.toFixed(1) + 'px)';
+        }
       });
       dvdRaf = reduce ? 0 : requestAnimationFrame(dvdTick);
     }
