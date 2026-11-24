@@ -9,6 +9,7 @@
 /img/*
 !/img/kv.jpg
 !/img/cursor-*.svg
+!/img/favicon.svg
 !/img/head-pasha.png
 !/img/head-anton.png
 !/img/site-pasha.jpg
