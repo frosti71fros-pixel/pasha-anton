@@ -369,45 +369,52 @@
   .aw .s3-num small{font:500 12px/1.45 var(--mono);letter-spacing:.06em;color:var(--muted);text-transform:uppercase}
   .aw .s3-fests li{background:#fff;border-width:2px}
   .aw .s4{position:relative;z-index:1;flex:1;min-height:0;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:none;row-gap:0;border-top:3px solid #000}
-  .aw .s4-col{grid-row:auto;display:flex;align-items:flex-start;justify-content:center;gap:clamp(16px,2.4vw,40px);padding:5svh clamp(24px,3.5vw,56px) 3svh}
+  /* колонка: большая голова и рядом роль, имя, число наград и кнопка; голова смотрит на свой текст —
+     Паша (на исходнике смотрит влево) справа от текста, Антон (смотрит вправо) — слева */
+  .aw .s4-col{grid-row:auto;display:flex;align-items:center;justify-content:center;gap:clamp(20px,3vw,56px);padding:3svh clamp(24px,3.5vw,56px)}
   .aw .s4-col > *{grid-row:auto}
   .aw .s4-col + .s4-col{border-left:3px solid #000}
-  /* голова смотрит на свой список: Паша (смотрит влево) — справа от текста, Антон (вправо) — слева */
   .aw .s4-col[data-who="pasha"]{flex-direction:row-reverse}
-  .aw .s4 .head-btn{flex:none;width:auto;height:min(22svh,13vw);margin:0}
-  .aw .s4-info{flex:1;display:flex;flex-direction:column;align-items:flex-start;gap:1.3svh;min-width:0;max-width:440px}
-  /* колонки выровнены по верху: роль, имя со счётом, список и кнопка у обоих на одной высоте */
-  .aw .s4-list li{display:block}
-  .aw .s4-list li::before{display:inline-block;margin-right:10px}
+  .aw .s4-col[data-who="pasha"] .s4-info{align-items:flex-end;text-align:right}
+  .s4-head{position:relative;flex:none;height:min(34svh,20vw);cursor:url("img/cursor-hand.svg") 17 2, pointer}
+  .s4-head img{display:block;height:100%;width:auto;transition:transform .45s cubic-bezier(.2,.8,.2,1)}
+  .s4-head .hint{position:absolute;left:50%;bottom:2%;transform:translate(-50%,8px);padding:7px 11px;background:var(--ink);color:#fff;font-size:11px;letter-spacing:.06em;white-space:nowrap;opacity:0;transition:opacity .25s ease, transform .25s ease;pointer-events:none}
+  .s4-head:hover .hint{opacity:1;transform:translate(-50%,0)}
+  .s4-col.on .s4-head img{transform:scale(1.1) rotate(-2deg)}
+  .s4-col.on .s4-head .hint{opacity:0}
+  .aw .s4-info{display:flex;flex-direction:column;align-items:flex-start;gap:1.6svh;min-width:0}
   .aw .s4-role{margin:0}
-  .aw .s4-nm{display:flex;align-items:flex-end;flex-wrap:wrap;gap:6px 16px}
-  .aw .s4-name{margin:0;font-size:min(10svh,6vw)}
-  .aw .s4-aw b{font-size:min(7svh,4.4vw)}
-  .aw .s4-aw span{font-size:14px}
+  .aw .s4-name{margin:0;font-size:min(13svh,7.5vw)}
+  .aw .s4-aw{align-items:center;gap:14px}
+  .aw .s4-col[data-who="pasha"] .s4-aw{flex-direction:row-reverse}
+  .aw .s4-aw b{font-size:min(11svh,6.4vw)}
+  .aw .s4-aw span{font:500 12px/1.35 var(--mono);letter-spacing:.06em;text-transform:uppercase}
   .aw .s4-site{padding:9px 14px;font-size:14px;border-width:2px}
   @media (max-width:800px){
     .aw-top{padding-top:12svh}
     .aw .s3-num b{font-size:30vw}
     .aw .s4{grid-template-columns:1fr}
-    .aw .s4-col,.aw .s4-col[data-who="pasha"]{flex-direction:row;align-items:flex-start;padding:28px 20px}
+    .aw .s4-col,.aw .s4-col[data-who="pasha"]{flex-direction:row;padding:28px 20px}
+    .aw .s4-col[data-who="pasha"] .s4-info{align-items:flex-start;text-align:left}
+    .aw .s4-col[data-who="pasha"] .s4-aw{flex-direction:row}
     .aw .s4-col + .s4-col{border-left:0;border-top:3px solid #000}
-    .aw .s4 .head-btn{height:26vw}
-    .aw .s4-name{font-size:12vw}
+    .s4-head{height:30vw}
+    .aw .s4-name{font-size:14vw}
   }
-
   /* 5 — кому написать */
   .s5{background:#0b0b0c;color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3svh;padding:5svh var(--pad)}
   .s5-title{margin:0;font-family:var(--display);font-weight:400;text-transform:uppercase;font-size:min(17svh,16vw);line-height:.8}
   .s5-row{display:flex;gap:clamp(24px,6vw,120px)}
   .pick{position:relative;display:flex;flex-direction:column;align-items:center;gap:14px}
   /* реплики героев над головами: белая карточка, как на первом экране; выскакивает, когда экран открылся */
-  .pick-say{position:absolute;top:-2svh;z-index:2;width:max-content;max-width:230px;padding:11px 14px;background:#fff;color:#000;outline:3px solid #000;outline-offset:-3px;font-size:14px;line-height:1.25;letter-spacing:.02em;text-transform:uppercase;opacity:0;transform:translateY(10px) scale(.9);transition:opacity .25s ease .5s, transform .5s cubic-bezier(.2,1.4,.4,1) .5s;pointer-events:none}
+  .pick-say{position:absolute;top:-2svh;z-index:2;width:max-content;max-width:240px;padding:11px 14px;background:#fff;color:#000;outline:3px solid #000;outline-offset:-3px;font-size:14px;line-height:1.25;letter-spacing:.02em;text-transform:uppercase;opacity:0;transform:translateY(10px) scale(.9);transition:opacity .2s ease, transform .45s cubic-bezier(.2,1.4,.4,1);pointer-events:none}
   .pick-say b{display:block;margin-bottom:4px;font-size:10px;letter-spacing:.08em;color:var(--c);font-weight:600}
   .pick-say::before,.pick-say::after{content:"";position:absolute;top:-4px;width:8px;height:8px;background:#000;box-shadow:0 0 0 1.5px #fff}
   .pick-say::before{left:-4px}.pick-say::after{right:-4px}
   .pick:first-child .pick-say{right:72%;transform-origin:100% 100%}
-  .pick:last-child .pick-say{left:72%;transform-origin:0 100%;transition-delay:1.3s}
-  .s5.vis .pick-say,html.flat .pick-say{opacity:1;transform:none}
+  .pick:last-child .pick-say{left:72%;transform-origin:0 100%}
+  .pick-say.on{opacity:1;transform:none}
+  .pick-say .ps-t::after{content:"";display:inline-block;width:.55em;height:1em;margin-left:3px;vertical-align:-.15em;background:var(--c);animation:caret .8s steps(1) infinite}
   .pick:hover .pick-say{transform:rotate(-3deg) scale(1.05)}
   .pick img{height:min(38svh,30vw);width:auto;transition:transform .45s cubic-bezier(.2,.8,.2,1)}
   .pick:hover img{transform:scale(1.08) rotate(-3deg)}
@@ -715,36 +722,21 @@
     <div class="s4" id="s4">
       <div class="s4-col" data-who="pasha" style="--c:#ff6a13">
         <div class="s4-bg" aria-hidden="true"><img class="s4-shot" src="img/site-pasha.jpg" alt="" loading="lazy"></div>
-        <button class="head-btn" type="button" data-who="pasha" aria-label="Паша — показать сайт">
-          <img src="img/head-pasha.png" width="1257" height="1400" alt="Паша — 3D-голова в розовой шапке с рыжей бородой">
-          <span class="hint mono">Смотреть сайт</span>
-        </button>
+        <div class="s4-head"><img src="img/head-pasha.png" width="1257" height="1400" alt="Паша — 3D-голова в розовой шапке с рыжей бородой"><span class="hint mono">Наведи — покажу сайт</span></div>
         <div class="s4-info">
           <span class="mono s4-k s4-role">[ <b>CREATIVE_</b> ]</span>
-          <div class="s4-nm"><h2 class="s4-name">Pasha</h2><div class="s4-aw"><b>15</b><span>медалей фестивалей</span></div></div>
-          <ul class="s4-list mono">
-            <li>Silver Mercury 2025 — золото <i>«Заклинатели»</i></li>
-            <li>Silver Mercury СЗФО 2026 — золото <i>«Хроники Ижоры»</i></li>
-            <li>Silver Mercury 2024–25 — серебро ×2, бронза</li>
-            <li>Red Apple 2024–25 — бронза ×4, шорт-листы ×9</li>
-          </ul>
+          <h2 class="s4-name">Pasha</h2>
+          <div class="s4-aw"><b>15</b><span>медалей<br>фестивалей</span></div>
           <a class="s4-site" href="https://pavel-cherkun.github.io/cherkun/" target="_blank" rel="noopener">Сайт Паши <i>↗</i></a>
         </div>
       </div>
       <div class="s4-col" data-who="anton" style="--c:#ff2b2b">
         <div class="s4-bg" aria-hidden="true"><img class="s4-shot" src="img/site-anton.jpg" alt="" loading="lazy"></div>
-        <button class="head-btn" type="button" data-who="anton" aria-label="Антон — показать сайт">
-          <img src="img/head-anton.png" width="1378" height="1400" alt="Антон — 3D-голова в чёрной шапке с усами">
-          <span class="hint mono">Смотреть сайт</span>
-        </button>
+        <div class="s4-head"><img src="img/head-anton.png" width="1378" height="1400" alt="Антон — 3D-голова в чёрной шапке с усами"><span class="hint mono">Наведи — покажу сайт</span></div>
         <div class="s4-info">
           <span class="mono s4-k s4-role">[ <b>ART DIRECTOR_</b> ]</span>
-          <div class="s4-nm"><h2 class="s4-name">Anton</h2><div class="s4-aw"><b>6</b><span>наград и 3 шорт-листа</span></div></div>
-          <ul class="s4-list mono">
-            <li>Silver Mercury СЗФО — золото, серебро ×2, бронза</li>
-            <li>Marspo Awards — серебро, бронза</li>
-            <li>Шорт-листы — Sreda, Dprofile Award, White Square</li>
-          </ul>
+          <h2 class="s4-name">Anton</h2>
+          <div class="s4-aw"><b>6</b><span>наград<br>и 3 шорт-листа</span></div>
           <a class="s4-site" href="https://frosti71fros-pixel.github.io/anton-fros/" target="_blank" rel="noopener">Сайт Антона <i>↗</i></a>
         </div>
       </div>
@@ -756,13 +748,13 @@
     <h2 class="s5-title">Pick a head</h2>
     <div class="s5-row">
       <a class="pick" href="https://t.me/cherkun" target="_blank" rel="noopener" style="--c:#ff6a13">
-        <span class="pick-say mono" aria-hidden="true"><b>PASHA_:</b> Сразу говорю: я женат.</span>
+        <span class="pick-say mono" aria-hidden="true"><b>PASHA_:</b><span class="ps-t"></span></span>
         <img src="img/head-pasha.png" width="1257" height="1400" alt="Паша">
         <span class="pick-go">Написать Паше <svg class="tg-ic" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M21.9 4.3 18.7 19.4c-.2 1-.9 1.3-1.7.8l-4.8-3.6-2.3 2.2c-.3.3-.5.5-1 .5l.3-4.9 8.9-8c.4-.3-.1-.5-.6-.2L6.5 13.1 1.8 11.6c-1-.3-1-1 .2-1.5L20.5 3c.9-.3 1.6.2 1.4 1.3z"/></svg></span>
         <span class="mono pick-at">идея, стратегия, тендеры</span>
       </a>
       <a class="pick" href="https://t.me/veji7" target="_blank" rel="noopener" style="--c:#ff2b2b">
-        <span class="pick-say mono" aria-hidden="true"><b>ANTON_:</b> А я — разведён.</span>
+        <span class="pick-say mono" aria-hidden="true"><b>ANTON_:</b><span class="ps-t"></span></span>
         <img src="img/head-anton.png" width="1378" height="1400" alt="Антон">
         <span class="pick-go">Написать Антону <svg class="tg-ic" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M21.9 4.3 18.7 19.4c-.2 1-.9 1.3-1.7.8l-4.8-3.6-2.3 2.2c-.3.3-.5.5-1 .5l.3-4.9 8.9-8c.4-.3-.1-.5-.6-.2L6.5 13.1 1.8 11.6c-1-.3-1-1 .2-1.5L20.5 3c.9-.3 1.6.2 1.4 1.3z"/></svg></span>
         <span class="mono pick-at">визуал, шрифты, айдентика</span>
@@ -1375,10 +1367,11 @@
       function sizeIntro(){ intro.style.height = ((TOTAL + 1) * innerHeight) + 'px'; }
       sizeIntro();
       window.s2Changed = function(){ N = 0; build(); update(); };
-      function stopY(i){ return intro.offsetTop + STOPS[i] * innerHeight; }
+      // последний экран останавливается в самом низу страницы — вместе с подвалом
+      function stopY(i){ return i === STOPS.length - 1 ? document.documentElement.scrollHeight - innerHeight : intro.offsetTop + STOPS[i] * innerHeight; }
       function nearest(){
-        var u = (scrollY - intro.offsetTop) / innerHeight, best = 0;
-        STOPS.forEach(function(s, i){ if (Math.abs(s - u) < Math.abs(STOPS[best] - u)) best = i; });
+        var best = 0;
+        STOPS.forEach(function(s, i){ if (Math.abs(stopY(i) - scrollY) < Math.abs(stopY(best) - scrollY)) best = i; });
         return best;
       }
       var anim = null;
@@ -1579,12 +1572,14 @@
     // 3.5 Экран «Pasha & Anton»: наведение на колонку — за ней прокручивается сайт (дуотон + зерно), вторая гаснет
     (function(){
       var s4 = document.getElementById('s4'); if (!s4) return;
+      // наведение на голову — за колонкой прокручивается сайт героя (головы не кликабельные)
       s4.querySelectorAll('.s4-col').forEach(function(col){
-        col.addEventListener('mouseenter', function(){
+        var hd = col.querySelector('.s4-head');
+        hd.addEventListener('mouseenter', function(){
           if (!matchMedia('(hover:hover)').matches) return;
           col.classList.add('on'); s4.classList.add('has-on');
         });
-        col.addEventListener('mouseleave', function(){ col.classList.remove('on'); s4.classList.remove('has-on'); });
+        hd.addEventListener('mouseleave', function(){ col.classList.remove('on'); s4.classList.remove('has-on'); });
       });
     })();
 
@@ -2520,21 +2515,41 @@
   })();
 </script>
 <script>
-  // экран наград: блоки двух колонок (роль, имя, список) одинаковой высоты — чтобы всё стояло ровно друг напротив друга
+  // последний экран: герои по очереди что-то говорят — реплика печатается, висит, исчезает, следом новая
   (function(){
-    var cols = document.querySelectorAll('.aw .s4-col');
-    function eq(){
-      ['.s4-role', '.s4-nm', '.s4-list'].forEach(function(sel){
-        var els = [].map.call(cols, function(c){ return c.querySelector(sel); });
-        els.forEach(function(e){ e.style.minHeight = ''; });
-        if (innerWidth <= 800) return;
-        var h = Math.max.apply(null, els.map(function(e){ return e.offsetHeight; }));
-        els.forEach(function(e){ e.style.minHeight = h + 'px'; });
-      });
+    var s5 = document.getElementById('s5'), says = s5.querySelectorAll('.pick-say');
+    var LINES = [
+      ['Сразу говорю: я женат.', 'Жена разрешает работать допоздна. Иногда.', 'Кольцо на пальце, идеи в голове.', 'Отвечу между семейными ужинами.', 'Женат. Но на тендеры хожу один.'],
+      ['А я — разведён.', 'Разведён. Зато дедлайны не ревнуют.', 'Теперь всё время — на ваш бренд.', 'Свободен для новых проектов.', 'Холост и готов к брифу.']
+    ];
+    var used = [-1, -1], who = 0, timer = 0, running = false;
+    function visible(){
+      var r = s5.getBoundingClientRect();
+      return (s5.classList.contains('vis') || document.documentElement.classList.contains('flat')) && r.bottom > innerHeight * .3 && r.top < innerHeight * .7;
     }
-    eq(); addEventListener('resize', eq); addEventListener('load', eq);
-    if (document.fonts) document.fonts.ready.then(eq);
-  })();  // полосы-«лесенка» для меню и автомата: 8 вертикальных полос, от центра к краям при открытии, от краёв к центру при закрытии
+    function next(){
+      if (!visible()) { running = false; says.forEach(function(s){ s.classList.remove('on'); }); return; }
+      var box = says[who], out = box.querySelector('.ps-t'), list = LINES[who], n;
+      // первые реплики — «женат» и «разведён», дальше случайные без повторов подряд
+      if (used[who] < 0) n = 0; else do { n = 1 + Math.floor(Math.random() * (list.length - 1)); } while (n === used[who]);
+      used[who] = n;
+      var str = list[n], i = 0;
+      out.textContent = ''; box.classList.add('on');
+      (function type(){
+        out.textContent = str.slice(0, ++i);
+        if (i < str.length) timer = setTimeout(type, 30 + Math.random() * 30);
+        else timer = setTimeout(function(){
+          box.classList.remove('on');
+          who = 1 - who;
+          timer = setTimeout(next, 700);
+        }, 2600);
+      })();
+    }
+    function check(){ if (!running && visible()) { running = true; clearTimeout(timer); timer = setTimeout(next, 500); } }
+    addEventListener('scroll', function(){ requestAnimationFrame(check); }, {passive: true});
+    setInterval(check, 1000);
+  })();
+  // полосы-«лесенка» для меню и автомата: 8 вертикальных полос, от центра к краям при открытии, от краёв к центру при закрытии
   ['menu', 'arcade'].forEach(function(id){
     var box = document.getElementById(id), w = document.createElement('div'), N = 8, c = (N - 1) / 2;
     w.className = 'wipe'; w.setAttribute('aria-hidden', 'true');
