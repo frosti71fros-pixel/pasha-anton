@@ -360,7 +360,11 @@
   .chips li:hover{background:var(--c);color:#000}
   /* 3 — награды одним экраном: сверху общий счёт и фестивали, ниже две колонки — голова и личные награды.
      Фон — сетка точек, как на первом экране; колонки разделены чёрной линией, как рамки карточек */
-  .aw{display:flex;flex-direction:column}
+  .aw{display:block}
+  /* всё содержимое экрана наград в обёртке, которая уменьшается целиком, если не влезает по высоте окна (--awk считает скрипт) */
+  .aw-fit{position:absolute;left:0;top:0;z-index:1;display:flex;flex-direction:column;width:calc(100% / var(--awk,1));height:calc(100% / var(--awk,1));transform:scale(var(--awk,1));transform-origin:0 0}
+  .aw-fit.measure .s4{flex:none}
+  html.flat .aw-fit{position:relative;width:auto;height:auto;transform:none}
   .aw::before{content:"";position:absolute;inset:0;pointer-events:none;opacity:.24;background-image:radial-gradient(circle,#0b0b0c 1.1px,transparent 1.6px);background-size:16px 16px;background-position:-8px 0}
   .aw-top{position:relative;z-index:1;flex:none;display:flex;flex-direction:column;align-items:center;gap:1.4svh;padding:4.5svh var(--pad) 2svh;text-align:center}
   .aw .s3-num{padding-top:3.4svh;gap:1.4vw;align-items:flex-end}
@@ -716,6 +720,7 @@
 
   <!-- 3. Награды на двоих -->
   <section class="scr s3 aw" id="s3" aria-label="Награды">
+    <div class="aw-fit">
     <div class="aw-top">
       <span class="mono s3-k">[ <b>AWARDS_</b> на двоих ]</span>
       <div class="s3-num"><b id="awardsNum">21</b><span>Awards<small>фестивальная награда на двоих<br>и ещё 12 шорт-листов</small></span></div>
@@ -743,6 +748,7 @@
           <a class="s4-site" href="https://frosti71fros-pixel.github.io/anton-fros/" target="_blank" rel="noopener">Сайт Антона <i>↗</i></a>
         </div>
       </div>
+    </div>
     </div>
   </section>
 
@@ -2527,6 +2533,22 @@
   })();
 </script>
 <script>
+  // экран наград всегда целиком в окне: если содержимое выше окна, вся обёртка пропорционально уменьшается
+  (function(){
+    var s3 = document.getElementById('s3'), fit = s3.querySelector('.aw-fit'), root = document.documentElement;
+    function fitAw(){
+      root.style.setProperty('--awk', 1);
+      if (root.classList.contains('flat')) return;
+      fit.classList.add('measure');
+      var need = fit.scrollHeight, H = s3.clientHeight || innerHeight;
+      fit.classList.remove('measure');
+      var k = need > H ? Math.max(.55, (H - 4) / need) : 1;
+      root.style.setProperty('--awk', k.toFixed(4));
+    }
+    fitAw();
+    addEventListener('resize', fitAw); addEventListener('load', fitAw);
+    if (document.fonts) document.fonts.ready.then(fitAw);
+  })();
   // последний экран: герои по очереди что-то говорят — реплика печатается, висит, исчезает, следом новая
   (function(){
     var s5 = document.getElementById('s5'), says = s5.querySelectorAll('.pick-say');
