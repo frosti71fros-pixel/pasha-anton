@@ -376,7 +376,7 @@
   .aw .s4-col + .s4-col{border-left:3px solid #000}
   .aw .s4-col[data-who="pasha"]{flex-direction:row-reverse}
   .aw .s4-col[data-who="pasha"] .s4-info{align-items:flex-end;text-align:right}
-  .s4-head{position:relative;flex:none;height:min(34svh,20vw);cursor:url("img/cursor-hand.svg") 17 2, pointer}
+  .s4-head{position:relative;flex:none;height:min(34svh,20vw)}   /* не кнопка: обычный курсор, без подсказки */
   .s4-head img{display:block;height:100%;width:auto;transition:transform .45s cubic-bezier(.2,.8,.2,1)}
   .s4-head .hint{position:absolute;left:50%;bottom:2%;transform:translate(-50%,8px);padding:7px 11px;background:var(--ink);color:#fff;font-size:11px;letter-spacing:.06em;white-space:nowrap;opacity:0;transition:opacity .25s ease, transform .25s ease;pointer-events:none}
   .s4-head:hover .hint{opacity:1;transform:translate(-50%,0)}
@@ -722,7 +722,7 @@
     <div class="s4" id="s4">
       <div class="s4-col" data-who="pasha" style="--c:#ff6a13">
         <div class="s4-bg" aria-hidden="true"><img class="s4-shot" src="img/site-pasha.jpg" alt="" loading="lazy"></div>
-        <div class="s4-head"><img src="img/head-pasha.png" width="1257" height="1400" alt="Паша — 3D-голова в розовой шапке с рыжей бородой"><span class="hint mono">Наведи — покажу сайт</span></div>
+        <div class="s4-head"><img src="img/head-pasha.png" width="1257" height="1400" alt="Паша — 3D-голова в розовой шапке с рыжей бородой"></div>
         <div class="s4-info">
           <span class="mono s4-k s4-role">[ <b>CREATIVE_</b> ]</span>
           <h2 class="s4-name">Pasha</h2>
@@ -732,7 +732,7 @@
       </div>
       <div class="s4-col" data-who="anton" style="--c:#ff2b2b">
         <div class="s4-bg" aria-hidden="true"><img class="s4-shot" src="img/site-anton.jpg" alt="" loading="lazy"></div>
-        <div class="s4-head"><img src="img/head-anton.png" width="1378" height="1400" alt="Антон — 3D-голова в чёрной шапке с усами"><span class="hint mono">Наведи — покажу сайт</span></div>
+        <div class="s4-head"><img src="img/head-anton.png" width="1378" height="1400" alt="Антон — 3D-голова в чёрной шапке с усами"></div>
         <div class="s4-info">
           <span class="mono s4-k s4-role">[ <b>ART DIRECTOR_</b> ]</span>
           <h2 class="s4-name">Anton</h2>
