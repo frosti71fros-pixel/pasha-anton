@@ -418,6 +418,15 @@
   .arcade{position:fixed;inset:0;z-index:65;background:#0b0b0c;color:#fff;display:grid;grid-template-columns:minmax(280px,36%) 1fr;gap:clamp(24px,4vw,64px);align-items:center;padding:12svh var(--pad) 6svh calc(var(--pad) + 60px);overflow:auto;opacity:0;transition:opacity .25s ease}
   .arcade.open{opacity:1}
   .arcade[hidden]{display:none}
+  /* меню и автомат открываются и закрываются «лесенкой» из вертикальных полос, как экраны:
+     полосы растут от центра к краям, затем содержимое влетает из расфокуса; при закрытии — наоборот */
+  .menu,.arcade{background:transparent !important;opacity:1 !important;transition:none !important}
+  .wipe{position:fixed;inset:0;z-index:-1;pointer-events:none}
+  .wipe i{position:absolute;top:0;bottom:0;background:#0b0b0c;clip-path:inset(50% 0);transition:clip-path .5s cubic-bezier(.65,0,.35,1) var(--dc,0s)}
+  .menu.open .wipe i,.arcade.open .wipe i{clip-path:inset(0 0);transition:clip-path .55s cubic-bezier(.2,.8,.2,1) var(--d,0s)}
+  .menu > :not(.wipe),.arcade > :not(.wipe){opacity:0;filter:blur(14px);transform:scale(1.06);transition:opacity .22s ease,filter .25s ease,transform .25s ease}
+  .menu.open > :not(.wipe),.arcade.open > :not(.wipe){opacity:1;filter:none;transform:none;transition:opacity .4s ease .3s,filter .55s ease .3s,transform .6s cubic-bezier(.2,.8,.2,1) .3s}
+  @media (prefers-reduced-motion:reduce){.wipe i,.menu > *,.arcade > *{transition-duration:0s !important;transition-delay:0s !important}}
   .ar-side{display:flex;flex-direction:column;gap:4svh}
   .ar-k{font-size:12px;letter-spacing:.08em;color:#8a8a90}
   .ar-k b{color:#ff6a13;font-weight:500}
@@ -1562,7 +1571,7 @@
     function setMenu(open){
       burger.setAttribute('aria-expanded', open);
       if (open) { menu.hidden = false; requestAnimationFrame(function(){ menu.classList.add('open'); dvdStart(); }); }
-      else { menu.classList.remove('open'); setTimeout(function(){ if (!menu.classList.contains('open')) { menu.hidden = true; dvdStop(); } }, 250); }
+      else { menu.classList.remove('open'); setTimeout(function(){ if (!menu.classList.contains('open')) { menu.hidden = true; dvdStop(); } }, 760); }
     }
     burger.addEventListener('click', function(){ setMenu(burger.getAttribute('aria-expanded') !== 'true'); });
     menu.querySelectorAll('[data-i]').forEach(function(a){
@@ -2401,7 +2410,7 @@
       } else {
         if (state === 'play') setState('pause');
         hidePop(); box.classList.remove('open'); document.body.classList.remove('lb-lock');
-        setTimeout(function(){ if (!isOpen) { box.hidden = true; cancelAnimationFrame(raf); raf = 0; } }, 250);
+        setTimeout(function(){ if (!isOpen) { box.hidden = true; cancelAnimationFrame(raf); raf = 0; } }, 760);
       }
     }
     btn.addEventListener('click', function(){ setArcade(!isOpen); btn.blur(); });
@@ -2410,6 +2419,18 @@
   })();
 </script>
 <script>
+  // полосы-«лесенка» для меню и автомата: 8 вертикальных полос, от центра к краям при открытии, от краёв к центру при закрытии
+  ['menu', 'arcade'].forEach(function(id){
+    var box = document.getElementById(id), w = document.createElement('div'), N = 8, c = (N - 1) / 2;
+    w.className = 'wipe'; w.setAttribute('aria-hidden', 'true');
+    for (var i = 0; i < N; i++) {
+      var s = document.createElement('i'), d = Math.abs(i - c) / c;
+      s.style.left = (i * 100 / N) + 'vw'; s.style.width = 'calc(' + (100 / N) + 'vw + 1px)';
+      s.style.setProperty('--d', (d * .18).toFixed(3) + 's'); s.style.setProperty('--dc', (.12 + (1 - d) * .14).toFixed(3) + 's');
+      w.appendChild(s);
+    }
+    box.insertBefore(w, box.firstChild);
+  });
   // головы-«домой»: клик — на первый экран (закрыв меню / автомат); при скролле головы крутятся навстречу друг другу,
   // скорость скролла добавляет подпрыгивание
   (function(){
