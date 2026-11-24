@@ -408,6 +408,56 @@
     .s4-head{height:30vw}
     .aw .s4-name{font-size:14vw}
   }
+  /* наведение на голову — весь фон экрана наград перекрашивается в цвет героя */
+  .aw{transition:background-color .35s ease}
+  .aw.on-pasha{background-color:#ff6a13}
+  .aw.on-anton{background-color:#ff2b2b}
+  .aw.on-pasha .s4-aw b,.aw.on-anton .s4-aw b,.aw.on-pasha .s4-k b,.aw.on-anton .s4-k b,.aw.on-pasha .s3-k b,.aw.on-anton .s3-k b{color:#0b0b0c}
+  .aw.on-pasha .s3-num small,.aw.on-anton .s3-num small,.aw.on-pasha .s4-k,.aw.on-anton .s4-k,.aw.on-pasha .s3-k,.aw.on-anton .s3-k{color:#0b0b0c}
+  .aw.on-pasha .s4-col[data-who="pasha"] .s4-head img,.aw.on-anton .s4-col[data-who="anton"] .s4-head img{transform:scale(1.1) rotate(-2deg)}
+  .s4-head{cursor:default}
+  /* большая кнопка «Подробнее о …» */
+  .s4-more{display:inline-flex;align-items:center;gap:14px;margin-top:1svh;padding:20px 30px;background:#fff;color:#000;border:3px solid #000;font:700 clamp(17px,1.45vw,22px)/1 var(--body);transition:background .2s,color .2s,transform .25s cubic-bezier(.2,.8,.2,1)}
+  .s4-more i{font-style:normal;font-size:1.3em;line-height:1;transition:transform .25s}
+  .s4-more:hover{background:#000;color:#fff;transform:translateY(-3px)}
+  .s4-more:hover i{transform:translateX(5px)}
+  .s4-col[data-who="pasha"] .s4-more{flex-direction:row}
+
+  /* профиль героя: фон в цвет героя с сеткой точек, крупная голова, описание, цифры, навыки, ссылки */
+  .pf{position:fixed;inset:0;z-index:66;color:#0b0b0c;overflow:auto;overscroll-behavior:contain}
+  .pf[hidden]{display:none}
+  .pf .wipe i{background:var(--c)}
+  .pf-in{min-height:100%;display:grid;grid-template-columns:minmax(0,44%) minmax(0,1fr);align-items:center;gap:4vw;padding:9svh 7vw 7svh;background-image:radial-gradient(circle,rgba(11,11,12,.3) 1.1px,transparent 1.6px);background-size:16px 16px}
+  .pf.is-pasha .pf-in{grid-template-columns:minmax(0,1fr) minmax(0,44%)}
+  .pf.is-pasha .pf-head{order:2}
+  .pf-head{display:flex;justify-content:center}
+  .pf-head img{display:block;width:100%;max-width:640px;max-height:80svh;object-fit:contain;filter:drop-shadow(0 40px 60px rgba(0,0,0,.25));animation:cvbob 3.4s ease-in-out infinite}
+  .pf-info{display:flex;flex-direction:column;align-items:flex-start;gap:2.2svh;min-width:0}
+  .pf-k{display:inline-block;padding:5px 9px;background:#0b0b0c;color:#fff;font-size:12px;letter-spacing:.08em;text-transform:uppercase}
+  .pf-name{margin:0;font-family:var(--display);font-weight:400;text-transform:uppercase;font-size:min(19svh,11vw);line-height:.8}
+  .pf-bio{margin:0;max-width:640px;font:600 clamp(19px,1.7vw,27px)/1.3 var(--body)}
+  .pf-stats{display:flex;flex-wrap:wrap;gap:10px 30px;list-style:none;margin:0;padding:0}
+  .pf-stats li{display:flex;align-items:center;gap:10px;font-size:11px;letter-spacing:.06em;line-height:1.3;text-transform:uppercase}
+  .pf-stats b{font:400 min(8svh,4.6vw)/.8 var(--display)}
+  .pf-chips{display:flex;flex-wrap:wrap;gap:8px;list-style:none;margin:0;padding:0}
+  .pf-chips li{padding:7px 11px;border:2px solid #0b0b0c;font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase}
+  .pf-links{display:flex;flex-wrap:wrap;gap:10px;margin-top:.6svh}
+  .pf-btn{display:inline-flex;align-items:center;gap:10px;padding:13px 18px;background:#fff;color:#000;border:3px solid #000;font:700 15px/1 var(--body);transition:background .2s,color .2s,transform .25s}
+  .pf-btn:hover{background:#000;color:#fff;transform:translateY(-3px)}
+  .pf-btn.main{padding:16px 26px;background:#000;color:#fff;font-size:18px}
+  .pf-btn.main:hover{background:#fff;color:#000}
+  .pf-btn i{font-style:normal}
+  html:has(#pf.open) .home{opacity:0;pointer-events:none}
+  .pf-x{position:fixed;top:20px;right:34px;z-index:3;width:52px;height:52px;display:grid;place-items:center;padding:0;background:#fff;color:#000;border:3px solid #000}
+  .pf-x:hover{background:#000;color:#fff}
+  .pf-x svg{width:24px;height:24px}
+  @media (max-width:800px){
+    .pf-in,.pf.is-pasha .pf-in{grid-template-columns:1fr;padding:14svh 20px 8svh;gap:3svh}
+    .pf.is-pasha .pf-head{order:0}
+    .pf-head img{max-height:34svh;width:auto}
+    .pf-name{font-size:22vw}
+    .pf-x{right:16px}
+  }
   /* 5 — кому написать */
   .s5{background:#0b0b0c;color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3svh;padding:5svh var(--pad)}
   .s5-title{margin:0;font-family:var(--display);font-weight:400;text-transform:uppercase;font-size:min(17svh,16vw);line-height:.8}
@@ -498,12 +548,12 @@
   .arcade[hidden]{display:none}
   /* меню и автомат открываются и закрываются «лесенкой» из вертикальных полос, как экраны:
      полосы растут от центра к краям, затем содержимое влетает из расфокуса; при закрытии — наоборот */
-  .menu,.arcade{background:transparent !important;opacity:1 !important;transition:none !important}
+  .menu,.arcade,.pf{background:transparent !important;opacity:1 !important;transition:none !important}
   .wipe{position:fixed;inset:0;z-index:-1;pointer-events:none}
   .wipe i{position:absolute;top:0;bottom:0;background:#0b0b0c;clip-path:inset(50% 0);transition:clip-path .5s cubic-bezier(.65,0,.35,1) var(--dc,0s)}
-  .menu.open .wipe i,.arcade.open .wipe i{clip-path:inset(0 0);transition:clip-path .55s cubic-bezier(.2,.8,.2,1) var(--d,0s)}
-  .menu > :not(.wipe),.arcade > :not(.wipe){opacity:0;filter:blur(14px);transform:scale(1.06);transition:opacity .22s ease,filter .25s ease,transform .25s ease}
-  .menu.open > :not(.wipe),.arcade.open > :not(.wipe){opacity:1;filter:none;transform:none;transition:opacity .4s ease .3s,filter .55s ease .3s,transform .6s cubic-bezier(.2,.8,.2,1) .3s}
+  .menu.open .wipe i,.arcade.open .wipe i,.pf.open .wipe i{clip-path:inset(0 0);transition:clip-path .55s cubic-bezier(.2,.8,.2,1) var(--d,0s)}
+  .menu > :not(.wipe),.arcade > :not(.wipe),.pf > :not(.wipe){opacity:0;filter:blur(14px);transform:scale(1.06);transition:opacity .22s ease,filter .25s ease,transform .25s ease}
+  .menu.open > :not(.wipe),.arcade.open > :not(.wipe),.pf.open > :not(.wipe){opacity:1;filter:none;transform:none;transition:opacity .4s ease .3s,filter .55s ease .3s,transform .6s cubic-bezier(.2,.8,.2,1) .3s}
   @media (prefers-reduced-motion:reduce){.wipe i,.menu > *,.arcade > *{transition-duration:0s !important;transition-delay:0s !important}}
   .ar-side{display:flex;flex-direction:column;gap:4svh}
   .ar-k{font-size:12px;letter-spacing:.08em;color:#8a8a90}
@@ -729,26 +779,40 @@
     <!-- ниже — личные награды: голова и список рядом; наведение — за колонкой прокручивается сайт героя -->
     <div class="s4" id="s4">
       <div class="s4-col" data-who="pasha" style="--c:#ff6a13">
-        <div class="s4-bg" aria-hidden="true"><img class="s4-shot" src="img/site-pasha.jpg" alt="" loading="lazy"></div>
-        <a class="s4-head" href="https://pavel-cherkun.github.io/cherkun/" target="_blank" rel="noopener" aria-label="Сайт Паши"><img src="img/head-pasha.png" width="1257" height="1400" alt="Паша — 3D-голова в розовой шапке с рыжей бородой"></a>
+        <div class="s4-head"><img src="img/head-pasha.png" width="1257" height="1400" alt="Паша — 3D-голова в розовой шапке с рыжей бородой"></div>
         <div class="s4-info">
           <span class="mono s4-k s4-role">[ <b>CREATIVE_</b> ]</span>
           <h2 class="s4-name">Pasha</h2>
           <div class="s4-aw"><b>15</b><span>медалей<br>фестивалей</span></div>
-          <a class="s4-site" href="https://pavel-cherkun.github.io/cherkun/" target="_blank" rel="noopener">Сайт Паши <i>↗</i></a>
+          <button class="s4-more" type="button" data-who="pasha">Подробнее о&nbsp;Паше <i>→</i></button>
         </div>
       </div>
       <div class="s4-col" data-who="anton" style="--c:#ff2b2b">
-        <div class="s4-bg" aria-hidden="true"><img class="s4-shot" src="img/site-anton.jpg" alt="" loading="lazy"></div>
-        <a class="s4-head" href="https://frosti71fros-pixel.github.io/anton-fros/" target="_blank" rel="noopener" aria-label="Сайт Антона"><img src="img/head-anton.png" width="1378" height="1400" alt="Антон — 3D-голова в чёрной шапке с усами"></a>
+        <div class="s4-head"><img src="img/head-anton.png" width="1378" height="1400" alt="Антон — 3D-голова в чёрной шапке с усами"></div>
         <div class="s4-info">
           <span class="mono s4-k s4-role">[ <b>ART DIRECTOR_</b> ]</span>
           <h2 class="s4-name">Anton</h2>
           <div class="s4-aw"><b>6</b><span>наград<br>и 3 шорт-листа</span></div>
-          <a class="s4-site" href="https://frosti71fros-pixel.github.io/anton-fros/" target="_blank" rel="noopener">Сайт Антона <i>↗</i></a>
+          <button class="s4-more" type="button" data-who="anton">Подробнее об&nbsp;Антоне <i>→</i></button>
         </div>
       </div>
     </div>
+    </div>
+  </section>
+
+  <!-- профиль героя: крупная голова, описание с его сайта и ссылки; открывается «лесенкой» из полос -->
+  <section class="pf" id="pf" role="dialog" aria-modal="true" aria-labelledby="pfName" hidden>
+    <button class="pf-x" type="button" aria-label="Закрыть"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+    <div class="pf-in">
+      <div class="pf-head"><img id="pfHead" src="img/head-pasha.png" alt=""></div>
+      <div class="pf-info">
+        <span class="mono pf-k" id="pfRole"></span>
+        <h2 class="pf-name" id="pfName"></h2>
+        <p class="pf-bio" id="pfBio"></p>
+        <ul class="pf-stats mono" id="pfStats"></ul>
+        <ul class="pf-chips mono" id="pfChips"></ul>
+        <div class="pf-links" id="pfLinks"></div>
+      </div>
     </div>
   </section>
 
@@ -779,12 +843,12 @@
     <div class="screen screen-pasha" data-who="pasha">
       <div class="chrome mono"><i></i><i></i><i></i><span>pavel-cherkun.github.io/cherkun</span></div>
       <div class="vp"><img src="img/site-pasha.jpg" alt="Сайт Паши — CHERKUN™" loading="lazy"></div>
-      <div class="cap mono"><span>Паша · креатор · CHERKUN™</span><a class="go-site" href="https://pavel-cherkun.github.io/cherkun/" target="_blank" rel="noopener">Перейти на сайт Паши <i>↗</i></a></div>
+      <div class="cap mono"><span>Паша · креатор · CHERKUN™</span><a class="go-site" href="https://pavel-cherkun.github.io/cherkun/" target="_blank" rel="noopener">Портфолио Паши <i>↗</i></a></div>
     </div>
     <div class="screen screen-anton" data-who="anton">
       <div class="chrome mono"><i></i><i></i><i></i><span>frosti71fros-pixel.github.io/anton-fros</span></div>
       <div class="vp"><img src="img/site-anton.jpg" alt="Сайт Антона — ANTON FROS" loading="lazy"></div>
-      <div class="cap mono"><span>Антон · арт-директор · ANTON FROS</span><a class="go-site" href="https://frosti71fros-pixel.github.io/anton-fros/" target="_blank" rel="noopener">Перейти на сайт Антона <i>↗</i></a></div>
+      <div class="cap mono"><span>Антон · арт-директор · ANTON FROS</span><a class="go-site" href="https://frosti71fros-pixel.github.io/anton-fros/" target="_blank" rel="noopener">Портфолио Антона <i>↗</i></a></div>
     </div>
     <button class="close" type="button" id="close" aria-label="Закрыть">Закрыть <span aria-hidden="true">✕</span></button>
   </div>
@@ -1084,8 +1148,9 @@
           h += it.pc.blocks.map(pBlock).join('');
         } else h += aHTML(it.ac);
         h += '<div class="cv-end">';
-        if (it.pc) h += '<a class="cv-go" style="--c:#ff6a13" href="' + P + '#case/' + it.p + '" target="_blank" rel="noopener">Кейс на сайте Паши <i>↗</i></a>';
-        if (it.ac) h += '<a class="cv-go" style="--c:#ff2b2b" href="' + A + '#/case/' + it.a + '" target="_blank" rel="noopener">Кейс на сайте Антона <i>↗</i></a>';
+        // прямая ссылка #case/… на сайте Паши открывает пустой экран (ошибка на его сайте) — ведём на тот же кейс на Dprofile
+        if (it.pc) h += it.pc.dprofile ? '<a class="cv-go" style="--c:#ff6a13" href="' + it.pc.dprofile + '" target="_blank" rel="noopener">Кейс Паши на Dprofile <i>↗</i></a>' : '<a class="cv-go" style="--c:#ff6a13" href="' + P + '" target="_blank" rel="noopener">Портфолио Паши <i>↗</i></a>';
+        if (it.ac) h += '<a class="cv-go" style="--c:#ff2b2b" href="' + A + '#/case/' + it.a + '" target="_blank" rel="noopener">Кейс в портфолио Антона <i>↗</i></a>';
         return h + '</div>';
       }
       function openCase(it){
@@ -1379,7 +1444,8 @@
       sizeIntro();
       window.s2Changed = function(){ N = 0; build(); update(); };
       // последний экран останавливается в самом низу страницы — вместе с подвалом
-      function stopY(i){ return i === STOPS.length - 1 ? document.documentElement.scrollHeight - innerHeight : intro.offsetTop + STOPS[i] * innerHeight; }
+      // позиции остановок — целые пиксели: браузер округляет прокрутку, и дробная остановка оставляла переход на 99,9%
+      function stopY(i){ return Math.round(i === STOPS.length - 1 ? document.documentElement.scrollHeight - innerHeight : intro.offsetTop + STOPS[i] * innerHeight); }
       function nearest(){
         var best = 0;
         STOPS.forEach(function(s, i){ if (Math.abs(stopY(i) - scrollY) < Math.abs(stopY(best) - scrollY)) best = i; });
@@ -1494,6 +1560,7 @@
 
         SEGS.forEach(function(sg){
           var p = clamp01((u - sg.a) / LEN);
+          if (p > .985) p = 1;   // почти доехали — экран считается открытым (живой, а не копия из полос)
           if (p <= 0) return;
           if (p >= 1) { show(sg.from, false); show(sg.to, true); return; }
           show(sg.from, true); show(sg.to, false);
@@ -1585,20 +1652,60 @@
     lb.addEventListener('click', function(e){ if (!e.target.closest('.screen, .lb-head')) closeLb(); });
     addEventListener('keydown', function(e){ if (e.key === 'Escape') closeLb(); });
 
-    // 3.5 Экран «Pasha & Anton»: наведение на колонку — за ней прокручивается сайт (дуотон + зерно), вторая гаснет
+    // 3.5 Экран наград: наведение на голову (или кнопку) — весь фон экрана в цвет героя;
+    // кнопка «Подробнее о …» — профиль героя: крупная голова, описание с его сайта, ссылки
     (function(){
-      var s4 = document.getElementById('s4'); if (!s4) return;
-      // наведение на голову — за колонкой прокручивается сайт героя (головы не кликабельные)
+      var s3 = document.getElementById('s3'), s4 = document.getElementById('s4'); if (!s4) return;
       s4.querySelectorAll('.s4-col').forEach(function(col){
-        // голова и кнопка «Сайт …»: наведение — за колонкой прокручивается сайт героя, клик — открывает сайт
-        col.querySelectorAll('.s4-head, .s4-site').forEach(function(hd){
-          hd.addEventListener('mouseenter', function(){
-            if (!matchMedia('(hover:hover)').matches) return;
-            col.classList.add('on'); s4.classList.add('has-on');
-          });
-          hd.addEventListener('mouseleave', function(){ col.classList.remove('on'); s4.classList.remove('has-on'); });
+        var who = col.dataset.who;
+        col.querySelectorAll('.s4-head, .s4-more').forEach(function(el){
+          el.addEventListener('mouseenter', function(){ if (matchMedia('(hover:hover)').matches) s3.classList.add('on-' + who); });
+          el.addEventListener('mouseleave', function(){ s3.classList.remove('on-' + who); });
         });
       });
+      var TGI = '<svg class="tg-ic" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M21.9 4.3 18.7 19.4c-.2 1-.9 1.3-1.7.8l-4.8-3.6-2.3 2.2c-.3.3-.5.5-1 .5l.3-4.9 8.9-8c.4-.3-.1-.5-.6-.2L6.5 13.1 1.8 11.6c-1-.3-1-1 .2-1.5L20.5 3c.9-.3 1.6.2 1.4 1.3z"/></svg>';
+      // тексты и ссылки — с сайтов героев
+      var PF = {
+        pasha: {c:'#ff6a13', role:'[ CREATIVE_ ] Санкт-Петербург', name:'Pasha',
+          bio:'Павел Черкун — креатор для тендеров. Прихожу автором идеи и довожу её до защиты. Lead AI-креатор в OXYGEN',
+          stats:[['15','медалей<br>фестивалей'], ['50%','тендеров выиграно<br>в лучшие сезоны'], ['8','лет<br>в рекламе'], ['24 ч','на ответ<br>по брифу']],
+          chips:['Стратегия', 'Big idea', 'Копирайт', 'Сценарий и продакшн', 'Защита тендеров', 'AI-пайплайны'],
+          links:[['Портфолио', 'https://pavel-cherkun.github.io/cherkun/', 1], ['Telegram', 'https://t.me/cherkun', 0, 1], ['Dprofile', 'https://dprofile.ru/cherkun']]},
+        anton: {c:'#ff2b2b', role:'[ ART DIRECTOR_ ] Санкт-Петербург — remote', name:'Anton',
+          bio:'Современный художник, работающий арт-директором. 10 лет собираю визуальные системы: рисую шрифты и логотипы, оживляю персонажей, руковожу съёмками и придумываю креативы, которые запоминаются',
+          stats:[['6','наград<br>и 3 шорт-листа'], ['25','кейсов<br>в портфолио'], ['10','лет<br>в профессии'], ['9','дисциплин<br>от идеи до продакшна']],
+          chips:['Branding', 'Identity', 'Packaging', 'Fonts', 'Illustration', 'Web', 'Motion', 'Production', 'Art direction'],
+          links:[['Портфолио', 'https://frosti71fros-pixel.github.io/anton-fros/', 1], ['Telegram', 'https://t.me/veji7', 0, 1], ['Behance', 'https://www.behance.net/anton_fros'], ['Dprofile', 'https://dprofile.ru/antonfros'], ['Instagram', 'https://instagram.com/fros_one']]}
+      };
+      var pf = document.getElementById('pf'), last = null;
+      document.body.appendChild(pf);   // поверх всех экранов, вне закреплённой сцены
+      function openPf(who){
+        var d = PF[who];
+        pf.style.setProperty('--c', d.c);
+        pf.classList.remove('is-pasha', 'is-anton'); pf.classList.add('is-' + who);
+        document.getElementById('pfHead').src = 'img/head-' + who + '.png';
+        document.getElementById('pfRole').textContent = d.role;
+        document.getElementById('pfName').textContent = d.name;
+        document.getElementById('pfBio').textContent = window.nbsp(d.bio);
+        document.getElementById('pfStats').innerHTML = d.stats.map(function(s){ return '<li><b>' + s[0] + '</b><span>' + s[1] + '</span></li>'; }).join('');
+        document.getElementById('pfChips').innerHTML = d.chips.map(function(s){ return '<li>' + s + '</li>'; }).join('');
+        document.getElementById('pfLinks').innerHTML = d.links.map(function(l){
+          return '<a class="pf-btn' + (l[2] ? ' main' : '') + '" href="' + l[1] + '" target="_blank" rel="noopener">' + l[0] + ' ' + (l[3] ? TGI : '<i>↗</i>') + '</a>';
+        }).join('');
+        last = document.activeElement;
+        pf.hidden = false; pf.scrollTop = 0; document.body.classList.add('lb-lock');
+        requestAnimationFrame(function(){ requestAnimationFrame(function(){ pf.classList.add('open'); }); });
+        pf.querySelector('.pf-x').focus({preventScroll: true});
+      }
+      function closePf(){
+        if (pf.hidden) return;
+        pf.classList.remove('open'); document.body.classList.remove('lb-lock');
+        setTimeout(function(){ if (!pf.classList.contains('open')) pf.hidden = true; }, 760);
+        if (last) last.focus({preventScroll: true});
+      }
+      s4.querySelectorAll('.s4-more').forEach(function(b){ b.addEventListener('click', function(){ openPf(b.dataset.who); }); });
+      pf.querySelector('.pf-x').addEventListener('click', closePf);
+      addEventListener('keydown', function(e){ if (e.key === 'Escape') closePf(); });
     })();
 
     // 4. Бургер-меню: пункты прокручивают к нужному экрану
@@ -2584,7 +2691,7 @@
     setInterval(check, 1000);
   })();
   // полосы-«лесенка» для меню и автомата: 8 вертикальных полос, от центра к краям при открытии, от краёв к центру при закрытии
-  ['menu', 'arcade'].forEach(function(id){
+  ['menu', 'arcade', 'pf'].forEach(function(id){
     var box = document.getElementById(id), w = document.createElement('div'), N = 8, c = (N - 1) / 2;
     w.className = 'wipe'; w.setAttribute('aria-hidden', 'true');
     for (var i = 0; i < N; i++) {
