@@ -26,7 +26,7 @@
     --pad:clamp(16px, 4vw, 48px);
   }
   *{box-sizing:border-box;margin:0;padding:0}
-  html{scroll-behavior:smooth}
+  /* без scroll-behavior:smooth — переходы между экранами анимируются скриптом покадрово */
   body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.5;-webkit-font-smoothing:antialiased;overflow-x:hidden}
   img{display:block;max-width:100%;height:auto}
   a{color:inherit;text-decoration:none}
@@ -68,8 +68,8 @@
   /* экран 2: при наведении на карточку — на фоне быстрое слайд-шоу из картинок этого кейса под сеткой точек */
   .s2-bg{left:0;right:0;width:100%}
   .s2.bg-on .s2-bg{opacity:1}
-  .s2-title{transition:color .3s}
-  .s2.bg-on .s2-title{color:#fff;mix-blend-mode:difference}
+  .s2-title{color:#fff;mix-blend-mode:difference}   /* инверсия, как у заголовков первого экрана */
+  .s2-tabs{position:relative;z-index:250}
 
   /* реплики голов в стиле видеотрекинга: рамка вокруг головы → линия-выноска → инфо-панель */
   .trk{position:absolute;left:7%;right:7%;top:6%;bottom:3%;border:1.5px solid var(--c);opacity:0;transition:opacity .2s ease, transform .6s cubic-bezier(.2,.8,.2,1);pointer-events:none}
@@ -167,7 +167,7 @@
   /* 2 — кейсы: шапка с тремя табами, ниже большие горизонтальные карточки веером на дуге колеса.
      Скролл на этом экране поворачивает колесо на одну карточку, дуга чуть ходит за мышью */
   .s2-in{position:relative;height:100%}
-  .s2-head{position:absolute;left:0;right:0;top:8svh;z-index:3;display:flex;flex-direction:column;align-items:center;gap:2.2svh;padding:0 var(--pad);pointer-events:none}
+  .s2-head{position:absolute;left:0;right:0;top:8svh;display:flex;flex-direction:column;align-items:center;gap:2.2svh;padding:0 var(--pad);pointer-events:none}
   .s2-head > *{pointer-events:auto}
   .s2-title{margin:0;font-family:var(--display);font-weight:400;text-transform:uppercase;font-size:min(9svh,8vw);line-height:.85;pointer-events:none}
   .s2-title b{color:#ff6a13;font-weight:400}
@@ -181,7 +181,8 @@
   .tb-h img{height:34px;width:auto;display:block}
   .tb-h img + img{margin-left:-8px}
   .s2-tab:hover .tb-h img{animation:popnod .5s ease}
-  .wheel{position:absolute;inset:0;touch-action:pan-y}
+  .wheel{position:absolute;inset:0;touch-action:pan-y;pointer-events:none}
+  .wc{pointer-events:auto}
   .wc:hover .wc-cover{animation:coverwhoosh .55s cubic-bezier(.2,.8,.2,1)}
   @keyframes coverwhoosh{0%{filter:blur(16px);transform:scale(1.35,1.15)}60%{filter:blur(3px)}100%{filter:none;transform:scale(1.06)}}
   @media (prefers-reduced-motion:reduce){.wc:hover .wc-cover{animation:none}}
@@ -387,7 +388,16 @@
   .s5{background:#0b0b0c;color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3svh;padding:5svh var(--pad)}
   .s5-title{margin:0;font-family:var(--display);font-weight:400;text-transform:uppercase;font-size:min(17svh,16vw);line-height:.8}
   .s5-row{display:flex;gap:clamp(24px,6vw,120px)}
-  .pick{display:flex;flex-direction:column;align-items:center;gap:14px}
+  .pick{position:relative;display:flex;flex-direction:column;align-items:center;gap:14px}
+  /* реплики героев над головами: белая карточка, как на первом экране; выскакивает, когда экран открылся */
+  .pick-say{position:absolute;top:-2svh;z-index:2;width:max-content;max-width:230px;padding:11px 14px;background:#fff;color:#000;outline:3px solid #000;outline-offset:-3px;font-size:14px;line-height:1.25;letter-spacing:.02em;text-transform:uppercase;opacity:0;transform:translateY(10px) scale(.9);transition:opacity .25s ease .5s, transform .5s cubic-bezier(.2,1.4,.4,1) .5s;pointer-events:none}
+  .pick-say b{display:block;margin-bottom:4px;font-size:10px;letter-spacing:.08em;color:var(--c);font-weight:600}
+  .pick-say::before,.pick-say::after{content:"";position:absolute;top:-4px;width:8px;height:8px;background:#000;box-shadow:0 0 0 1.5px #fff}
+  .pick-say::before{left:-4px}.pick-say::after{right:-4px}
+  .pick:first-child .pick-say{right:72%;transform-origin:100% 100%}
+  .pick:last-child .pick-say{left:72%;transform-origin:0 100%;transition-delay:1.3s}
+  .s5.vis .pick-say,html.flat .pick-say{opacity:1;transform:none}
+  .pick:hover .pick-say{transform:rotate(-3deg) scale(1.05)}
   .pick img{height:min(38svh,30vw);width:auto;transition:transform .45s cubic-bezier(.2,.8,.2,1)}
   .pick:hover img{transform:scale(1.08) rotate(-3deg)}
   .pick:nth-child(2):hover img{transform:scale(1.08) rotate(3deg)}
@@ -472,6 +482,7 @@
   @media (prefers-reduced-motion:reduce){.wipe i,.menu > *,.arcade > *{transition-duration:0s !important;transition-delay:0s !important}}
   .ar-side{display:flex;flex-direction:column;gap:4svh}
   .ar-k{font-size:12px;letter-spacing:.08em;color:#8a8a90}
+  .ar-lead{margin:-2svh 0 0;max-width:420px;font:700 clamp(20px,1.9vw,28px)/1.15 var(--body);color:#fff}
   .ar-k b{color:#ff6a13;font-weight:500}
   .ar-list{list-style:none;display:grid;gap:1.2svh}
   .ar-list button{display:grid;grid-template-columns:auto 1fr;column-gap:20px;align-items:baseline;width:100%;padding:0;border:0;background:none;color:#fff;font:inherit;text-align:left;opacity:.55;transition:opacity .2s,color .2s,transform .3s cubic-bezier(.2,.8,.2,1)}
@@ -593,6 +604,7 @@
 <section class="arcade" id="arcade" aria-label="Мини-игры" hidden>
   <div class="ar-side">
     <span class="mono ar-k">[ <b>ARCADE_</b> мини-игры ]</span>
+    <p class="ar-lead">Устал листать кейсы? Передохни — поиграй в&nbsp;игрушки.</p>
     <div class="ar-who mono"><span class="ar-who-k">Играю за</span>
       <button type="button" data-who="pasha" aria-pressed="true" style="--c:#ff6a13"><img src="img/head-pasha.png" alt="">PASHA_</button>
       <button type="button" data-who="anton" aria-pressed="false" style="--c:#ff2b2b"><img src="img/head-anton.png" alt="">ANTON_</button>
@@ -731,11 +743,13 @@
     <h2 class="s5-title">Pick a head</h2>
     <div class="s5-row">
       <a class="pick" href="https://t.me/cherkun" target="_blank" rel="noopener" style="--c:#ff6a13">
+        <span class="pick-say mono" aria-hidden="true"><b>PASHA_:</b> Сразу говорю: я женат.</span>
         <img src="img/head-pasha.png" width="1257" height="1400" alt="Паша">
         <span class="pick-go">Написать Паше <svg class="tg-ic" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M21.9 4.3 18.7 19.4c-.2 1-.9 1.3-1.7.8l-4.8-3.6-2.3 2.2c-.3.3-.5.5-1 .5l.3-4.9 8.9-8c.4-.3-.1-.5-.6-.2L6.5 13.1 1.8 11.6c-1-.3-1-1 .2-1.5L20.5 3c.9-.3 1.6.2 1.4 1.3z"/></svg></span>
         <span class="mono pick-at">идея, стратегия, тендеры</span>
       </a>
       <a class="pick" href="https://t.me/veji7" target="_blank" rel="noopener" style="--c:#ff2b2b">
+        <span class="pick-say mono" aria-hidden="true"><b>ANTON_:</b> А я — разведён.</span>
         <img src="img/head-anton.png" width="1378" height="1400" alt="Антон">
         <span class="pick-go">Написать Антону <svg class="tg-ic" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M21.9 4.3 18.7 19.4c-.2 1-.9 1.3-1.7.8l-4.8-3.6-2.3 2.2c-.3.3-.5.5-1 .5l.3-4.9 8.9-8c.4-.3-.1-.5-.6-.2L6.5 13.1 1.8 11.6c-1-.3-1-1 .2-1.5L20.5 3c.9-.3 1.6.2 1.4 1.3z"/></svg></span>
         <span class="mono pick-at">визуал, шрифты, айдентика</span>
@@ -860,7 +874,7 @@
             '<img class="wc-cover" src="' + esc(it.cover) + '" alt="" loading="lazy">' +
             '<span class="wc-num">' + pad2(i + 1) + '</span>' +
             '<span class="wc-meta mono"><span class="wc-t"><span class="wc-hd">' + heads + '</span><b>' + esc(it.title) + '</b></span><i>' + esc(it.meta) + '</i></span></button>';
-        }).join('') + (rest > 0 ? '<button class="wc wc-more" type="button" data-more="1" aria-label="Смотреть ещё кейсы"><span class="wc-more-c"><svg class="wc-more-a" viewBox="0 0 48 48" aria-hidden="true"><path d="M9 24h28M24 11l13 13-13 13" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="square"/></svg></span><span class="wc-more-s mono">Смотреть ещё</span><span class="wc-more-n mono">+' + rest + ' ' + (rest === 1 ? 'кейс' : rest < 5 ? 'кейса' : 'кейсов') + '</span></button>' : '');
+        }).join('') + (rest > 0 ? '<button class="wc wc-more" type="button" data-more="1" aria-label="Смотреть ещё кейсы"><span class="wc-more-c"><svg class="wc-more-a" viewBox="0 0 48 48" aria-hidden="true"><path d="M8 21h23l-9.5-9.5 4.2-4.2L42.4 24 25.7 40.7l-4.2-4.2L31 27H8z" fill="currentColor"/></svg></span><span class="wc-more-s mono">Смотреть ещё</span><span class="wc-more-n mono">+' + rest + ' ' + (rest === 1 ? 'кейс' : rest < 5 ? 'кейса' : 'кейсов') + '</span></button>' : '');
         cards = [].slice.call(wheel.querySelectorAll('.wc'));
         cards.forEach(function(c, i){
           c._lift = 0;
@@ -1353,13 +1367,13 @@
       function animateTo(i){
         i = Math.max(0, Math.min(STOPS.length - 1, i));
         var from = scrollY, to = stopY(i), d = Math.abs(to - from) / innerHeight;
-        if (Math.abs(to - from) < 2) { window.scrollTo({top: to, behavior: 'instant'}); return; }
+        if (Math.abs(to - from) < 2) { window.scrollTo({top: to, behavior: 'auto'}); return; }
         var dur = reduce ? 0 : Math.min(1500, 650 + d * 260), t0 = performance.now();
         if (anim) cancelAnimationFrame(anim.raf);
         anim = {to: i};
         (function step(t){
           var k = dur ? Math.min(1, (t - t0) / dur) : 1, e = k < .5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2;
-          window.scrollTo({top: from + (to - from) * e, behavior: 'instant'});
+          window.scrollTo({top: from + (to - from) * e, behavior: 'auto'});
           if (k < 1) anim.raf = requestAnimationFrame(step); else anim = null;
         })(t0);
       }
@@ -1493,7 +1507,7 @@
       thumb.addEventListener('pointermove', function(e){
         if (!drag) return;
         var H = bar.clientHeight - thumb.offsetHeight;
-        window.scrollTo({top: drag.s + (e.clientY - drag.y) / H * maxScroll(), behavior: 'instant'});
+        window.scrollTo({top: drag.s + (e.clientY - drag.y) / H * maxScroll(), behavior: 'auto'});
       });
       thumb.addEventListener('pointerup', function(){ drag = null; bar.classList.remove('drag'); document.documentElement.classList.remove('sbar-drag'); if (scrollY <= lastY() + 4) animateTo(nearest()); });
       bar.addEventListener('pointerdown', function(e){
