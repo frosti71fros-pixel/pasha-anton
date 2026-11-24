@@ -1,0 +1,17 @@
+# Публикуем только сам сайт. Всё остальное (исходники 4096 px, бэкапы,
+# заметки, скрипты, черновики) остаётся локально.
+/*
+!/.gitignore
+!/.nojekyll
+!/index.html
+!/img/
+
+/img/*
+!/img/kv.jpg
+!/img/cursor-*.svg
+!/img/head-pasha.png
+!/img/head-anton.png
+!/img/site-pasha.jpg
+!/img/site-anton.jpg
+!/img/anton/
+!/img/pasha/

@@ -1,0 +1,1038 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pasha &amp; Anton — креативная пара</title>
+<meta name="description" content="Павел Черкун и Антон Фрос — креативная пара из Петербурга. Идея и визуал под одной шапкой.">
+<meta property="og:title" content="Pasha & Anton — Creative Couple">
+<meta property="og:image" content="img/kv.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.cdnfonts.com/css/schabo" rel="stylesheet">
+<style>
+  :root{
+    --bg:#fff;
+    --ink:#0b0b0c;
+    --muted:#6d6d72;
+    --line:#e4e4e2;
+    --soft:#f4f4f2;
+    --red:#ff6a13;
+    --display:"SCHABO", "Arial Narrow", sans-serif;
+    --body:"Golos Text", system-ui, sans-serif;
+    --mono:"IBM Plex Mono", ui-monospace, monospace;
+    --pad:clamp(16px, 4vw, 48px);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.5;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+  img{display:block;max-width:100%;height:auto}
+  a{color:inherit;text-decoration:none}
+  .mono{font-family:var(--mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase}
+
+  /* hero */
+  /* первый экран: живой текст SCHABO + обтравленные головы поверх */
+  .hero{position:relative;height:100svh;min-height:560px;overflow:hidden;display:grid;place-items:center}
+  .stage{--S:min(calc(100vw - 2 * var(--pad)), calc(100svh - 48px));position:relative;width:var(--S);height:var(--S)}
+  .title{position:absolute;left:50%;transform:translateX(-50%);width:max-content;margin:0;text-align:center;font-family:var(--display);font-weight:400;text-transform:uppercase;line-height:.78;white-space:nowrap;font-size:calc(var(--S) * .2)}
+  .t1{top:2%}
+  .t2{bottom:2%}
+  /* без z-index: сцена не изолируется, и заголовки могут инвертироваться поверх фона */
+  .title{color:#fff;mix-blend-mode:difference;z-index:1;will-change:transform,filter}
+  .hero.whoosh .title{animation:whoosh .55s cubic-bezier(.2,.8,.2,1)}
+  @keyframes whoosh{
+    0%{filter:blur(18px);transform:translateX(-50%) scale(1.35,1.15);opacity:.35}
+    60%{filter:blur(3px)}
+    100%{filter:none;transform:translateX(-50%) scale(1);opacity:1}
+  }
+  .hh img{transition:transform .6s cubic-bezier(.2,.8,.2,1), opacity .4s ease}
+  .hero.bg-on-pasha .hh-pasha img,.hero.bg-on-anton .hh-anton img{transform:scale(1.16)}
+  .hero.bg-on-pasha .hh-anton img,.hero.bg-on-anton .hh-pasha img{transform:scale(.9)}
+  .hero.bg-on-pasha .hh-pasha,.hero.bg-on-anton .hh-anton{z-index:4}
+  @media (prefers-reduced-motion:reduce){.hero.whoosh .title{animation:none}}
+  /* фоновое слайд-шоу кейсов: левая половина — Паша, правая — Антон */
+  .bg{position:absolute;top:0;bottom:0;width:50%;overflow:hidden;opacity:0;pointer-events:none;z-index:0;transition:opacity .45s ease}
+  .bg-pasha{left:0}
+  .bg-anton{right:0}
+  .hero.bg-on-pasha .bg-pasha,.hero.bg-on-anton .bg-anton{opacity:1}
+  /* быстрые жёсткие склейки, без плавного перехода */
+  .bg .slide{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0}
+  .bg .slide.on{opacity:1}
+  /* спокойная сетка из точек поверх слайд-шоу */
+  .bg::after{content:"";position:absolute;inset:0;pointer-events:none;mix-blend-mode:difference;opacity:.55;
+    background-image:radial-gradient(circle, #fff 1.1px, transparent 1.6px);background-size:16px 16px}
+  .bg-pasha::after{background-position:calc(50vw - 8px) 0}
+  .bg-anton::after{background-position:-8px 0}
+
+  /* реплики голов в стиле видеотрекинга: рамка вокруг головы → линия-выноска → инфо-панель */
+  .trk{position:absolute;left:7%;right:7%;top:6%;bottom:3%;border:1.5px solid var(--c);opacity:0;transition:opacity .2s ease, transform .6s cubic-bezier(.2,.8,.2,1);pointer-events:none}
+  .trk::before{content:"";position:absolute;left:50%;top:-9px;width:34px;height:9px;margin-left:-17px;border:1.5px solid var(--c);border-bottom:0}
+  .trk i{position:absolute;left:-1.5px;bottom:100%;padding:3px 6px;background:var(--c);color:#000;font-style:normal;font-size:10px;letter-spacing:.08em}
+  .hero.bg-on-pasha .hh-pasha .trk,.hero.bg-on-anton .hh-anton .trk{transform:scale(1.16)}
+  .hero.bg-on-pasha .hh-anton .trk,.hero.bg-on-anton .hh-pasha .trk{transform:scale(.9)}
+  .trk{visibility:hidden}  /* рамку не показываем — нужна только как точка старта линии-выноски */
+  .links{position:absolute;inset:0;width:100%;height:100%;z-index:5;pointer-events:none;overflow:visible}
+  .lk{fill:none;stroke-width:1.5;opacity:0;transition:opacity .2s ease}
+  .lk-pasha,.lk-anton{stroke:#fff;stroke-width:2}
+  .lk-dot{fill:#fff;stroke:none}
+  .lk.on{opacity:1}
+
+  /* реплика в стиле «system log»: чёрная карточка, моно, метки-квадратики по углам, фраза цельная */
+  .bubble{position:absolute;z-index:6;width:max-content;min-width:260px;max-width:min(440px, calc((100vw - var(--S)) / 2 - 80px));padding:14px 18px 14px;background:#0b0b0c;color:#fff;pointer-events:none;opacity:0;transition:opacity .15s ease}
+  /* метки по углам с контрастным контуром — видны и на белом, и на тёмном фоне */
+  .bubble::before,.bubble::after{content:"";position:absolute;top:-4px;width:8px;height:8px;background:#fff;box-shadow:0 0 0 1.5px #000}
+  .bubble::before{left:-4px}.bubble::after{right:-4px}
+  .b-head{display:flex;justify-content:space-between;gap:24px;color:#8a8a90;font-size:11px;letter-spacing:.08em;text-transform:uppercase}
+  .b-head b{color:var(--c);font-weight:500}
+  .b-body{position:relative;margin:14px 0 14px;font:500 clamp(18px,1.6vw,25px)/1.2 var(--mono);letter-spacing:.02em;text-transform:uppercase}
+  .b-body .pr{color:var(--c)}
+  .b-body .tw-size{visibility:hidden;white-space:pre-line}
+  .b-body .tw-out{position:absolute;left:0;right:0;top:0;white-space:pre-line}
+  .b-body .tw-out::after{content:"";display:inline-block;width:.55em;height:1em;margin-left:2px;vertical-align:-.12em;background:var(--c);animation:caret .8s steps(1) infinite}
+  .bubble.typed .tw-out::after{display:none}
+  @keyframes caret{50%{opacity:0}}
+  .b-foot{display:flex;align-items:center;gap:10px;color:#8a8a90;font-size:10px;letter-spacing:.08em}
+  .b-foot i{flex:1;height:3px;background:#2a2a2e}
+  .b-foot b{display:block;height:100%;width:0;background:var(--c);transition:width .9s cubic-bezier(.2,.8,.2,1)}
+  /* Паша говорит слева от своей головы, Антон — справа */
+  .bubble-pasha{right:calc(100% + 40px);top:22%}
+  .bubble-anton{left:calc(100% + 40px);top:26%}
+  .hero.bg-on-pasha .bubble.show,.hero.bg-on-anton .bubble.show{opacity:1}
+  /* «Это мои кейсы!» — крупнее, плашки в ключевом цвете */
+  .bubble.mine .b-body{font-size:clamp(26px,2.5vw,40px);line-height:1.05;color:var(--c)}
+  /* карточка героя, на которого навели: белая с чёрным контуром */
+  .bubble.mine{background:#fff;color:#000;outline:4px solid #000;outline-offset:-4px}
+  .bubble.mine::before,.bubble.mine::after{background:#000;box-shadow:0 0 0 1.5px #fff}
+  .bubble.mine .b-body,.bubble.mine .b-body .pr,.bubble.mine .b-head,.bubble.mine .b-foot{color:#000}
+  .bubble .b-head b{color:var(--c)}  /* имя всегда цветом персонажа */
+  .bubble.mine .b-foot i{background:#e4e4e2}
+  .bubble-pasha.mine{right:calc(100% + 40px + 5%)}
+  .bubble-anton.mine{left:calc(100% + 40px + 5%)}
+  @media (max-width:1100px){.bubble,.links,.trk{display:none}}
+  .hh{position:absolute;display:block}
+  .hh img{width:100%;-webkit-user-drag:none;user-select:none}
+  .hh-pasha{left:1%;top:16%;width:52%;z-index:2}
+  .hh-anton{left:43%;top:20%;width:56%;z-index:3}
+  @media (max-width:700px){.hero{height:auto;min-height:0;padding:24px 0}}
+
+  /* окно «голова крупно + экран с сайтом» (открывается кликом по голове в «Кто мы») */
+  .lb{position:fixed;inset:0;z-index:50;background:var(--bg);display:flex;align-items:center;justify-content:center;gap:clamp(24px,4vw,72px);padding:80px var(--pad) 40px;opacity:0;visibility:hidden;transition:opacity .35s ease, visibility 0s linear .35s}
+  .lb.open{opacity:1;visibility:visible;transition:opacity .35s ease}
+  .lb.is-pasha{flex-direction:row-reverse}
+  .lb-head{flex:0 1 auto;height:min(80vh, 40vw);transform:scale(.7) translateY(40px);opacity:0;transition:transform .8s cubic-bezier(.2,.8,.2,1), opacity .4s ease}
+  .lb-head img{height:100%;width:auto;max-width:none}
+  .lb.open .lb-head{transform:none;opacity:1}
+  .lb .screen{display:none;flex:0 0 auto;width:min(52vw, calc((100vh - 230px) * 16 / 9));transform:translateY(30px);opacity:0;transition:transform .7s cubic-bezier(.2,.8,.2,1) .1s, opacity .4s ease .1s}
+  .lb.is-pasha .screen-pasha,.lb.is-anton .screen-anton{display:block}
+  .lb.open .screen{transform:none;opacity:1}
+  .close{position:absolute;top:24px;right:var(--pad);display:flex;align-items:center;gap:10px;padding:12px 16px;border:1px solid var(--ink);background:var(--bg);color:var(--ink);font:500 12px/1 var(--mono);letter-spacing:.06em;text-transform:uppercase;cursor:pointer}
+  .close:hover{background:var(--ink);color:#fff}
+  body.lb-lock{overflow:hidden}
+  @media (max-width:900px){
+    .lb,.lb.is-pasha{flex-direction:column;justify-content:center;gap:20px}
+    .lb-head{height:30vh}
+    .lb .screen{width:100%}
+    .screen .cap{flex-direction:column;align-items:stretch}
+  }
+  .screen .vp{box-shadow:0 30px 80px -30px rgba(0,0,0,.35)}
+  .screen .chrome{display:flex;align-items:center;gap:6px;height:32px;padding:0 12px;background:var(--ink);color:#bbb;border-radius:10px 10px 0 0}
+  .screen .chrome i{width:8px;height:8px;border-radius:50%;background:#444}
+  .screen .chrome i:first-child{background:var(--red)}
+  .screen .chrome span{margin-left:8px;font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .screen .vp{aspect-ratio:16/9;overflow:hidden;background:#111;border:2px solid var(--ink);border-top:0}
+  .screen .vp img{width:100%;will-change:transform}
+  .screen .cap{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-top:16px}
+  .screen .go-site{font-family:var(--body);letter-spacing:0;text-transform:none}
+  .screen .go-site i{font-style:normal;font-size:20px;line-height:1;transition:transform .2s}
+  .screen .go-site:hover i{transform:translate(3px,-3px)}
+  /* первый + второй экран: закреплены, второй собирается вертикальными полосами по скроллу */
+  .intro{position:relative;height:280svh}
+  .intro-pin{position:sticky;top:0;height:100svh;overflow:hidden;background:var(--bg)}
+  .intro-pin .hero{position:absolute;inset:0;height:100%;min-height:0;transform-origin:50% 50%;background:var(--bg)}
+  .s2{position:absolute;inset:0;background:#e9e9e6;color:#000;visibility:hidden;overflow:hidden}
+  .s2.on{visibility:visible}
+  /* 2 — избранные кейсы: карточки веером на дуге колеса (по рефу) */
+  .s2-in{position:relative;height:100%}
+  .s2-head{position:absolute;left:0;right:0;top:9svh;z-index:2;display:flex;flex-direction:column;align-items:center;gap:14px;pointer-events:none}
+  .s2-title{margin:0;font-family:var(--display);font-weight:400;text-transform:uppercase;font-size:min(10svh,9vw);line-height:.85}
+  .s2-title b{color:#ff6a13;font-weight:400}
+  .s2-legend{display:flex;gap:18px;font-size:11px;letter-spacing:.08em;color:#6d6d72}
+  .s2-legend b{color:var(--c);font-weight:500}
+  .wheel{position:absolute;inset:0}
+  .wc{--w:min(16vw,28svh);position:absolute;left:50%;top:0;width:var(--w);height:calc(var(--w) * 1.55);margin-left:calc(var(--w) / -2);border-radius:16px;overflow:hidden;background:#111;box-shadow:0 30px 60px -30px rgba(0,0,0,.45);transform-origin:50% 50%;will-change:transform}
+  .wc img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .5s cubic-bezier(.2,.8,.2,1)}
+  .wc::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.25),transparent 30%,transparent 55%,rgba(0,0,0,.55));pointer-events:none}
+  .wc-num{position:absolute;right:14px;top:10px;z-index:1;font-family:var(--display);font-size:calc(var(--w) * .26);line-height:1;color:#fff}
+  .wc-side{position:absolute;left:12px;top:14px;z-index:1;writing-mode:vertical-rl;transform:rotate(180deg);font-size:10px;letter-spacing:.12em;color:#fff}
+  .wc-meta{position:absolute;left:12px;right:12px;bottom:12px;z-index:1;display:flex;flex-direction:column;align-items:flex-start;gap:5px;font-size:10px;letter-spacing:.05em;text-transform:uppercase}
+  .wc-meta b,.wc-meta i{font-style:normal;font-weight:500;padding:3px 6px;background:#0b0b0c;color:#fff}
+  .wc-meta b{background:var(--c);color:#000}
+  .wc:hover img{transform:scale(1.06)}
+  .wc:hover{box-shadow:0 0 0 4px #fff,0 0 0 7px #000,0 40px 70px -30px rgba(0,0,0,.55)}
+  .strips{position:absolute;inset:0;pointer-events:none}
+  .strip{position:absolute;top:0;bottom:0;overflow:hidden;will-change:clip-path}
+  .strip > *{visibility:visible;width:100vw;right:auto;will-change:transform}
+  @media (prefers-reduced-motion:reduce){
+    .intro{height:auto}.intro-pin{position:relative;height:auto;overflow:visible}
+    .intro-pin .hero{position:relative;height:100svh}
+    .s2{position:relative;visibility:visible;height:100svh}.strips{display:none}
+  }
+  /* экраны 3–5 — слои на той же закреплённой сцене, появляются «кадром в кадре» */
+  .scr{position:absolute;inset:0;background:var(--bg);visibility:hidden;overflow:hidden}
+  .scr.vis{visibility:visible}
+  .echo{position:absolute;inset:0;visibility:hidden;pointer-events:none}
+  .echo-1{background:#ff6a13}.echo-2{background:#ff2b2b}
+
+  /* 3 — награды */
+  .s3-in{height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2.5svh;padding:6svh var(--pad);text-align:center}
+  .s3-k,.s4-k{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+  .s3-k b{color:#ff6a13;font-weight:500}
+  .s3-num{display:flex;align-items:flex-end;gap:2vw;padding-top:6svh;font-family:var(--display);text-transform:uppercase;line-height:.78}
+  .s3-num b{font-weight:400;font-size:min(56svh,42vw)}
+  .s3-num span{font-size:min(15svh,11vw);padding-bottom:1.5svh}
+  .s3-sub{font-size:clamp(17px,1.6vw,22px);color:var(--muted)}
+  .s3-fests{display:flex;flex-wrap:wrap;justify-content:center;gap:8px 10px;list-style:none;font-size:12px;letter-spacing:.06em;text-transform:uppercase}
+  .s3-fests li{padding:7px 11px;border:1.5px solid #000}
+
+  /* 4 — разделение: награды и скиллы каждого */
+  /* общая сетка строк для обеих колонок (subgrid) — всё стоит ровно на одной высоте */
+  .s4{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr auto auto auto auto auto 1fr;row-gap:2.6svh}
+  .s4-col{position:relative;overflow:hidden;grid-row:1 / -1;display:grid;grid-template-rows:subgrid;padding:0 clamp(24px,4.5vw,72px);transition:background .35s ease,color .35s ease,opacity .35s ease,filter .35s ease}
+  .s4-col > .s4-top{grid-row:2}.s4-col > .s4-list{grid-row:3}.s4-col > .s4-k{grid-row:4;align-self:end;justify-self:start}.s4-col > .chips{grid-row:5;align-content:start}.s4-col > .s4-site{grid-row:6;justify-self:start}
+  .s4-col > :not(.s4-bg){position:relative;z-index:1}
+  .s4-col + .s4-col{border-left:1px solid var(--line)}
+  .s4-top{display:flex;align-items:center;gap:clamp(16px,2.5vw,40px)}
+  .s4 .head-btn{flex:none;width:auto;height:min(26svh,16vw);margin:0}
+  .s4 .head-btn img{height:100%;width:auto}
+  .s4-list{align-content:start}
+  /* кнопки в стиле бургера: белые с толстым чёрным контуром, при наведении — цвет персонажа */
+  .s4-site,.pick-go,.screen .go-site{display:inline-flex;align-items:center;gap:12px;padding:13px 20px;background:#fff;color:#000;border:3px solid #000;font-weight:600;font-size:16px;transition:background .2s,color .2s}
+  .s4-site:hover,.pick:hover .pick-go,.screen .go-site:hover{background:var(--c);color:#000}
+  .screen-pasha{--c:#ff6a13}.screen-anton{--c:#ff2b2b}
+  .s4-site i{font-style:normal;font-size:19px;line-height:1;transition:transform .2s}
+  .s4-site:hover i{transform:translate(3px,-3px)}
+  .s4-role{display:inline-block;margin-bottom:1.8svh}
+  /* фон колонки при наведении: сайт человека прокручивается, дуотон в его цвете + зерно (по рефу) */
+  .s4-bg{position:absolute;inset:0;overflow:hidden;opacity:0;transition:opacity .35s ease;pointer-events:none;background:var(--c)}
+  .s4-shot{position:absolute;left:0;top:0;width:100%;filter:grayscale(1) contrast(1.25) brightness(1.05);mix-blend-mode:screen}
+  .s4-col.on .s4-shot{animation:sitescroll 22s ease-in-out infinite alternate}
+  @keyframes sitescroll{to{transform:translateY(calc(-100% + 100svh))}}
+  .s4-bg::after{content:"";position:absolute;inset:0;opacity:.16;mix-blend-mode:multiply;animation:grain .5s steps(3) infinite;
+    background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1.4 -.35'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E") 0 0/220px 220px}
+  @keyframes grain{33%{background-position:-60px 40px}66%{background-position:50px -70px}}
+  .s4-col.on .s4-bg{opacity:1}
+  /* тексты при наведении — на чёрных плашках, чтобы читались поверх фона */
+  .s4-col.on{color:#fff}
+  .s4-col.on .s4-k,.s4-col.on .s4-aw b,.s4-col.on .s4-aw span,.s4-col.on .s4-list li{background:#0b0b0c;box-shadow:0 0 0 7px #0b0b0c;color:#fff}
+  .s4-col.on .s4-name{color:#000}   /* имя — просто чёрным, без плашки; всё остальное на плашках */
+  .s4-name{display:block;width:fit-content}
+  .s4-list li{width:fit-content}
+  .s4-col.on .s4-aw b{color:var(--c)}
+  .s4-col.on .s4-list i{color:#c9c9cc}
+  .s4-col.on .chips li{background:#0b0b0c;border-color:#fff;color:#fff}
+  .s4-col.on .chips li:hover{background:#fff;color:#000}
+  .s4-col.on .head-btn img{transform:scale(1.1) rotate(-2deg)}
+  .s4.has-on .s4-col:not(.on){opacity:.35;filter:grayscale(1)}
+  .s4-k b{color:var(--c);font-weight:500}
+  .s4-name{margin:6px 0 4px;font-family:var(--display);font-weight:400;text-transform:uppercase;font-size:min(15svh,9vw);line-height:.82}
+  .s4-aw{display:flex;align-items:baseline;gap:12px}
+  .s4-aw b{font-family:var(--display);font-weight:400;font-size:min(10svh,6vw);line-height:.8;color:var(--c)}
+  .s4-aw span{color:#000}
+  .s4-list{list-style:none;display:grid;gap:9px;font-size:13px;letter-spacing:.02em}
+  .s4-list li{display:flex;gap:10px;align-items:baseline}
+  .s4-list li::before{content:"";flex:none;width:8px;height:8px;background:var(--c);transform:translateY(-1px)}
+  .s4-list i{font-style:normal;color:var(--muted)}
+  .chips{list-style:none;display:flex;flex-wrap:wrap;gap:8px}
+  .chips li{padding:8px 12px;border:1.5px solid #000;font-size:12px;letter-spacing:.06em;text-transform:uppercase;transition:background .2s,color .2s}
+  .chips li:hover{background:var(--c);color:#000}
+
+  /* 5 — кому написать */
+  .s5{background:#0b0b0c;color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3svh;padding:5svh var(--pad)}
+  .s5-title{margin:0;font-family:var(--display);font-weight:400;text-transform:uppercase;font-size:min(17svh,16vw);line-height:.8}
+  .s5-row{display:flex;gap:clamp(24px,6vw,120px)}
+  .pick{display:flex;flex-direction:column;align-items:center;gap:14px}
+  .pick img{height:min(38svh,30vw);width:auto;transition:transform .45s cubic-bezier(.2,.8,.2,1)}
+  .pick:hover img{transform:scale(1.08) rotate(-3deg)}
+  .pick:nth-child(2):hover img{transform:scale(1.08) rotate(3deg)}
+  .pick-go i{font-style:normal;font-size:20px;line-height:1}
+  .pick-at{font-size:11px;letter-spacing:.06em;color:#8a8a90;text-transform:uppercase}
+  .s5-sub{font-size:12px;letter-spacing:.06em;color:#8a8a90;text-transform:uppercase;text-align:center}
+
+  /* телефон и «без анимации»: экраны просто идут друг за другом */
+  html.flat .intro{height:auto}
+  html.flat .intro-pin{position:relative;height:auto;overflow:visible}
+  html.flat .intro-pin .hero{position:relative;height:100svh}
+  html.flat .s2,html.flat .scr{position:relative;visibility:visible;min-height:100svh;height:auto}
+  html.flat .strips,html.flat .echo{display:none}
+  @media (max-width:800px){
+    .s4{grid-template-columns:1fr;grid-template-rows:none;row-gap:0}
+    .s4-col{grid-row:auto;display:flex;flex-direction:column;gap:20px;padding:48px 24px}
+    .s4-col > *{grid-row:auto !important}
+    .s4-col + .s4-col{border-left:0;border-top:1px solid var(--line)}
+    .s4 .head-btn{height:30vw}
+    .s4 .head-btn{width:30vw}
+    .s4-name{font-size:18vw}
+    .s5-row{flex-direction:column;align-items:center}
+    .pick img{height:34vw}
+  }
+
+  html.flat .s2-in{height:100svh}
+
+  /* бургер в стиле курсора: белый квадрат с чёрным контуром */
+  .burger{position:fixed;left:20px;top:20px;z-index:70;width:52px;height:52px;display:grid;align-content:center;justify-items:center;gap:6px;background:#fff;border:3px solid #000;padding:0}
+  .burger i{display:block;width:22px;height:3px;background:#000;transition:transform .3s cubic-bezier(.2,.8,.2,1),opacity .2s}
+  .burger:hover{background:#000;border-color:#fff;outline:2px solid #000}
+  .burger:hover i{background:#fff}
+  .burger[aria-expanded="true"] i:nth-child(1){transform:translateY(9px) rotate(45deg)}
+  .burger[aria-expanded="true"] i:nth-child(2){opacity:0}
+  .burger[aria-expanded="true"] i:nth-child(3){transform:translateY(-9px) rotate(-45deg)}
+  .menu{position:fixed;inset:0;z-index:65;background:#0b0b0c;color:#fff;display:flex;flex-direction:column;gap:24px;justify-content:center;padding:12svh var(--pad) 6svh calc(var(--pad) + 60px);opacity:0;transition:opacity .25s ease}
+  .menu.open{opacity:1}
+  .menu[hidden]{display:none}  /* закрытое меню не должно перехватывать мышь */
+  /* головы летают по меню, как логотип DVD */
+  .dvd{position:absolute;inset:0;overflow:hidden;pointer-events:none}
+  .dvd-h{position:absolute;left:0;top:0;height:min(26svh,22vw);width:auto;will-change:transform}
+  .menu a{opacity:.7;transition:opacity .2s}
+  .menu a:hover{opacity:1}
+  .menu-list,.menu-foot{position:relative;z-index:1}
+  .menu-list{list-style:none;display:grid;gap:.5svh}
+  .menu-list a{display:flex;align-items:baseline;gap:20px;font-family:var(--display);text-transform:uppercase;font-size:min(13svh,12vw);line-height:.9;transition:color .2s, transform .3s cubic-bezier(.2,.8,.2,1)}
+  .menu-list a span{font-size:12px;letter-spacing:.08em;color:#8a8a90;transform:translateY(-1.2em)}
+  .menu-list a:hover{color:#ff6a13;transform:translateX(16px)}
+  .menu-list li:nth-child(even) a:hover{color:#ff2b2b}
+  .menu-foot{display:flex;flex-wrap:wrap;gap:12px 32px;margin-top:5svh;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:#8a8a90}
+  .menu-foot b{color:var(--c);font-weight:500}
+  .menu-foot a:hover{color:#fff}
+
+  /* встроенный скроллбар в стиле курсора: белый ползунок с чёрным контуром */
+  .sbar{position:fixed;top:12px;bottom:12px;right:8px;width:14px;z-index:60}
+  .sbar::before{content:"";position:absolute;left:6px;top:0;bottom:0;width:2px;background:#000;opacity:.15}
+  .sbar-tick{position:absolute;left:3px;width:8px;height:2px;background:#000;opacity:.35}
+  .sbar-thumb{position:absolute;left:1px;width:12px;min-height:36px;background:#fff;border:2.5px solid #000;border-radius:7px;cursor:url("img/cursor-hand.svg") 17 2, grab !important;transition:width .15s,left .15s}
+  .sbar:hover .sbar-thumb,.sbar.drag .sbar-thumb{left:-1px;width:16px}
+  /* курсор над скроллбаром — тот же кастомный палец, и при перетаскивании тоже */
+  .sbar,.sbar *,html.sbar-drag,html.sbar-drag *{cursor:url("img/cursor-hand.svg") 17 2, pointer !important}
+  @media (hover:none){.sbar{display:none}}
+
+  /* кнопка-голова (экран 4): клик открывает окно с сайтом */
+  .head-btn{position:relative;display:block;width:min(72%,440px);margin:0 auto 20px;padding:0;border:0;background:none;cursor:pointer}
+  .head-btn img{width:100%;transition:transform .45s cubic-bezier(.2,.8,.2,1)}
+  .head-btn:hover img,.head-btn:focus-visible img{transform:scale(1.08) rotate(-2deg)}
+  .head-btn:focus-visible{outline:2px solid var(--red);outline-offset:8px}
+  .head-btn .hint{position:absolute;left:50%;bottom:4%;transform:translate(-50%,8px);padding:8px 12px;background:var(--ink);color:#fff;white-space:nowrap;opacity:0;transition:opacity .25s ease, transform .25s ease}
+  .head-btn:hover .hint,.head-btn:focus-visible .hint{opacity:1;transform:translate(-50%,0)}
+
+  /* большой курсор: белый с чёрным контуром; стрелка / палец / текст */
+  html{cursor:url("img/cursor-arrow.svg") 4 3, auto}
+  p, li, footer span{cursor:url("img/cursor-text.svg") 12 26, text}
+  a, a *, button, button *, [role=button], .head-btn, .head-btn *, .go-site, .close{cursor:url("img/cursor-hand.svg") 17 2, pointer !important}
+
+  /* без системного скроллбара (прокрутка колесом, тачпадом и клавишами работает) */
+  html{scrollbar-width:none;-ms-overflow-style:none}
+  html::-webkit-scrollbar{display:none;width:0;height:0}
+
+  footer{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px 24px;padding:18px var(--pad);border-top:1px solid var(--line);color:var(--muted)}
+</style>
+</head>
+<body>
+
+
+<!-- бургер и меню -->
+<button class="burger" id="burger" type="button" aria-label="Меню" aria-expanded="false" aria-controls="menu"><i></i><i></i><i></i></button>
+<nav class="menu" id="menu" aria-label="Меню" hidden>
+  <div class="dvd" aria-hidden="true"><img class="dvd-h" src="img/head-pasha.png" alt=""><img class="dvd-h" src="img/head-anton.png" alt=""></div>
+  <ol class="menu-list">
+    <li><a href="#top" data-i="0"><span class="mono">01</span>Creative Couple</a></li>
+    <li><a href="#s2" data-i="1"><span class="mono">02</span>Selected works</a></li>
+    <li><a href="#s3" data-i="2"><span class="mono">03</span>Awards</a></li>
+    <li><a href="#s4" data-i="3"><span class="mono">04</span>Pasha &amp; Anton</a></li>
+    <li><a href="#s5" data-i="4"><span class="mono">05</span>Pick a head</a></li>
+  </ol>
+  <div class="menu-foot mono">
+    <a href="https://t.me/cherkun" target="_blank" rel="noopener" style="--c:#ff6a13">[ <b>PASHA_</b> @cherkun ]</a>
+    <a href="https://t.me/veji7" target="_blank" rel="noopener" style="--c:#ff2b2b">[ <b>ANTON_</b> @veji7 ]</a>
+  </div>
+</nav>
+
+<main id="top">
+  <!-- первый экран + второй экран (шоурил) с переходом «нарезкой» по скроллу -->
+  <div class="intro" id="intro">
+  <div class="intro-pin">
+  <section class="hero" id="hero">
+    <div class="bg bg-pasha" aria-hidden="true"><div class="slides"></div></div>
+    <div class="bg bg-anton" aria-hidden="true"><div class="slides"></div></div>    <div class="stage" id="stage">
+      <h1 class="title t1">Creative Couple</h1>
+      <p class="title t2" aria-hidden="true">Pasha &amp; Anton</p>
+      <div class="hh hh-pasha" style="--c:#ff6a13">
+        <img src="img/head-pasha.png" width="1257" height="1400" alt="Паша — 3D-голова в розовой шапке с рыжей бородой">
+        <span class="trk" aria-hidden="true"><i class="mono">TRK_01</i></span>
+      </div>
+      <div class="hh hh-anton" style="--c:#ff2b2b">
+        <img src="img/head-anton.png" width="1378" height="1400" alt="Антон — 3D-голова в чёрной шапке с усами">
+        <span class="trk" aria-hidden="true"><i class="mono">TRK_02</i></span>
+      </div>
+      <div class="bubble bubble-pasha" style="--c:#ff6a13" aria-hidden="true">
+        <div class="b-head mono"><span>[ <b>PASHA_</b> creative ]</span></div>
+        <div class="b-body"></div>
+        <div class="b-foot mono"><span class="b-k"></span><i><b></b></i><span class="b-v"></span></div>
+      </div>
+      <div class="bubble bubble-anton" style="--c:#ff2b2b" aria-hidden="true">
+        <div class="b-head mono"><span>[ <b>ANTON_</b> art director ]</span></div>
+        <div class="b-body"></div>
+        <div class="b-foot mono"><span class="b-k"></span><i><b></b></i><span class="b-v"></span></div>
+      </div>
+    </div>
+    <svg class="links" aria-hidden="true"><polyline class="lk lk-pasha" points=""/><polyline class="lk lk-anton" points=""/><circle class="lk lk-dot lk-dot-pasha" r="5"/><circle class="lk lk-dot lk-dot-anton" r="5"/></svg>
+  </section>
+
+  <section class="s2" id="s2" aria-label="Избранные кейсы">
+    <div class="s2-in">
+      <div class="s2-head">
+        <h2 class="s2-title"><b>+</b> Selected works</h2>
+        <span class="mono s2-legend"><span style="--c:#ff6a13">[ <b>PASHA_</b> 01–03 ]</span><span style="--c:#ff2b2b">[ <b>ANTON_</b> 04–06 ]</span></span>
+      </div>
+      <div class="wheel" id="wheel">
+        <a class="wc" href="https://pavel-cherkun.github.io/cherkun/#case/zaklinateli" target="_blank" rel="noopener" style="--c:#ff6a13">
+          <img src="img/pasha/zaklinateli.jpg" alt="Заклинатели — Дикси" loading="lazy">
+          <span class="wc-num">01</span><span class="wc-side mono">PASHA_ · CREATIVE</span>
+          <span class="wc-meta mono"><b>Заклинатели</b><i>Дикси · золото Silver Mercury</i></span>
+        </a>
+        <a class="wc" href="https://pavel-cherkun.github.io/cherkun/#case/xroniki-izory" target="_blank" rel="noopener" style="--c:#ff6a13">
+          <img src="img/pasha/xroniki-izory.jpg" alt="Хроники Ижоры — ФК «Зенит»" loading="lazy">
+          <span class="wc-num">02</span><span class="wc-side mono">PASHA_ · CREATIVE</span>
+          <span class="wc-meta mono"><b>Хроники Ижоры</b><i>ФК «Зенит» · золото SM СЗФО</i></span>
+        </a>
+        <a class="wc" href="https://pavel-cherkun.github.io/cherkun/#case/tresnutye-3" target="_blank" rel="noopener" style="--c:#ff6a13">
+          <img src="img/pasha/tresnutye-3.jpg" alt="Треснутые 3 — Дикси" loading="lazy">
+          <span class="wc-num">03</span><span class="wc-side mono">PASHA_ · CREATIVE</span>
+          <span class="wc-meta mono"><b>Треснутые 3</b><i>Дикси · 6 медалей</i></span>
+        </a>
+        <a class="wc" href="https://frosti71fros-pixel.github.io/anton-fros/#/case/tevredens-type" target="_blank" rel="noopener" style="--c:#ff2b2b">
+          <img src="img/anton/tevredens-type.jpg" alt="Tevredens Typeface" loading="lazy">
+          <span class="wc-num">04</span><span class="wc-side mono">ANTON_ · ART DIRECTOR</span>
+          <span class="wc-meta mono"><b>Tevredens Typeface</b><i>Шрифт · брендинг</i></span>
+        </a>
+        <a class="wc" href="https://frosti71fros-pixel.github.io/anton-fros/#/case/pbp" target="_blank" rel="noopener" style="--c:#ff2b2b">
+          <img src="img/anton/pbp.jpg" alt="PBP — Piece by Piece" loading="lazy">
+          <span class="wc-num">05</span><span class="wc-side mono">ANTON_ · ART DIRECTOR</span>
+          <span class="wc-meta mono"><b>PBP [Piece by Piece]</b><i>Fashion · фотография</i></span>
+        </a>
+        <a class="wc" href="https://frosti71fros-pixel.github.io/anton-fros/#/case/avangard" target="_blank" rel="noopener" style="--c:#ff2b2b">
+          <img src="img/anton/avangard.jpg" alt="ХК «Авангард» 24/25" loading="lazy">
+          <span class="wc-num">06</span><span class="wc-side mono">ANTON_ · ART DIRECTOR</span>
+          <span class="wc-meta mono"><b>ХК «Авангард» 24/25</b><i>Визуальная коммуникация</i></span>
+        </a>
+      </div>
+    </div>
+  </section>
+ <div class="strips" id="strips" aria-hidden="true"></div>
+
+  <!-- рамки-«эхо» для перехода «кадр в кадре» -->
+  <div class="echo echo-1" aria-hidden="true"></div>
+  <div class="echo echo-2" aria-hidden="true"></div>
+
+  <!-- 3. Награды на двоих -->
+  <section class="scr s3" id="s3" aria-label="Награды">
+    <div class="s3-in">
+      <span class="mono s3-k">[ <b>AWARDS_</b> на двоих ]</span>
+      <div class="s3-num"><b id="awardsNum">21</b><span>Awards</span></div>
+      <p class="s3-sub">фестивальная награда на двоих — и ещё 12 шорт-листов</p>
+      <ul class="s3-fests mono"><li>Silver Mercury</li><li>Red Apple</li><li>Marspo Awards</li><li>Нейротренд</li><li>Sreda</li><li>Dprofile Award</li><li>White Square</li></ul>
+    </div>
+  </section>
+
+  <!-- 4. Разделение: награды и скиллы каждого -->
+  <section class="scr s4" id="s4" aria-label="Кто мы">
+    <div class="s4-col" data-who="pasha" style="--c:#ff6a13">
+      <div class="s4-bg" aria-hidden="true"><img class="s4-shot" src="img/site-pasha.jpg" alt="" loading="lazy"></div>
+      <div class="s4-top">
+        <button class="head-btn" type="button" data-who="pasha" aria-label="Паша — показать сайт">
+          <img src="img/head-pasha.png" width="1257" height="1400" alt="Паша — 3D-голова в розовой шапке с рыжей бородой">
+          <span class="hint mono">Смотреть сайт</span>
+        </button>
+        <div>
+          <span class="mono s4-k s4-role">[ <b>CREATIVE_</b> ]</span>
+          <h2 class="s4-name">Pasha</h2>
+          <div class="s4-aw"><b>15</b><span>медалей фестивалей</span></div>
+        </div>
+      </div>
+      <ul class="s4-list mono">
+        <li>Silver Mercury 2025 — золото <i>«Заклинатели»</i></li>
+        <li>Silver Mercury СЗФО 2026 — золото <i>«Хроники Ижоры»</i></li>
+        <li>Silver Mercury 2024–25 — серебро ×2, бронза</li>
+        <li>Red Apple 2024–25 — бронза ×4, шорт-листы ×9</li>
+      </ul>
+      <span class="mono s4-k">[ <b>SKILL SET_</b> ]</span>
+      <ul class="chips mono"><li>Стратегия</li><li>Big idea</li><li>Копирайт</li><li>Сценарии</li><li>Продакшн</li><li>Защита тендеров</li><li>AI-пайплайны</li></ul>
+      <a class="s4-site" href="https://pavel-cherkun.github.io/cherkun/" target="_blank" rel="noopener">Сайт Паши — CHERKUN™ <i>↗</i></a>
+    </div>
+    <div class="s4-col" data-who="anton" style="--c:#ff2b2b">
+      <div class="s4-bg" aria-hidden="true"><img class="s4-shot" src="img/site-anton.jpg" alt="" loading="lazy"></div>
+      <div class="s4-top">
+        <button class="head-btn" type="button" data-who="anton" aria-label="Антон — показать сайт">
+          <img src="img/head-anton.png" width="1378" height="1400" alt="Антон — 3D-голова в чёрной шапке с усами">
+          <span class="hint mono">Смотреть сайт</span>
+        </button>
+        <div>
+          <span class="mono s4-k s4-role">[ <b>ART DIRECTOR_</b> ]</span>
+          <h2 class="s4-name">Anton</h2>
+          <div class="s4-aw"><b>6</b><span>наград и 3 шорт-листа</span></div>
+        </div>
+      </div>
+      <ul class="s4-list mono">
+        <li>Silver Mercury СЗФО — золото, серебро ×2, бронза</li>
+        <li>Marspo Awards — серебро, бронза</li>
+        <li>Шорт-листы — Sreda, Dprofile Award, White Square</li>
+      </ul>
+      <span class="mono s4-k">[ <b>SKILL SET_</b> ]</span>
+      <ul class="chips mono"><li>Branding</li><li>Identity</li><li>Packaging</li><li>Fonts</li><li>Illustration</li><li>Web</li><li>Motion</li><li>Production</li><li>Art direction</li></ul>
+      <a class="s4-site" href="https://frosti71fros-pixel.github.io/anton-fros/" target="_blank" rel="noopener">Сайт Антона — ANTON FROS <i>↗</i></a>
+    </div>
+  </section>
+
+  <!-- 5. Кому написать -->
+  <section class="scr s5" id="s5" aria-label="Контакты">
+    <h2 class="s5-title">Pick a head</h2>
+    <div class="s5-row">
+      <a class="pick" href="https://t.me/cherkun" target="_blank" rel="noopener" style="--c:#ff6a13">
+        <img src="img/head-pasha.png" width="1257" height="1400" alt="Паша">
+        <span class="pick-go">Написать Паше <i>↗</i></span>
+        <span class="mono pick-at">@cherkun · идея, стратегия, тендеры</span>
+      </a>
+      <a class="pick" href="https://t.me/veji7" target="_blank" rel="noopener" style="--c:#ff2b2b">
+        <img src="img/head-anton.png" width="1378" height="1400" alt="Антон">
+        <span class="pick-go">Написать Антону <i>↗</i></span>
+        <span class="mono pick-at">@veji7 · визуал, шрифты, айдентика</span>
+      </a>
+    </div>
+    <p class="mono s5-sub">Пишите любому — второй всё равно будет в курсе. Ответим за 24 часа.</p>
+  </section>
+  </div>
+  </div>
+
+  <div class="lb" id="lb" role="dialog" aria-modal="true" aria-label="Сайт" hidden>
+    <div class="lb-head"><img id="lbHead" src="img/head-pasha.png" alt=""></div>
+    <div class="screen screen-pasha" data-who="pasha">
+      <div class="chrome mono"><i></i><i></i><i></i><span>pavel-cherkun.github.io/cherkun</span></div>
+      <div class="vp"><img src="img/site-pasha.jpg" alt="Сайт Паши — CHERKUN™" loading="lazy"></div>
+      <div class="cap mono"><span>Паша · креатор · CHERKUN™</span><a class="go-site" href="https://pavel-cherkun.github.io/cherkun/" target="_blank" rel="noopener">Перейти на сайт Паши <i>↗</i></a></div>
+    </div>
+    <div class="screen screen-anton" data-who="anton">
+      <div class="chrome mono"><i></i><i></i><i></i><span>frosti71fros-pixel.github.io/anton-fros</span></div>
+      <div class="vp"><img src="img/site-anton.jpg" alt="Сайт Антона — ANTON FROS" loading="lazy"></div>
+      <div class="cap mono"><span>Антон · арт-директор · ANTON FROS</span><a class="go-site" href="https://frosti71fros-pixel.github.io/anton-fros/" target="_blank" rel="noopener">Перейти на сайт Антона <i>↗</i></a></div>
+    </div>
+    <button class="close" type="button" id="close" aria-label="Закрыть">Закрыть <span aria-hidden="true">✕</span></button>
+  </div>
+</main>
+
+<footer class="mono">
+  <span>© Pasha &amp; Anton, 2026</span>
+  <span>Creative Couple — Saint Petersburg</span>
+</footer>
+<script>
+  (function(){
+    var hero = document.getElementById('hero'), stage = document.getElementById('stage');
+
+    // 0. Типограф: без висячих предлогов/союзов (короткое слово + неразрывный пробел), тире не отрывается
+    function nbsp(s){
+      var prev;
+      do {
+        prev = s;
+        s = s.replace(/(^|[\s («"„])([А-Яа-яЁёA-Za-z]{1,3})[ \t\n]+(?=\S)/g, '$1$2 ');
+      } while (s !== prev);
+      return s.replace(/[ \t\n]+—/g, ' —');
+    }
+    (function typo(root){
+      var w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {acceptNode: function(n){
+        var p = n.parentNode && n.parentNode.nodeName;
+        return (p === 'SCRIPT' || p === 'STYLE') ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT;
+      }});
+      var n; while ((n = w.nextNode())) { var t = nbsp(n.nodeValue); if (t !== n.nodeValue) n.nodeValue = t; }
+    })(document.body);
+
+    // 0.5 Колесо кейсов (экран 2): карточки веером по дуге, дуга ходит за мышью и чуть покачивается,
+    // карточка под курсором выезжает вперёд. Раскладка считается сразу — до клонирования экрана в полосы.
+    (function(){
+      var wheel = document.getElementById('wheel'); if (!wheel) return;
+      var s2el = document.getElementById('s2');
+      var cards = [].slice.call(wheel.querySelectorAll('.wc')), N = cards.length, STEP = 12.5;
+      var rot = 0, target = 0, hover = -1;
+      cards.forEach(function(c, i){
+        c._lift = 0;
+        c.addEventListener('mouseenter', function(){ hover = i; });
+        c.addEventListener('mouseleave', function(){ if (hover === i) hover = -1; });
+      });
+      s2el.addEventListener('mousemove', function(e){
+        var r = s2el.getBoundingClientRect();
+        target = -((e.clientX - r.left) / r.width - .5) * 34;
+      });
+      s2el.addEventListener('mouseleave', function(){ target = 0; });
+      function layout(t){
+        var H = s2el.clientHeight || innerHeight, W = s2el.clientWidth || innerWidth;
+        var R = Math.max(H * .95, W * .42), cy = H * .66 + R;
+        var sway = reduce ? 0 : Math.sin(t / 2600) * 3;
+        rot += (target + sway - rot) * .06;
+        cards.forEach(function(c, i){
+          c._lift += ((i === hover ? 1 : 0) - c._lift) * .18;
+          var a = (i - (N - 1) / 2) * STEP + rot;
+          c.style.transform = 'translate(0,' + cy.toFixed(1) + 'px) translateY(-50%) rotate(' + a.toFixed(2) + 'deg) translateY(' + (-R - c._lift * 36).toFixed(1) + 'px) scale(' + (1 + c._lift * .08).toFixed(3) + ')';
+          c.style.zIndex = i === hover ? 200 : 100 - Math.round(Math.abs(a));
+        });
+      }
+      layout(0);
+      (function loop(t){ if (s2el.classList.contains('on') || document.documentElement.classList.contains('flat')) layout(t); requestAnimationFrame(loop); })(0);
+      addEventListener('resize', function(){ layout(performance.now()); });
+    })();
+
+    // 1. Подгоняем заголовки под ширину сцены (как на КВ — во всю ширину)
+    function fitTitles(){
+      var W = stage.clientWidth;
+      stage.querySelectorAll('.title').forEach(function(t){
+        t.style.fontSize = '100px';
+        var w = t.getBoundingClientRect().width;
+        t.style.fontSize = (100 * W / w) + 'px';
+      });
+    }
+    fitTitles();
+    if (document.fonts) document.fonts.load('100px SCHABO').then(fitTitles);
+    addEventListener('load', fitTitles);
+    addEventListener('resize', fitTitles);
+
+    var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    // 2. Первый экран: курсор слева — фоном слайд-шоу кейсов Паши, справа — Антона
+    var CASES = {
+      pasha: ['zaklinateli','xroniki-izory','tresnutye-3','ozon-x-fandom-fest','diksi-klipersy','diksi-dino','sinegrivyi-lev-talisman-fk-zenit','purr-love','dogs']
+        .map(function(n){ return 'img/pasha/' + n + '.jpg'; }),
+      anton: [
+        'img/anton/pbp.jpg',
+        'img/anton/tevredens-type.jpg',
+        'img/anton/zenit-lev.jpg',
+        'img/anton/avangard.jpg',
+        'img/anton/ebenya.jpg',
+        'img/anton/typography-fashion.jpg',
+        'img/anton/xroniki-izory.jpg',
+        'img/anton/terror.jpg',
+        'img/anton/belyi-kot.jpg'
+      ]
+    };
+    var side = null, timers = {}, idx = {pasha:0, anton:0};
+    // что говорит голова, когда смотрят не на неё
+    var LINES = {
+      anton: [
+        'Да он ничего без меня не может!',
+        'А шрифт кто рисовал?',
+        'Опять его кейсы смотрят…',
+        'Эй! Я тоже тут!',
+        'Без визуала это просто слова',
+        'Красиво же я сделал, да?',
+        'Тут кернинг поехал, я вижу',
+        'Идея норм. Но шрифт — мой',
+        'Можно уже мои посмотреть?',
+        'Я эти медали рисовал, вообще-то',
+        'Без меня это был бы вордовский файл',
+        'Ладно, это правда хорошо. Не говорите ему'
+      ],
+      pasha: [
+        'Да он ничего без меня не может!',
+        'А идею кто придумал?',
+        'Красиво. А защищать кто будет?',
+        'Эй! Я тоже тут!',
+        'Без идеи это просто картинки',
+        'Смету видел? Вот то-то же',
+        'А бюджет кто считал?',
+        'Красиво. Тендер-то выиграли?',
+        'Это я на защите рассказывал',
+        'Шрифт хороший. Идея лучше',
+        'Без брифа так каждый сможет',
+        'Ну ладно, красиво. Признаю'
+      ]
+    };
+    var lastLine = {pasha:-1, anton:-1};
+    // шкалы внизу карточки: у хозяина — что-то гордое, у второго — что-то страдальческое
+    var METERS = {
+      mine: [['Гордость', 100, 100], ['ЧСВ', 100, 100], ['Вдохновение', 92, 100], ['Понты', 100, 100], ['Уверенность', 96, 100], ['Звёздность', 88, 100]],
+      other: [['Ревность', 72, 97], ['Голод', 60, 99], ['Зависть', 70, 95], ['Обида', 55, 90], ['Скука', 60, 95], ['Недосып', 75, 99],
+              ['Кофеин', 3, 12], ['Терпение', 2, 14], ['Жду обед', 80, 99], ['Дедлайн близко', 85, 99], ['Хочу внимания', 90, 100]]
+    };
+    var lastMeter = {mine:-1, other:-1};
+    function meter(kind){
+      var list = METERS[kind], k;
+      do { k = Math.floor(Math.random() * list.length); } while (k === lastMeter[kind]);
+      lastMeter[kind] = k;
+      var m = list[k];
+      return [m[0].toUpperCase(), m[1] + Math.floor(Math.random() * (m[2] - m[1] + 1))];
+    }
+    // реплика печатается по букве цельной фразой; невидимый слой сразу держит размер карточки
+    function type(bubble, text, delay, done){
+      var el = bubble.querySelector('.b-body');
+      clearTimeout(bubble._tw);
+      bubble.classList.remove('typed');
+      el.innerHTML = '<span class="tw-size"></span><span class="tw-out"><span class="tx"></span></span>';
+      el.firstChild.appendChild(document.createTextNode(text));
+      var tx = el.querySelector('.tx'), i = 0;
+      if (reduce) { tx.textContent = text; bubble.classList.add('typed'); if (done) done(); return; }
+      function step(){
+        tx.textContent = text.slice(0, ++i);
+        if (i < text.length) bubble._tw = setTimeout(step, text[i - 1] === ' ' ? 18 : 28 + Math.random() * 26);
+        else { bubble.classList.add('typed'); if (done) done(); }
+      }
+      bubble._tw = setTimeout(step, delay);
+    }
+    // показать панель говорящего: рамка вокруг головы, линия-выноска, шкала внизу
+    function showBubble(b, key, val){
+      var who = b.classList.contains('bubble-pasha') ? 'pasha' : 'anton';
+      b.querySelector('.b-k').textContent = key;
+      b.querySelector('.b-v').textContent = val + '%';
+      var bar = b.querySelector('.b-foot b'); bar.style.width = '0';
+      b.classList.add('show');
+      stage.querySelector('.hh-' + who).classList.add('talk');
+      hero.querySelector('.lk-' + who).classList.add('on');
+      hero.querySelector('.lk-dot-' + who).classList.add('on');
+      setTimeout(function(){ bar.style.width = val + '%'; }, 60);
+      startLinks();
+    }
+    function resetBubbles(){
+      hero.querySelectorAll('.bubble').forEach(function(b){ clearTimeout(b._tw); clearTimeout(b._seq); b.classList.remove('show'); });
+      stage.querySelectorAll('.hh').forEach(function(h){ h.classList.remove('talk'); });
+      hero.querySelectorAll('.lk').forEach(function(l){ l.classList.remove('on'); });
+    }
+    // линии-выноски: от рамки вокруг головы к панели; пересчёт каждый кадр, пока панели видны
+    var linksRaf = 0;
+    // силуэт головы: для каждой строки картинки — где начинается и кончается непрозрачная часть,
+    // чтобы линия-выноска упиралась ровно в контур
+    var SIL = {};
+    ['pasha', 'anton'].forEach(function(who){
+      var img = new Image(); img.src = 'img/head-' + who + '.png';
+      img.onload = function(){
+        var W = 120, H = Math.round(120 * img.height / img.width), c = document.createElement('canvas');
+        c.width = W; c.height = H; var g = c.getContext('2d'); g.drawImage(img, 0, 0, W, H);
+        var d = g.getImageData(0, 0, W, H).data, L = [], R = [];
+        for (var y = 0; y < H; y++) {
+          var l = -1, r = -1;
+          for (var x = 0; x < W; x++) if (d[(y * W + x) * 4 + 3] > 60) { if (l < 0) l = x; r = x; }
+          L.push(l < 0 ? -1 : l / W); R.push(r < 0 ? -1 : (r + 1) / W);
+        }
+        SIL[who] = {L: L, R: R, H: H};
+      };
+    });
+    function drawLinks(){
+      var hr = hero.getBoundingClientRect(), any = false;
+      ['pasha', 'anton'].forEach(function(who){
+        var b = hero.querySelector('.bubble-' + who), line = hero.querySelector('.lk-' + who);
+        if (!b.classList.contains('show')) return;
+        any = true;
+        var im = stage.querySelector('.hh-' + who + ' img').getBoundingClientRect(), p = b.getBoundingClientRect();
+        var k = who === 'pasha' ? .68 : .76, x1;   // уровень рта: у Паши чуть выше, у Антона чуть ниже
+        var s = SIL[who];
+        if (s) {
+          var row = Math.round(k * (s.H - 1)), e = who === 'pasha' ? s.L[row] : s.R[row];
+          x1 = im.left + (e >= 0 ? e : (who === 'pasha' ? .1 : .9)) * im.width;
+        } else x1 = who === 'pasha' ? im.left + im.width * .1 : im.right - im.width * .1;
+        // от нижнего угла карточки — диагональ вниз, затем горизонталь в контур головы
+        if (who === 'anton') x1 -= 14;   // у Антона кончик ближе к лицу
+        var y1 = im.top + im.height * k - hr.top, yb = p.bottom - hr.top;
+        x1 -= hr.left;
+        var dot = hero.querySelector('.lk-dot-' + who);
+        dot.setAttribute('cx', x1); dot.setAttribute('cy', y1);
+        var pts = who === 'pasha'
+          ? [p.right - hr.left, yb, x1 - 44, y1, x1, y1]
+          : [p.left - hr.left, yb, x1 + 44, y1, x1, y1];
+        line.setAttribute('points', pts.join(' '));
+      });
+      linksRaf = any ? requestAnimationFrame(drawLinks) : 0;
+    }
+    function startLinks(){ if (!linksRaf) linksRaf = requestAnimationFrame(drawLinks); }
+    function bg(who){ return hero.querySelector('.bg-' + who); }
+    function build(who){
+      var box = bg(who);
+      if (box.dataset.built) return;
+      box.dataset.built = '1';
+      CASES[who].forEach(function(src, i){
+        var im = new Image(); im.src = src; im.alt = ''; im.className = 'slide' + (i === 0 ? ' on' : '');
+        box.querySelector('.slides').appendChild(im);
+      });
+    }
+    function next(who){
+      var s = bg(who).querySelectorAll('.slide'); if (!s.length) return;
+      s[idx[who]].classList.remove('on');
+      idx[who] = (idx[who] + 1) % s.length;
+      s[idx[who]].classList.add('on');
+    }
+    function setSide(who){
+      if (side === who) return;
+      if (side) { hero.classList.remove('bg-on-' + side); clearInterval(timers[side]); }
+      side = who;
+      if (!who) { resetBubbles(); return; }
+      build(who);
+      hero.classList.add('bg-on-' + who);
+      // баблы: у хозяина стороны «Мои кейсы!», у второй головы — ревнивая реплика (каждый раз новая)
+      var speaker = who === 'pasha' ? 'anton' : 'pasha', list = LINES[speaker];
+      var k; do { k = Math.floor(Math.random() * list.length); } while (list.length > 1 && k === lastLine[speaker]);
+      lastLine[speaker] = k;
+      var own = hero.querySelector('.bubble-' + who), other = hero.querySelector('.bubble-' + speaker);
+      // по очереди: сначала хозяин печатает «Это мои кейсы!», потом отвечает второй
+      resetBubbles();
+      own.classList.add('mine'); other.classList.remove('mine');
+      var reply = nbsp(list[k]);
+      var m1 = meter('mine'), m2 = meter('other');
+      showBubble(own, m1[0], m1[1]);
+      type(own, 'Это мои\nкейсы!', 150, function(){
+        own._seq = setTimeout(function(){
+          showBubble(other, m2[0], m2[1]);
+          type(other, reply, 200);
+        }, 350);
+      });
+      // заголовки «влетают» с размытием при каждой смене стороны
+      hero.classList.remove('whoosh'); void hero.offsetWidth; hero.classList.add('whoosh');
+      if (!reduce) timers[who] = setInterval(function(){ next(who); }, 180);
+    }
+    if (matchMedia('(hover:hover)').matches) {
+      addEventListener('load', function(){ build('pasha'); build('anton'); });
+      hero.addEventListener('mousemove', function(e){
+        var r = hero.getBoundingClientRect();
+        setSide(e.clientX < r.left + r.width / 2 ? 'pasha' : 'anton');
+      });
+      hero.addEventListener('mouseleave', function(){ setSide(null); });
+    }
+
+    // 2.5 Переход на второй экран «нарезкой»: шоурил собирается из вертикальных полос,
+    // в каждой полосе свой увеличенный и сдвинутый кусок — к концу скролла всё сходится в целое
+    // Дальше 2→3→4→5: «кадр в кадре» — новый экран растёт окном внутри старого, вокруг вложенные рамки-эхо.
+    // Всё на одной закреплённой сцене; таймлайн в «экранах» прокрутки (1 = высота окна).
+    (function(){
+      var intro = document.getElementById('intro'), s2 = document.getElementById('s2'), box = document.getElementById('strips');
+      var s3 = document.getElementById('s3'), s4 = document.getElementById('s4'), s5 = document.getElementById('s5');
+      var echo1 = intro.querySelector('.echo-1'), echo2 = intro.querySelector('.echo-2');
+      var flat = reduce || matchMedia('(max-width:800px)').matches;
+      document.documentElement.classList.toggle('flat', flat);
+      addEventListener('resize', function(){ if ((reduce || matchMedia('(max-width:800px)').matches) !== flat) location.reload(); });
+      var counted = false;
+      function countAwards(){
+        if (counted) return; counted = true;
+        var el = document.getElementById('awardsNum'), to = 21, t0 = performance.now();
+        if (reduce) { el.textContent = to; return; }
+        (function tick(t){ var k = Math.min(1, (t - t0) / 1200); el.textContent = Math.round(to * (1 - Math.pow(1 - k, 3))); if (k < 1) requestAnimationFrame(tick); })(t0);
+      }
+      if (flat) {
+        window.goScreen = function(i){ [hero, s2, s3, s4, s5][i].scrollIntoView({behavior: 'smooth'}); };
+        s2.classList.add('on');
+        new IntersectionObserver(function(es){ if (es[0].isIntersecting) countAwards(); }).observe(s3);
+        return;
+      }
+      document.getElementById('awardsNum').textContent = '0';
+      // таймлайн (в «экранах» прокрутки): каждый следующий экран собирается «лесенкой» из полос,
+      // предыдущий уходит в расфокус; первый экран к тому же рассыпается на квадраты
+      var LEN = 1.6, HOLD = .5;
+      var SEGS = [{from:hero, to:s2}, {from:s2, to:s3}, {from:s3, to:s4}, {from:s4, to:s5}];
+      SEGS.forEach(function(sg, i){ sg.a = i * (LEN + HOLD); });
+      var TOTAL = SEGS[SEGS.length - 1].a + LEN + .3;
+      var STOPS = [0].concat(SEGS.map(function(sg){ return sg.a + LEN; }));   // где каждый экран стоит целиком
+      function sizeIntro(){ intro.style.height = ((TOTAL + 1) * innerHeight) + 'px'; }
+      sizeIntro();
+      window.goScreen = function(i){ window.scrollTo({top: intro.offsetTop + STOPS[i] * innerHeight, behavior: 'smooth'}); };
+      var ticking = false, heroLeft = false, N = 0;
+      function show(l, on){ if (l === hero) l.style.visibility = on ? '' : 'hidden'; else if (l === s2) l.classList.toggle('on', on); else l.classList.toggle('vis', on); }
+
+      // полосы для каждого перехода: клоны целевого экрана, нарезанные по вертикали
+      function build(){
+        var n = innerWidth < 700 ? 5 : 8;
+        if (n === N) return;
+        N = n;
+        intro.querySelectorAll('.strips').forEach(function(b){ b.remove(); });
+        SEGS.forEach(function(sg){
+          var b = document.createElement('div'); b.className = 'strips'; b.setAttribute('aria-hidden', 'true'); b.style.display = 'none';
+          sg.box = b; sg.strips = [];
+          for (var i = 0; i < N; i++) {
+            var st = document.createElement('div'); st.className = 'strip';
+            st.style.left = (i * 100 / N) + 'vw'; st.style.width = 'calc(' + (100 / N) + 'vw + 1px)';
+            var c = sg.to.cloneNode(true); c.removeAttribute('id');
+            c.querySelectorAll('[id]').forEach(function(e){ e.removeAttribute('id'); });
+            c.querySelectorAll('a, button').forEach(function(e){ e.setAttribute('tabindex', '-1'); });
+            c.classList.add('on', 'vis');
+            c.style.left = (-i * 100 / N) + 'vw';
+            c.style.transformOrigin = ((i + .5) * 100 / N) + 'vw 50%';
+            st.appendChild(c); b.appendChild(st); sg.strips.push({el: st, inner: c});
+          }
+          intro.querySelector('.intro-pin').appendChild(b);
+        });
+      }
+
+
+
+      function ease(t){ return 1 - Math.pow(1 - t, 3); }
+      function clamp01(x){ return Math.min(1, Math.max(0, x)); }
+      function update(){
+        ticking = false;
+        var u = (scrollY - intro.offsetTop) / innerHeight;   // сколько «экранов» прокручено внутри сцены
+        // сброс: виден только первый экран
+        show(hero, true); [s2, s3, s4, s5].forEach(function(l){ show(l, false); });
+        [hero, s2, s3, s4].forEach(function(l){ l.style.transform = l.style.filter = ''; });
+        SEGS.forEach(function(sg){ if (sg.box) sg.box.style.display = 'none'; });
+        var p0 = clamp01(u / LEN);
+        if (p0 > .02 && !heroLeft) { heroLeft = true; hero.dispatchEvent(new Event('mouseleave')); }
+        if (p0 <= .02) heroLeft = false;
+
+        SEGS.forEach(function(sg){
+          var p = clamp01((u - sg.a) / LEN);
+          if (p <= 0) return;
+          if (p >= 1) { show(sg.from, false); show(sg.to, true); return; }
+          show(sg.from, true); show(sg.to, false);
+          // старый экран: расфокус, обесцвечивание, лёгкое отдаление
+          sg.from.style.transform = 'scale(' + (1 - .06 * p) + ')';
+          sg.from.style.filter = 'blur(' + (p * 26).toFixed(1) + 'px) grayscale(' + p.toFixed(2) + ')';
+          // новый экран — «лесенкой» из полос: из центра к краям, каждая со своим сдвигом и масштабом, из расфокуса в резкость
+          sg.box.style.display = '';
+          var c = (N - 1) / 2;
+          sg.strips.forEach(function(s, i){
+            var d = Math.abs(i - c) / c;
+            var e = ease(clamp01((p - d * .3) / .6));
+            s.el.style.clipPath = 'inset(' + ((1 - e) * 50) + '% 0)';
+            s.inner.style.transform = 'translateX(' + ((i - c) * (1 - e) * -5) + 'vw) scale(' + (1 + (1 - e) * .7) + ')';
+            s.inner.style.filter = e < 1 ? 'blur(' + ((1 - e) * 22).toFixed(1) + 'px)' : '';
+          });
+        });
+        if (u >= SEGS[1].a + LEN * .8) countAwards();
+        drawBar();
+      }
+      function onScroll(){ if (!ticking) { ticking = true; requestAnimationFrame(update); } }
+
+      // встроенный скроллбар в стиле курсора + отметки экранов
+      var bar = document.createElement('div'); bar.className = 'sbar'; bar.setAttribute('aria-hidden', 'true');
+      var thumb = document.createElement('div'); thumb.className = 'sbar-thumb'; bar.appendChild(thumb);
+      document.body.appendChild(bar);
+      var ticks = STOPS.map(function(){ var t = document.createElement('i'); t.className = 'sbar-tick'; bar.insertBefore(t, thumb); return t; });
+      function maxScroll(){ return document.documentElement.scrollHeight - innerHeight; }
+      function drawBar(){
+        var H = bar.clientHeight, m = maxScroll(), th = Math.max(36, H * innerHeight / document.documentElement.scrollHeight);
+        thumb.style.height = th + 'px';
+        thumb.style.top = (m > 0 ? (scrollY / m) * (H - th) : 0) + 'px';
+        ticks.forEach(function(t, i){ var y = intro.offsetTop + STOPS[i] * innerHeight; t.style.top = (m > 0 ? (y / m) * (H - th) + th / 2 : 0) + 'px'; });
+      }
+      var drag = null;
+      thumb.addEventListener('pointerdown', function(e){ drag = {y: e.clientY, s: scrollY}; bar.classList.add('drag'); document.documentElement.classList.add('sbar-drag'); thumb.setPointerCapture(e.pointerId); e.preventDefault(); });
+      thumb.addEventListener('pointermove', function(e){
+        if (!drag) return;
+        var H = bar.clientHeight - thumb.offsetHeight;
+        window.scrollTo({top: drag.s + (e.clientY - drag.y) / H * maxScroll(), behavior: 'instant'});
+      });
+      thumb.addEventListener('pointerup', function(){ drag = null; bar.classList.remove('drag'); document.documentElement.classList.remove('sbar-drag'); });
+      bar.addEventListener('pointerdown', function(e){
+        if (e.target === thumb) return;
+        var r = bar.getBoundingClientRect();
+        window.scrollTo({top: (e.clientY - r.top) / r.height * maxScroll(), behavior: 'smooth'});
+      });
+
+      build(); update();
+      addEventListener('scroll', onScroll, {passive:true});
+      addEventListener('resize', function(){ sizeIntro(); build(); update(); });
+    })();
+
+    // 3. «Кто мы»: клик по голове — голова крупно + экран со скроллом сайта и кнопкой
+    var lb = document.getElementById('lb'), lbHead = document.getElementById('lbHead');
+    var current = null, anim = null, lastFocus = null;
+    function openLb(who){
+      current = who; lastFocus = document.activeElement;
+      lbHead.src = 'img/head-' + who + '.png';
+      lb.classList.remove('is-pasha', 'is-anton'); lb.classList.add('is-' + who);
+      lb.hidden = false; document.body.classList.add('lb-lock');
+      requestAnimationFrame(function(){ requestAnimationFrame(function(){ lb.classList.add('open'); }); });
+      var scr = lb.querySelector('.screen-' + who), img = scr.querySelector('.vp img'), vp = scr.querySelector('.vp');
+      function run(){
+        if (anim) anim.cancel();
+        var dist = img.getBoundingClientRect().height - vp.clientHeight;
+        if (reduce || dist <= 0) return;
+        anim = img.animate([{transform:'translateY(0)'},{transform:'translateY(-' + dist + 'px)'}],
+          {duration: Math.max(14000, dist * 6), iterations: Infinity, direction: 'alternate', easing: 'ease-in-out', delay: 900});
+      }
+      if (img.complete && img.naturalWidth) setTimeout(run, 50); else img.addEventListener('load', run, {once:true});
+      document.getElementById('close').focus({preventScroll:true});
+    }
+    function closeLb(){
+      if (!current) return;
+      lb.classList.remove('open'); document.body.classList.remove('lb-lock');
+      if (anim) { anim.cancel(); anim = null; }
+      current = null;
+      setTimeout(function(){ if (!current) lb.hidden = true; }, 400);
+      if (lastFocus) lastFocus.focus({preventScroll:true});
+    }
+    document.querySelectorAll('.head-btn').forEach(function(b){
+      b.addEventListener('click', function(){ openLb(b.dataset.who); });
+    });
+    document.getElementById('close').addEventListener('click', closeLb);
+    lb.addEventListener('click', function(e){ if (!e.target.closest('.screen, .lb-head')) closeLb(); });
+    addEventListener('keydown', function(e){ if (e.key === 'Escape') closeLb(); });
+
+    // 3.5 Экран «Pasha & Anton»: наведение на колонку — за ней прокручивается сайт (дуотон + зерно), вторая гаснет
+    (function(){
+      var s4 = document.getElementById('s4'); if (!s4) return;
+      s4.querySelectorAll('.s4-col').forEach(function(col){
+        col.addEventListener('mouseenter', function(){
+          if (!matchMedia('(hover:hover)').matches) return;
+          col.classList.add('on'); s4.classList.add('has-on');
+        });
+        col.addEventListener('mouseleave', function(){ col.classList.remove('on'); s4.classList.remove('has-on'); });
+      });
+    })();
+
+    // 4. Бургер-меню: пункты прокручивают к нужному экрану
+    var burger = document.getElementById('burger'), menu = document.getElementById('menu');
+    // DVD-головы: летят по прямой, отскакивают от краёв и друг от друга, при ударе сплющиваются
+    var dvd = [].map.call(menu.querySelectorAll('.dvd-h'), function(el, i){
+      return {el: el, x: 0, y: 0, vx: (i ? -1 : 1) * 2.6, vy: (i ? 1 : -1) * 2.1, squash: 0, rot: 0};
+    });
+    var dvdRaf = 0;
+    function dvdStart(){
+      var W = innerWidth, H = innerHeight;
+      dvd.forEach(function(h, i){
+        var w = h.el.offsetWidth || 200, hh = h.el.offsetHeight || 220;
+        h.x = W * (i ? .7 : .45) - w / 2; h.y = H * (i ? .55 : .25) - hh / 2;
+      });
+      if (!dvdRaf && !reduce) dvdRaf = requestAnimationFrame(dvdTick);
+      else if (reduce) dvdTick();
+    }
+    function dvdTick(){
+      var W = innerWidth, H = innerHeight;
+      dvd.forEach(function(h){
+        var w = h.el.offsetWidth, hh = h.el.offsetHeight;
+        h.x += h.vx; h.y += h.vy;
+        if (h.x < 0) { h.x = 0; h.vx = Math.abs(h.vx); h.squash = 1; }
+        if (h.x + w > W) { h.x = W - w; h.vx = -Math.abs(h.vx); h.squash = 1; }
+        if (h.y < 0) { h.y = 0; h.vy = Math.abs(h.vy); h.squash = -1; }
+        if (h.y + hh > H) { h.y = H - hh; h.vy = -Math.abs(h.vy); h.squash = -1; }
+        h.rot += h.vx * .08;
+      });
+      // столкновение голов: разлетаются
+      var a = dvd[0], b = dvd[1];
+      if (a && b) {
+        var ax = a.x + a.el.offsetWidth / 2, ay = a.y + a.el.offsetHeight / 2, bx = b.x + b.el.offsetWidth / 2, by = b.y + b.el.offsetHeight / 2;
+        var dx = bx - ax, dy = by - ay, dist = Math.hypot(dx, dy), minD = (a.el.offsetWidth + b.el.offsetWidth) * .4;
+        if (dist < minD && dist > 0) {
+          var nx = dx / dist, ny = dy / dist, rel = (a.vx - b.vx) * nx + (a.vy - b.vy) * ny;
+          if (rel > 0) { a.vx -= rel * nx; a.vy -= rel * ny; b.vx += rel * nx; b.vy += rel * ny; a.squash = b.squash = .7; }
+        }
+      }
+      dvd.forEach(function(h){
+        var s = h.squash, sx = 1 + (s > 0 ? -.12 : .08) * Math.abs(s), sy = 1 + (s > 0 ? .08 : -.12) * Math.abs(s);
+        h.el.style.transform = 'translate(' + h.x + 'px,' + h.y + 'px) rotate(' + (Math.sin(h.rot) * 8).toFixed(2) + 'deg) scale(' + sx + ',' + sy + ')';
+        h.squash *= .85; if (Math.abs(h.squash) < .01) h.squash = 0;
+      });
+      dvdRaf = reduce ? 0 : requestAnimationFrame(dvdTick);
+    }
+    function dvdStop(){ cancelAnimationFrame(dvdRaf); dvdRaf = 0; }
+    function setMenu(open){
+      burger.setAttribute('aria-expanded', open);
+      if (open) { menu.hidden = false; requestAnimationFrame(function(){ menu.classList.add('open'); dvdStart(); }); }
+      else { menu.classList.remove('open'); setTimeout(function(){ if (!menu.classList.contains('open')) { menu.hidden = true; dvdStop(); } }, 250); }
+    }
+    burger.addEventListener('click', function(){ setMenu(burger.getAttribute('aria-expanded') !== 'true'); });
+    menu.querySelectorAll('[data-i]').forEach(function(a){
+      a.addEventListener('click', function(e){ e.preventDefault(); setMenu(false); if (window.goScreen) window.goScreen(+a.dataset.i); });
+    });
+    addEventListener('keydown', function(e){ if (e.key === 'Escape') setMenu(false); });
+  })();
+</script>
+</body>
+</html>
