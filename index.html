@@ -462,7 +462,7 @@
   .aw.on-pasha .s4-aw b,.aw.on-anton .s4-aw b,.aw.on-pasha .s4-k b,.aw.on-anton .s4-k b,.aw.on-pasha .s3-k b,.aw.on-anton .s3-k b{color:#0b0b0c}
   .aw.on-pasha .s3-num small,.aw.on-anton .s3-num small,.aw.on-pasha .s4-k,.aw.on-anton .s4-k,.aw.on-pasha .s3-k,.aw.on-anton .s3-k{color:#0b0b0c}
   .aw.on-pasha .s4-col[data-who="pasha"] .s4-head img,.aw.on-anton .s4-col[data-who="anton"] .s4-head img{transform:scale(1.1) rotate(-2deg)}
-  .s4-head,.s4-head *{cursor:url("img/cursor-arrow.svg") 4 3, auto}   /* фирменная стрелка, а не системный курсор */
+  .aw .s4-col,.aw .s4-col *{cursor:url("img/cursor-hand.svg") 17 2, pointer !important}   /* весь блок героя кликабельный — открывает его карточку */
   /* большая кнопка «Подробнее о …» */
   .s4-more{display:inline-flex;align-items:center;gap:14px;margin-top:1svh;padding:20px 30px;background:#fff;color:#000;border:3px solid #000;font:700 clamp(15px,1.2vw,19px)/1 var(--mono);letter-spacing:.06em;text-transform:uppercase;transition:background .2s,color .2s,transform .25s cubic-bezier(.2,.8,.2,1)}
   .s4-more i{font-style:normal;font-size:1.3em;line-height:1;transition:transform .25s}
@@ -474,12 +474,21 @@
   .pf{position:fixed;inset:0;z-index:66;color:#0b0b0c;overflow:auto;overscroll-behavior:contain}
   .pf[hidden]{display:none}
   .pf .wipe i{background:var(--c)}
-  .pf-in{min-height:100%;display:grid;grid-template-columns:minmax(0,44%) minmax(0,1fr);align-items:center;gap:4vw;padding:9svh 7vw 7svh;background-image:radial-gradient(circle,rgba(11,11,12,.3) 1.1px,transparent 1.6px);background-size:16px 16px}
-  .pf.is-pasha .pf-in{grid-template-columns:minmax(0,1fr) minmax(0,44%)}
+  .pf-in{min-height:100%;display:grid;grid-template-columns:minmax(0,52%) minmax(0,1fr);align-items:center;gap:4vw;padding:9svh 7vw 7svh;background-image:radial-gradient(circle,rgba(11,11,12,.3) 1.1px,transparent 1.6px);background-size:16px 16px}
+  .pf.is-pasha .pf-in{grid-template-columns:minmax(0,1fr) minmax(0,52%)}
   .pf.is-pasha .pf-head{order:2}
-  .pf-head{display:flex;justify-content:center}
-  .pf-head img{display:block;width:100%;max-width:640px;max-height:80svh;object-fit:contain;filter:drop-shadow(0 40px 60px rgba(0,0,0,.25));animation:cvbob 3.4s ease-in-out infinite}
+  .pf-head{position:relative;display:flex;justify-content:center}
+  .pf-head img{display:block;width:100%;max-width:900px;max-height:90svh;object-fit:contain;filter:drop-shadow(0 40px 60px rgba(0,0,0,.25));animation:cvbob 3.4s ease-in-out infinite}
   .pf-info{display:flex;flex-direction:column;align-items:flex-start;gap:2.2svh;min-width:0}
+  /* реплика героя над головой: белая карточка, как на первом экране; печатается, висит, сменяется */
+  .pf-say{position:absolute;top:2%;z-index:2;width:max-content;max-width:min(340px,36vw);padding:12px 15px;background:#fff;color:#000;outline:3px solid #000;outline-offset:-3px;font-size:15px;line-height:1.25;letter-spacing:.02em;text-transform:uppercase;opacity:0;transform:translateY(10px) scale(.92);transition:opacity .2s ease, transform .4s cubic-bezier(.2,1.4,.4,1);pointer-events:none}
+  .pf-say.on{opacity:1;transform:none}
+  .pf-say b{display:block;margin-bottom:5px;font-size:10px;letter-spacing:.08em;color:var(--c);font-weight:700}
+  .pf-say::before,.pf-say::after{content:"";position:absolute;top:-4px;width:8px;height:8px;background:#000;box-shadow:0 0 0 1.5px #fff}
+  .pf-say::before{left:-4px}.pf-say::after{right:-4px}
+  .pf-say .ps-t::after{content:"";display:inline-block;width:.55em;height:1em;margin-left:3px;vertical-align:-.15em;background:var(--c);animation:caret .8s steps(1) infinite}
+  .pf.is-anton .pf-say{right:2%}
+  .pf.is-pasha .pf-say{left:2%}
   .pf-k{display:inline-block;margin-bottom:2.4svh;padding:5px 9px;background:#0b0b0c;color:#fff;font-size:12px;letter-spacing:.08em;text-transform:uppercase}
   .pf-name{margin:0;font-family:var(--display);font-weight:400;text-transform:uppercase;font-size:min(19svh,11vw);line-height:.8}
   .pf-bio{margin:0;max-width:640px;font:600 clamp(19px,1.7vw,27px)/1.3 var(--body)}
@@ -895,7 +904,7 @@
   <section class="pf" id="pf" role="dialog" aria-modal="true" aria-labelledby="pfName" hidden>
     <button class="pf-x" type="button" aria-label="Закрыть"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
     <div class="pf-in">
-      <div class="pf-head"><img id="pfHead" src="img/head-pasha.png" alt=""></div>
+      <div class="pf-head"><div class="pf-say mono" id="pfSay" aria-hidden="true"><b id="pfSayK"></b><span class="ps-t"></span></div><img id="pfHead" src="img/head-pasha.png" alt=""></div>
       <div class="pf-info">
         <span class="mono pf-k" id="pfRole"></span>
         <h2 class="pf-name" id="pfName"></h2>
@@ -1759,7 +1768,7 @@
       }
       s4.querySelectorAll('.s4-col').forEach(function(col){
         var who = col.dataset.who;
-        col.querySelectorAll('.s4-head, .s4-more').forEach(function(el){
+        [col].forEach(function(el){   // весь блок героя — наведение (шторка) и клик (профиль)
           el.addEventListener('mouseenter', function(){
             if (!matchMedia('(hover:hover)').matches) return;
             cur.style.background = COLS[who];
@@ -1805,14 +1814,45 @@
         pf.hidden = false; pf.scrollTop = 0; document.body.classList.add('lb-lock');
         requestAnimationFrame(function(){ requestAnimationFrame(function(){ pf.classList.add('open'); }); });
         pf.querySelector('.pf-x').focus({preventScroll: true});
+        // реплики: герой подкалывает напарника; наведение на ссылку — хвалит, куда ты собрался
+        sayWho = who; sayK.textContent = d.name.toUpperCase() + '_:'; sayEl.classList.remove('on');
+        pf.querySelectorAll('.pf-btn').forEach(function(a){
+          a.addEventListener('mouseenter', function(){ sayNow(pick(LINK[sayWho]), true); });
+          a.addEventListener('mouseleave', function(){ holding = false; clearTimeout(sayT); sayT = setTimeout(sayNext, 1600); });
+        });
+        clearTimeout(sayT); sayT = setTimeout(sayNext, 900);
       }
+      // смешные реплики: Паша — про Антона, Антон — про Пашу
+      var DISS = {
+        pasha: ['Антон рисует шрифты. Читать их, правда, невозможно', 'Без меня он бы делал логотипы для шаурмы', 'Он думает, что кернинг — это вид спорта', 'Антон третий день двигает один пиксель', 'Идея — моя. Красиво — ладно, его', 'Арт-директор — это тот, кто спорит со шрифтом', 'Попроси у него макет «вчера». Посмотри на лицо'],
+        anton: ['Паша придумал идею. Опять на салфетке', 'Креатор — это кто говорит «а давайте ярче»', 'Без меня его идеи были бы вордовским файлом', 'У Паши 15 медалей. Половина — моя, не говорите ему', 'Паша выиграл тендер. Я нарисовал, как именно', 'Он пишет тексты длиннее, чем мои дедлайны', 'Паша, это не бриф, это роман']
+      };
+      var LINK = {
+        pasha: ['Во-во, правильно, переходи туда — там точно красиво', 'Жми, не бойся. Там всё по делу', 'Отличный выбор. Там лучшие идеи', 'Туда-туда. Там ещё и тендеры выигранные'],
+        anton: ['Во-во, правильно, переходи туда — там точно красиво', 'Жми! Там каждый пиксель на месте', 'Правильно. Там шрифты лучше, чем у Паши', 'Да-да, туда. Только кернинг Паши не смотри']
+      };
+      var sayEl = document.getElementById('pfSay'), sayK = document.getElementById('pfSayK'), sayOut = sayEl.querySelector('.ps-t');
+      var sayWho = 'pasha', sayT = 0, typeT = 0, lastLine = '', holding = false;
+      function pick(list){ var s; do { s = list[Math.floor(Math.random() * list.length)]; } while (list.length > 1 && s === lastLine); return s; }
+      function sayNow(str, hold){
+        if (pf.hidden) return;
+        clearTimeout(sayT); clearTimeout(typeT); holding = !!hold; lastLine = str; str = window.nbsp(str);
+        var i = 0; sayOut.textContent = ''; sayEl.classList.add('on');
+        (function type(){
+          sayOut.textContent = str.slice(0, ++i);
+          if (i < str.length) typeT = setTimeout(type, 26 + Math.random() * 26);
+          else if (!holding) sayT = setTimeout(function(){ sayEl.classList.remove('on'); sayT = setTimeout(sayNext, 700); }, 2800);
+        })();
+      }
+      function sayNext(){ if (!pf.hidden && !holding) sayNow(pick(DISS[sayWho])); }
       function closePf(){
         if (pf.hidden) return;
+        clearTimeout(sayT); clearTimeout(typeT); holding = false; sayEl.classList.remove('on');
         pf.classList.remove('open'); document.body.classList.remove('lb-lock');
         setTimeout(function(){ if (!pf.classList.contains('open')) pf.hidden = true; }, 760);
         if (last) last.focus({preventScroll: true});
       }
-      s4.querySelectorAll('.s4-more').forEach(function(b){ b.addEventListener('click', function(){ openPf(b.dataset.who); }); });
+      s4.querySelectorAll('.s4-col').forEach(function(c){ c.addEventListener('click', function(){ openPf(c.dataset.who); }); });
       pf.querySelector('.pf-x').addEventListener('click', closePf);
       addEventListener('keydown', function(e){ if (e.key === 'Escape') closePf(); });
     })();
