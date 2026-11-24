@@ -714,6 +714,9 @@
   html.top-dark .hm-h i,html:has(#burger[aria-expanded="true"]) .hm-h i,html:has(#arcadeBtn[aria-expanded="true"]) .hm-h i{opacity:1;animation:eyeglow 2.4s ease-in-out infinite}
   @keyframes eyeglow{0%,100%{filter:brightness(1)}50%{filter:brightness(1.35) drop-shadow(0 0 3px #ff2b2b)}92%{opacity:1}95%{opacity:.15}98%{opacity:1}}
   @media (hover:none){.home{right:16px}}
+  /* экран наград: навели на героя — в шапке голова второго героя чёрная, видны только красные глаза */
+  html.hv-pasha .hm-h:nth-child(2) img,html.hv-anton .hm-h:nth-child(1) img{filter:brightness(0)}
+  html.hv-pasha .hm-h:nth-child(2) i,html.hv-anton .hm-h:nth-child(1) i{opacity:1;animation:eyeglow 2.4s ease-in-out infinite}
   footer{padding-left:max(var(--pad), 88px) !important}   /* место под кнопку автомата слева внизу */
 
   footer{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px 24px;padding:18px var(--pad);border-top:1px solid var(--line);color:var(--muted)}
@@ -1774,10 +1777,11 @@
             cur.style.background = COLS[who];
             wipe(CLIP[who], FULL, 480); shown = who;
             s3.classList.remove('on-pasha', 'on-anton'); s3.classList.add('on-' + who);
+            document.documentElement.classList.remove('hv-pasha', 'hv-anton'); document.documentElement.classList.add('hv-' + who);
           });
           el.addEventListener('mouseleave', function(){
             if (shown === who) { wipe(FULL, CLIP[who], 380); shown = null; }
-            s3.classList.remove('on-' + who);
+            s3.classList.remove('on-' + who); document.documentElement.classList.remove('hv-' + who);
           });
         });
       });
