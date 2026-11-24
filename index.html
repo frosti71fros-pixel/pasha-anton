@@ -177,15 +177,10 @@
   .tb-h img + img{margin-left:-8px}
   .s2-tab:hover .tb-h img{animation:popnod .5s ease}
   .wheel{position:absolute;inset:0;touch-action:pan-y}
-  /* при наведении на карточку — огромное английское название кейса за колесом, влетает из расфокуса */
-  .s2-big{position:absolute;left:0;right:0;top:56%;z-index:300;margin:0;text-align:center;white-space:nowrap;font-family:var(--display);font-weight:400;text-transform:uppercase;line-height:.8;color:#fff;mix-blend-mode:difference;transform:translateY(-50%);opacity:0;transition:opacity .2s ease;pointer-events:none;will-change:transform,filter}
-  .s2-big.on{opacity:1;animation:bigwhoosh .55s cubic-bezier(.2,.8,.2,1)}
-  /* тот же «влёт» из расфокуса с зумом, что у заголовков первого экрана */
-  @keyframes bigwhoosh{0%{filter:blur(18px);transform:translateY(-50%) scale(1.35,1.15);opacity:.35}60%{filter:blur(3px)}100%{filter:none;transform:translateY(-50%) scale(1);opacity:1}}
   .wc:hover .wc-cover{animation:coverwhoosh .55s cubic-bezier(.2,.8,.2,1)}
   @keyframes coverwhoosh{0%{filter:blur(16px);transform:scale(1.35,1.15)}60%{filter:blur(3px)}100%{filter:none;transform:scale(1.06)}}
-  @media (prefers-reduced-motion:reduce){.s2-big.on,.wc:hover .wc-cover{animation:none}}
-  .wc{--w:min(34vw,56svh);position:absolute;left:50%;top:0;width:var(--w);height:calc(var(--w) * .7);margin-left:calc(var(--w) / -2);padding:0;border:0;overflow:hidden;background:#111;color:#fff;text-align:left;font:inherit;outline:3px solid #000;outline-offset:-3px;box-shadow:0 30px 60px -30px rgba(0,0,0,.45);transform-origin:50% 50%;will-change:transform}
+  @media (prefers-reduced-motion:reduce){.wc:hover .wc-cover{animation:none}}
+  .wc{--w:min(34vw,56svh);position:absolute;left:50%;top:0;width:var(--w);height:calc(var(--w) * .7);margin-left:calc(var(--w) / -2);padding:0;border:0;overflow:hidden;background:#111;color:#fff;text-align:left;font:inherit;border-radius:16px;box-shadow:0 30px 60px -30px rgba(0,0,0,.45);transform-origin:50% 50%;will-change:transform}
   .wc-cover{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .5s cubic-bezier(.2,.8,.2,1)}
   .wc::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.2),transparent 30%,transparent 50%,rgba(0,0,0,.6));pointer-events:none}
   .wc-num{position:absolute;right:14px;top:8px;z-index:1;font-family:var(--display);font-size:calc(var(--w) * .15);line-height:1;color:#fff}
@@ -571,7 +566,7 @@
     <div class="dvd-say" style="--c:#ff6a13"><b>PASHA_:</b> <span></span></div><div class="dvd-say" style="--c:#ff2b2b"><b>ANTON_:</b> <span></span></div></div>
   <ol class="menu-list">
     <li><a href="#top" data-i="0"><span class="mono">01</span>Creative Couple</a></li>
-    <li><a href="#s2" data-i="1"><span class="mono">02</span>Selected works</a></li>
+    <li><a href="#s2" data-i="1"><span class="mono">02</span>All cases</a></li>
     <li><a href="#s3" data-i="2"><span class="mono">03</span>Awards</a></li>
     <li><a href="#s4" data-i="3"><span class="mono">04</span>Pasha &amp; Anton</a></li>
     <li><a href="#s5" data-i="4"><span class="mono">05</span>Pick a head</a></li>
@@ -616,14 +611,13 @@
   <section class="s2" id="s2" aria-label="Кейсы">
     <div class="s2-in">
       <div class="s2-head">
-        <h2 class="s2-title"><b>+</b> Selected works</h2>
+        <h2 class="s2-title"><b>+</b> All cases</h2>
         <div class="s2-tabs" role="tablist" aria-label="Чьи кейсы">
-          <button class="s2-tab" type="button" role="tab" data-tab="both" aria-selected="true" style="--c:#ff6a13"><span class="tb-h"><img src="img/head-pasha.png" alt=""><img src="img/head-anton.png" alt=""></span>Общие кейсы <sup class="tb-n"></sup></button>
+          <button class="s2-tab" type="button" role="tab" data-tab="both" aria-selected="true" style="--c:#ff6a13"><span class="tb-h"><img src="img/head-pasha.png" alt=""><img src="img/head-anton.png" alt=""></span>Все кейсы <sup class="tb-n"></sup></button>
           <button class="s2-tab" type="button" role="tab" data-tab="pasha" aria-selected="false" style="--c:#ff6a13"><span class="tb-h"><img src="img/head-pasha.png" alt=""></span>Кейсы Паши <sup class="tb-n"></sup></button>
           <button class="s2-tab" type="button" role="tab" data-tab="anton" aria-selected="false" style="--c:#ff2b2b"><span class="tb-h"><img src="img/head-anton.png" alt=""></span>Кейсы Антона <sup class="tb-n"></sup></button>
         </div>
       </div>
-      <p class="s2-big" id="s2big" aria-hidden="true"></p>
       <div class="wheel" id="wheel"></div>
       <div class="s2-nav mono"><button type="button" class="s2-prev" aria-label="Предыдущий кейс">←</button><span><b class="s2-i">01</b> / <span class="s2-n">04</span></span><button type="button" class="s2-next" aria-label="Следующий кейс">→</button><span class="s2-hint">скролл — листать</span></div>
     </div>
@@ -791,11 +785,14 @@
           title: pc ? pc.title : ac.t, meta: pc ? pc.meta : (ac.sub ? ac.sub + ' · ' : '') + (ac.tags || ''), cover: cover};
       }
       var L = {
-        both: SHARED.map(function(s){ return item(s[0], s[1]); }),
+        both: null,   // «Все кейсы» — собираются ниже: Паша и Антон через один, общие — один раз
         pasha: PP.map(function(c){ return item(c.slug, p2a[c.slug]); }),
         anton: ANTON_LIST.map(function(id){ return item(a2p[id], id); })
       };
-      Object.keys(L).forEach(function(k){ L[k] = L[k].filter(Boolean); });
+      Object.keys(L).forEach(function(k){ if (L[k]) L[k] = L[k].filter(Boolean); });
+      var only = L.anton.filter(function(it){ return !it.shared; }), all = [];
+      for (var i = 0; i < Math.max(L.pasha.length, only.length); i++) { if (L.pasha[i]) all.push(L.pasha[i]); if (only[i]) all.push(only[i]); }
+      L.both = all;
       return {L: L, PB: PB, AB: AB, AA: AA};
     })();
     (function(){
@@ -818,26 +815,6 @@
         step: function(d){ var n = idx + d; if (n < 0 || n >= cards.length) return false; go(n); return true; },
         reset: function(){ go(0); pos = 0; layout(0); }
       };
-      // английские названия кейсов — для большого заголовка шрифтом SCHABO (в нём только латиница)
-      var EN = {
-        'zaklinateli':'Spellcasters', 'xroniki-izory':'Izhora Chronicles', 'tresnutye-3':'Cracked 3', 'ozon-x-fandom-fest':'Ozon Fandom Fest',
-        'diksi-klipersy':'Clippers', 'diksi-dino':'Dixy Dino', 'sinegrivyi-lev-talisman-fk-zenit':'Blue-Maned Lion', 'purr-love':'Purr Love', 'dogs':'Dogs.',
-        'pbp':'Piece by Piece', 'tevredens-type':'Tevredens Type', 'avangard':'Avangard 24/25', 'ebenya':'Ebenya Type', 'type-fashion':'Type × Fashion',
-        'luns-muns':'Luns Muns', 'samurai':'Samurai Type', 'nowatorus':'Nowatorus', 'kontakt':'Kontakt Bar', 'shpala':'Shpala', 'terror':'Terror'
-      };
-      var big = document.getElementById('s2big'), bigT = 0;
-      function bigShow(it){
-        if (!it) return;
-        clearTimeout(bigT);
-        var t = EN[it.p] || EN[it.a] || it.title;
-        big.innerHTML = '<span></span>'; big.firstChild.textContent = t;
-        // вписываем в ширину экрана, но не выше 30% высоты
-        big.style.fontSize = '100px';
-        var w = big.firstChild.offsetWidth || 1, W = s2el.clientWidth * .94;
-        big.style.fontSize = Math.min(100 * W / w, s2el.clientHeight * .3) + 'px';
-        big.classList.remove('on'); void big.offsetWidth; big.classList.add('on');
-      }
-      function bigHide(){ clearTimeout(bigT); bigT = setTimeout(function(){ big.classList.remove('on'); }, 120); }
       function render(tab){
         cur = tab;
         tabs.forEach(function(t){ t.setAttribute('aria-selected', t.dataset.tab === tab); });
@@ -855,17 +832,16 @@
         cards = [].slice.call(wheel.querySelectorAll('.wc'));
         cards.forEach(function(c, i){
           c._lift = 0;
-          c.addEventListener('mouseenter', function(){ hover = i; bigShow(WORKS.L[tab][i]); });
-          c.addEventListener('mouseleave', function(){ if (hover === i) { hover = -1; bigHide(); } });
+          c.addEventListener('mouseenter', function(){ hover = i; });
+          c.addEventListener('mouseleave', function(){ if (hover === i) hover = -1; });
         });
-        bigHide();
         hover = -1; idx = 0; pos = 0; syncNav(); layout(0);
         if (window.s2Changed) window.s2Changed();
       }
       function layout(t){
         var H = s2el.clientHeight || innerHeight, W = s2el.clientWidth || innerWidth;
         var w = cards.length ? cards[0].offsetWidth : 400, mob = W <= 800;
-        var R = mob ? W * 3 :Math.max(H * 2, W * 1.1), cy = H * (mob ? .64 : .62) + R;
+        var R = mob ? W * 3 :Math.max(H * 2, W * 1.1), cy = H * (mob ? .6 : .52) + R;
         var STEP = (w * (mob ? 1.06 : 1.02) / R) * 180 / Math.PI;
         var sway = reduce ? 0 : Math.sin(t / 2600) * 1.2;
         pos += (idx - pos) * .12; if (Math.abs(idx - pos) < .001) pos = idx;
@@ -873,7 +849,7 @@
         cards.forEach(function(c, i){
           c._lift += ((i === hover ? 1 : 0) - c._lift) * .18;
           var rel = i - pos, a = rel * STEP + rot, far = Math.abs(rel);
-          c.style.transform = 'translate(0,' + cy.toFixed(1) + 'px) translateY(-50%) rotate(' + a.toFixed(2) + 'deg) translateY(' + (-R - c._lift * 30).toFixed(1) + 'px) scale(' + (1 - Math.min(far, 3) * .06 + c._lift * .05).toFixed(3) + ')';
+          c.style.transform = 'translate(0,' + cy.toFixed(1) + 'px) translateY(-50%) rotate(' + a.toFixed(2) + 'deg) translateY(' + (-R - c._lift * 24).toFixed(1) + 'px) scale(' + (1 - Math.min(far, 3) * .06 + c._lift * .3).toFixed(3) + ')';
           c.style.zIndex = i === hover ? 200 : 100 - Math.round(far * 10);
           c.style.opacity = far > 3.2 ? 0 : 1;
           c.style.pointerEvents = far > 3.2 ? 'none' : '';
