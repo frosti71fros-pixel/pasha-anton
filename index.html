@@ -159,24 +159,104 @@
   .intro-pin .hero{position:absolute;inset:0;height:100%;min-height:0;transform-origin:50% 50%;background:var(--bg)}
   .s2{position:absolute;inset:0;background:#e9e9e6;color:#000;visibility:hidden;overflow:hidden}
   .s2.on{visibility:visible}
-  /* 2 — избранные кейсы: карточки веером на дуге колеса (по рефу) */
+  /* 2 — кейсы: шапка с тремя табами закреплена сверху, плитки по 3 в ряд прокручиваются под ней скроллом страницы */
   .s2-in{position:relative;height:100%}
-  .s2-head{position:absolute;left:0;right:0;top:9svh;z-index:2;display:flex;flex-direction:column;align-items:center;gap:14px;pointer-events:none}
-  .s2-title{margin:0;font-family:var(--display);font-weight:400;text-transform:uppercase;font-size:min(10svh,9vw);line-height:.85}
+  .s2-head{position:absolute;left:0;right:0;top:0;z-index:3;display:flex;flex-direction:column;align-items:center;gap:2.2svh;padding:8svh var(--pad) 3svh;background:linear-gradient(#e9e9e6 78%,rgba(233,233,230,0))}
+  .s2-title{margin:0;font-family:var(--display);font-weight:400;text-transform:uppercase;font-size:min(9svh,8vw);line-height:.85}
   .s2-title b{color:#ff6a13;font-weight:400}
-  .s2-legend{display:flex;gap:18px;font-size:11px;letter-spacing:.08em;color:#6d6d72}
-  .s2-legend b{color:var(--c);font-weight:500}
-  .wheel{position:absolute;inset:0}
-  .wc{--w:min(16vw,28svh);position:absolute;left:50%;top:0;width:var(--w);height:calc(var(--w) * 1.55);margin-left:calc(var(--w) / -2);border-radius:16px;overflow:hidden;background:#111;box-shadow:0 30px 60px -30px rgba(0,0,0,.45);transform-origin:50% 50%;will-change:transform}
-  .wc img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .5s cubic-bezier(.2,.8,.2,1)}
-  .wc::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.25),transparent 30%,transparent 55%,rgba(0,0,0,.55));pointer-events:none}
-  .wc-num{position:absolute;right:14px;top:10px;z-index:1;font-family:var(--display);font-size:calc(var(--w) * .26);line-height:1;color:#fff}
-  .wc-side{position:absolute;left:12px;top:14px;z-index:1;writing-mode:vertical-rl;transform:rotate(180deg);font-size:10px;letter-spacing:.12em;color:#fff}
-  .wc-meta{position:absolute;left:12px;right:12px;bottom:12px;z-index:1;display:flex;flex-direction:column;align-items:flex-start;gap:5px;font-size:10px;letter-spacing:.05em;text-transform:uppercase}
-  .wc-meta b,.wc-meta i{font-style:normal;font-weight:500;padding:3px 6px;background:#0b0b0c;color:#fff}
-  .wc-meta b{background:var(--c);color:#000}
-  .wc:hover img{transform:scale(1.06)}
-  .wc:hover{box-shadow:0 0 0 4px #fff,0 0 0 7px #000,0 40px 70px -30px rgba(0,0,0,.55)}
+  .s2-tabs{display:flex;flex-wrap:wrap;justify-content:center;gap:10px}
+  .s2-tab{display:inline-flex;align-items:center;gap:10px;padding:6px 18px 6px 8px;background:#fff;color:#000;border:3px solid #000;font:600 15px/1 var(--mono);letter-spacing:.04em;text-transform:uppercase;transition:background .2s,color .2s,transform .25s cubic-bezier(.2,.8,.2,1)}
+  .s2-tab sup{font-size:10px;color:#8a8a90;vertical-align:6px}
+  .s2-tab:hover{transform:translateY(-3px)}
+  .s2-tab[aria-selected="true"]{background:#000;color:#fff}
+  .s2-tab[aria-selected="true"] sup{color:var(--c)}
+  .tb-h{display:inline-flex}
+  .tb-h img{height:34px;width:auto;display:block}
+  .tb-h img + img{margin-left:-8px}
+  .s2-tab:hover .tb-h img{animation:popnod .5s ease}
+  .s2-scroll{position:absolute;left:0;right:0;top:0;will-change:transform}
+  .s2-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:4svh 28px;width:min(1180px,calc(100% - 2 * var(--pad) - 40px));margin:0 auto;padding:var(--s2top,30svh) 0 0}
+  .s2-more{display:flex;justify-content:center;gap:14px;flex-wrap:wrap;padding:6svh 0 14svh}
+  /* плитка кейса: появляется из расфокуса, когда доезжает до экрана */
+  .cs{position:relative;display:flex;flex-direction:column;gap:10px;padding:0;background:none;border:0;color:#000;text-align:left;font:inherit;opacity:0;transform:translateY(46px) scale(.96);filter:blur(10px);transition:opacity .5s ease, transform .7s cubic-bezier(.2,.8,.2,1), filter .6s ease;transition-delay:calc(var(--col,0) * 90ms)}
+  .cs.in{opacity:1;transform:none;filter:none}
+  .cs-img{position:relative;display:block;aspect-ratio:4/3;overflow:hidden;background:#d6d6d3;outline:3px solid #000;outline-offset:-3px}
+  .cs-img img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .6s cubic-bezier(.2,.8,.2,1)}
+  .cs-img::after{content:"";position:absolute;inset:0;border:3px solid #000;pointer-events:none}
+  .cs:hover .cs-img img{transform:scale(1.06)}
+  .cs:hover .cs-img{box-shadow:0 0 0 4px #fff,0 0 0 7px #000}
+  .cs-tag{position:absolute;left:10px;top:10px;z-index:1;padding:3px 6px;background:var(--c);color:#000;font-size:10px;letter-spacing:.08em}
+  .cs-open{position:absolute;right:10px;bottom:10px;z-index:1;padding:6px 10px;background:#fff;color:#000;border:2px solid #000;font-size:11px;letter-spacing:.06em;opacity:0;transform:translateY(6px);transition:opacity .2s,transform .2s}
+  .cs:hover .cs-open{opacity:1;transform:none}
+  .cs-cap{display:flex;align-items:center;gap:10px;font:700 clamp(18px,1.6vw,24px)/1.05 var(--body);letter-spacing:-.01em;text-transform:uppercase}
+  .cs-heads{display:inline-flex;flex:none}
+  .cs-heads img{height:40px;width:auto;display:block}
+  .cs-heads img + img{margin-left:-10px}
+  .cs:hover .cs-heads img{animation:popnod .5s ease}
+  .cs:hover .cs-heads img + img{animation-delay:.08s}
+  .cs-meta{font-size:11px;letter-spacing:.06em;color:#6d6d72;text-transform:uppercase}
+
+  /* кейс: «портянка» во всю высоту, но не на весь экран; по бокам головы комментируют */
+  .cv{position:fixed;inset:0;z-index:80;display:flex;justify-content:center;align-items:center;opacity:0;transition:opacity .25s ease}
+  .cv[hidden]{display:none}
+  .cv.open{opacity:1}
+  .cv-back{position:absolute;inset:0;background:rgba(11,11,12,.86)}
+  .cv-panel{position:relative;z-index:1;width:min(860px,calc(100vw - 520px));height:92svh;overflow:auto;overscroll-behavior:contain;background:#fff;color:#000;outline:4px solid #000;outline-offset:-4px;transform:translateY(40px) scale(.97);transition:transform .45s cubic-bezier(.2,.8,.2,1);scrollbar-width:thin}
+  .cv.open .cv-panel{transform:none}
+  .cv-top{position:sticky;top:0;z-index:2;display:flex;align-items:flex-start;justify-content:space-between;gap:16px;padding:18px 20px 16px;background:#fff;border-bottom:3px solid #000}
+  .cv-k{font-size:11px;letter-spacing:.08em;color:#8a8a90;text-transform:uppercase}
+  .cv-k b{font-weight:500}
+  .cv-t{margin:6px 0 0;font:800 clamp(26px,3vw,44px)/1 var(--body);letter-spacing:-.02em;text-transform:uppercase}
+  .cv-m{margin-top:8px;font-size:11px;letter-spacing:.06em;color:#6d6d72;text-transform:uppercase}
+  .cv-x{flex:none;width:44px;height:44px;display:grid;place-items:center;background:#fff;color:#000;border:3px solid #000;padding:0}
+  .cv-x:hover{background:#000;color:#fff}
+  .cv-x svg{width:22px;height:22px}
+  .cv-body{display:flex;flex-direction:column;gap:6px;padding:6px}
+  .cv-body img,.cv-body video{display:block;width:100%;height:auto;background:#eee}
+  .cv-row{display:grid;gap:6px}
+  .cv-vid{position:relative;aspect-ratio:16/9;background:#000}
+  .cv-vid iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+  .cv-txt{margin:0;padding:22px 20px;font-size:17px;line-height:1.5;white-space:pre-line}
+  .cv-info{display:grid;grid-template-columns:150px 1fr;gap:10px 20px;margin:0;padding:22px 20px;border-bottom:1px solid #e4e4e2}
+  .cv-info dt{font-size:11px;letter-spacing:.08em;color:#8a8a90;text-transform:uppercase;padding-top:4px}
+  .cv-info dd{margin:0;font-size:16px;line-height:1.45}
+  .cv-end{display:flex;justify-content:center;flex-wrap:wrap;gap:12px;padding:40px 20px 56px}
+  .cv-go{display:inline-flex;align-items:center;gap:12px;padding:13px 20px;background:#fff;color:#000;border:3px solid #000;font-weight:600;font-size:16px;transition:background .2s}
+  .cv-go:hover{background:var(--c)}
+  /* головы по бокам: смотрят на кейс, над головой реплика */
+  .cv-hd{position:absolute;z-index:2;bottom:8svh;width:220px;display:flex;flex-direction:column;align-items:center;pointer-events:none}
+  .cv-hd-pasha{right:calc(50% + min(430px, (100vw - 520px) / 2) + 20px)}
+  .cv-hd-anton{left:calc(50% + min(430px, (100vw - 520px) / 2) + 20px)}
+  .cv-hd img{height:min(30svh,190px);width:auto;transform:translateY(60px) scaleX(var(--fx,1));opacity:0;transition:transform .6s cubic-bezier(.2,.8,.2,1), opacity .3s}
+  .cv.open .cv-hd img{transform:translateY(0) scaleX(var(--fx,1));opacity:1;animation:cvbob 3.2s ease-in-out infinite}
+  .cv-hd-anton img{animation-delay:-1.6s !important}
+  .cv-hd.talk img{animation:cvtalk .5s ease 2, cvbob 3.2s ease-in-out 1s infinite !important}
+  @keyframes cvbob{0%,100%{transform:translateY(0) rotate(-2deg) scaleX(var(--fx,1))}50%{transform:translateY(-10px) rotate(2deg) scaleX(var(--fx,1))}}
+  @keyframes cvtalk{0%,100%{transform:translateY(0) scaleX(var(--fx,1))}30%{transform:translateY(-14px) rotate(-5deg) scaleX(var(--fx,1))}60%{transform:translateY(2px) rotate(3deg) scaleX(var(--fx,1))}}
+  .cv-say{position:relative;margin-bottom:16px;width:max-content;max-width:220px;padding:12px 14px;background:#fff;color:#000;outline:3px solid #000;outline-offset:-3px;font:500 15px/1.2 var(--mono);text-transform:uppercase;letter-spacing:.02em;opacity:0;transform:translateY(8px);transition:opacity .2s,transform .3s}
+  .cv-say.on{opacity:1;transform:none}
+  .cv-say b{display:block;margin-bottom:6px;font-size:10px;letter-spacing:.08em;color:var(--c);font-weight:600}
+  .cv-say::before,.cv-say::after{content:"";position:absolute;top:-4px;width:8px;height:8px;background:#000;box-shadow:0 0 0 1.5px #fff}
+  .cv-say::before{left:-4px}.cv-say::after{right:-4px}
+  .cv-say i{position:absolute;left:50%;bottom:-12px;width:0;height:0;margin-left:-8px;border:8px solid transparent;border-top-color:#000;border-bottom:0}
+  @media (max-width:1000px){
+    .cv-panel{width:calc(100vw - 24px);height:calc(100svh - 24px)}
+    .cv-hd{bottom:10px;width:auto}
+    .cv-hd-pasha{left:10px;right:auto;align-items:flex-start}
+    .cv-hd-anton{right:10px;left:auto;align-items:flex-end}
+    .cv-hd img{height:64px}
+    .cv-say{max-width:min(240px,44vw);font-size:12px;margin-bottom:8px}
+    .cv-say i{display:none}
+    .cv-info{grid-template-columns:1fr;gap:4px}
+    .cv-info dd{margin-bottom:10px}
+  }
+  @media (max-width:800px){
+    .s2-grid{grid-template-columns:1fr;width:calc(100% - 2 * var(--pad));padding-top:4svh}
+    .s2-head{position:relative;padding-top:12svh;background:none}
+    .s2-scroll{position:relative}
+    .s2-tab{font-size:12px;padding:5px 12px 5px 6px}
+    .tb-h img{height:26px}
+  }
   .strips{position:absolute;inset:0;pointer-events:none}
   .strip{position:absolute;top:0;bottom:0;overflow:hidden;will-change:clip-path}
   .strip > *{visibility:visible;width:100vw;right:auto;will-change:transform}
@@ -287,7 +367,10 @@
     .pick img{height:34vw}
   }
 
-  html.flat .s2-in{height:100svh}
+  html.flat .s2-in{height:auto}
+  html.flat .s2-head{position:relative;background:none}
+  html.flat .s2-scroll{position:relative}
+  html.flat .s2-grid{padding-top:4svh}
 
   /* бургер в стиле курсора: белый квадрат с чёрным контуром */
   .burger{position:fixed;left:20px;top:20px;z-index:70;width:52px;height:52px;display:grid;align-content:center;justify-items:center;gap:6px;background:#fff;border:3px solid #000;padding:0}
@@ -522,43 +605,19 @@
     <svg class="links" aria-hidden="true"><polyline class="lk lk-pasha" points=""/><polyline class="lk lk-anton" points=""/><circle class="lk lk-dot lk-dot-pasha" r="5"/><circle class="lk lk-dot lk-dot-anton" r="5"/></svg>
   </section>
 
-  <section class="s2" id="s2" aria-label="Избранные кейсы">
+  <section class="s2" id="s2" aria-label="Кейсы">
     <div class="s2-in">
       <div class="s2-head">
         <h2 class="s2-title"><b>+</b> Selected works</h2>
-        <span class="mono s2-legend"><span style="--c:#ff6a13">[ <b>PASHA_</b> 01–03 ]</span><span style="--c:#ff2b2b">[ <b>ANTON_</b> 04–06 ]</span></span>
+        <div class="s2-tabs" role="tablist" aria-label="Чьи кейсы">
+          <button class="s2-tab" type="button" role="tab" data-tab="both" aria-selected="true" style="--c:#ff6a13"><span class="tb-h"><img src="img/head-pasha.png" alt=""><img src="img/head-anton.png" alt=""></span>Общие кейсы <sup class="tb-n"></sup></button>
+          <button class="s2-tab" type="button" role="tab" data-tab="pasha" aria-selected="false" style="--c:#ff6a13"><span class="tb-h"><img src="img/head-pasha.png" alt=""></span>Кейсы Паши <sup class="tb-n"></sup></button>
+          <button class="s2-tab" type="button" role="tab" data-tab="anton" aria-selected="false" style="--c:#ff2b2b"><span class="tb-h"><img src="img/head-anton.png" alt=""></span>Кейсы Антона <sup class="tb-n"></sup></button>
+        </div>
       </div>
-      <div class="wheel" id="wheel">
-        <a class="wc" href="https://pavel-cherkun.github.io/cherkun/#case/zaklinateli" target="_blank" rel="noopener" style="--c:#ff6a13">
-          <img src="img/pasha/zaklinateli.jpg" alt="Заклинатели — Дикси" loading="lazy">
-          <span class="wc-num">01</span><span class="wc-side mono">PASHA_ · CREATIVE</span>
-          <span class="wc-meta mono"><b>Заклинатели</b><i>Дикси · золото Silver Mercury</i></span>
-        </a>
-        <a class="wc" href="https://pavel-cherkun.github.io/cherkun/#case/xroniki-izory" target="_blank" rel="noopener" style="--c:#ff6a13">
-          <img src="img/pasha/xroniki-izory.jpg" alt="Хроники Ижоры — ФК «Зенит»" loading="lazy">
-          <span class="wc-num">02</span><span class="wc-side mono">PASHA_ · CREATIVE</span>
-          <span class="wc-meta mono"><b>Хроники Ижоры</b><i>ФК «Зенит» · золото SM СЗФО</i></span>
-        </a>
-        <a class="wc" href="https://pavel-cherkun.github.io/cherkun/#case/tresnutye-3" target="_blank" rel="noopener" style="--c:#ff6a13">
-          <img src="img/pasha/tresnutye-3.jpg" alt="Треснутые 3 — Дикси" loading="lazy">
-          <span class="wc-num">03</span><span class="wc-side mono">PASHA_ · CREATIVE</span>
-          <span class="wc-meta mono"><b>Треснутые 3</b><i>Дикси · 6 медалей</i></span>
-        </a>
-        <a class="wc" href="https://frosti71fros-pixel.github.io/anton-fros/#/case/tevredens-type" target="_blank" rel="noopener" style="--c:#ff2b2b">
-          <img src="img/anton/tevredens-type.jpg" alt="Tevredens Typeface" loading="lazy">
-          <span class="wc-num">04</span><span class="wc-side mono">ANTON_ · ART DIRECTOR</span>
-          <span class="wc-meta mono"><b>Tevredens Typeface</b><i>Шрифт · брендинг</i></span>
-        </a>
-        <a class="wc" href="https://frosti71fros-pixel.github.io/anton-fros/#/case/pbp" target="_blank" rel="noopener" style="--c:#ff2b2b">
-          <img src="img/anton/pbp.jpg" alt="PBP — Piece by Piece" loading="lazy">
-          <span class="wc-num">05</span><span class="wc-side mono">ANTON_ · ART DIRECTOR</span>
-          <span class="wc-meta mono"><b>PBP [Piece by Piece]</b><i>Fashion · фотография</i></span>
-        </a>
-        <a class="wc" href="https://frosti71fros-pixel.github.io/anton-fros/#/case/avangard" target="_blank" rel="noopener" style="--c:#ff2b2b">
-          <img src="img/anton/avangard.jpg" alt="ХК «Авангард» 24/25" loading="lazy">
-          <span class="wc-num">06</span><span class="wc-side mono">ANTON_ · ART DIRECTOR</span>
-          <span class="wc-meta mono"><b>ХК «Авангард» 24/25</b><i>Визуальная коммуникация</i></span>
-        </a>
+      <div class="s2-scroll">
+        <div class="s2-grid" id="s2grid"></div>
+        <div class="s2-more" id="s2more"></div>
       </div>
     </div>
   </section>
@@ -667,6 +726,21 @@
   <span>© Pasha &amp; Anton, 2026</span>
   <span>Creative Couple — Saint Petersburg</span>
 </footer>
+<!-- открытый кейс: «портянка» с сайта героя, по бокам головы комментируют -->
+<div class="cv" id="cv" role="dialog" aria-modal="true" aria-labelledby="cvT" hidden>
+  <div class="cv-back" data-close></div>
+  <div class="cv-hd cv-hd-pasha" style="--c:#ff6a13;--fx:-1" aria-hidden="true"><div class="cv-say"><b>PASHA_:</b><span></span><i></i></div><img src="img/head-pasha.png" alt=""></div>
+  <article class="cv-panel" id="cvPanel">
+    <header class="cv-top">
+      <div><div class="cv-k mono" id="cvK"></div><h3 class="cv-t" id="cvT"></h3><div class="cv-m mono" id="cvM"></div></div>
+      <button class="cv-x" type="button" data-close aria-label="Закрыть кейс"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+    </header>
+    <div class="cv-body" id="cvBody"></div>
+  </article>
+  <div class="cv-hd cv-hd-anton" style="--c:#ff2b2b;--fx:-1" aria-hidden="true"><div class="cv-say"><b>ANTON_:</b><span></span><i></i></div><img src="img/head-anton.png" alt=""></div>
+</div>
+
+<script src="data/cases.js"></script>
 <script>
   (function(){
     var hero = document.getElementById('hero'), stage = document.getElementById('stage');
@@ -688,38 +762,192 @@
       var n; while ((n = w.nextNode())) { var t = nbsp(n.nodeValue); if (t !== n.nodeValue) n.nodeValue = t; }
     })(document.body);
 
-    // 0.5 Колесо кейсов (экран 2): карточки веером по дуге, дуга ходит за мышью и чуть покачивается,
-    // карточка под курсором выезжает вперёд. Раскладка считается сразу — до клонирования экрана в полосы.
-    (function(){
-      var wheel = document.getElementById('wheel'); if (!wheel) return;
-      var s2el = document.getElementById('s2');
-      var cards = [].slice.call(wheel.querySelectorAll('.wc')), N = cards.length, STEP = 12.5;
-      var rot = 0, target = 0, hover = -1;
-      cards.forEach(function(c, i){
-        c._lift = 0;
-        c.addEventListener('mouseenter', function(){ hover = i; });
-        c.addEventListener('mouseleave', function(){ if (hover === i) hover = -1; });
-      });
-      s2el.addEventListener('mousemove', function(e){
-        var r = s2el.getBoundingClientRect();
-        target = -((e.clientX - r.left) / r.width - .5) * 34;
-      });
-      s2el.addEventListener('mouseleave', function(){ target = 0; });
-      function layout(t){
-        var H = s2el.clientHeight || innerHeight, W = s2el.clientWidth || innerWidth;
-        var R = Math.max(H * .95, W * .42), cy = H * .66 + R;
-        var sway = reduce ? 0 : Math.sin(t / 2600) * 3;
-        rot += (target + sway - rot) * .06;
-        cards.forEach(function(c, i){
-          c._lift += ((i === hover ? 1 : 0) - c._lift) * .18;
-          var a = (i - (N - 1) / 2) * STEP + rot;
-          c.style.transform = 'translate(0,' + cy.toFixed(1) + 'px) translateY(-50%) rotate(' + a.toFixed(2) + 'deg) translateY(' + (-R - c._lift * 36).toFixed(1) + 'px) scale(' + (1 + c._lift * .08).toFixed(3) + ')';
-          c.style.zIndex = i === hover ? 200 : 100 - Math.round(Math.abs(a));
-        });
+    // 0.5 Кейсы (экран 2): три таба — общие / Паши / Антона, плитки по 3 в ряд появляются по скроллу.
+    // Данные — data/cases.js (скопированы с сайтов героев). Клик по плитке — «портянка» кейса, по бокам головы комментируют.
+    var WORKS = (function(){
+      var PB = 'https://pavel-cherkun.github.io/cherkun/', AB = 'https://frosti71fros-pixel.github.io/anton-fros/';
+      var PP = window.PA_PASHA || [], AA = window.PA_ANTON || {CASES:[]};
+      var pBy = {}, aBy = {};
+      PP.forEach(function(c){ pBy[c.slug] = c; });
+      (AA.CASES || []).forEach(function(c){ aBy[c.id] = c; });
+      // общие кейсы: слаг у Паши ↔ id у Антона
+      var SHARED = [['sinegrivyi-lev-talisman-fk-zenit', 'zenit-lion'], ['xroniki-izory', 'izhora'], ['purr-love', 'purr-love'], ['diksi-dino', 'diksi-dino']];
+      var p2a = {}, a2p = {};
+      SHARED.forEach(function(s){ p2a[s[0]] = s[1]; a2p[s[1]] = s[0]; });
+      var ACOVER = {'pbp':'pbp', 'tevredens-type':'tevredens-type', 'avangard':'avangard', 'ebenya':'ebenya', 'type-fashion':'typography-fashion', 'terror':'terror', 'belyi-kot':'belyi-kot', 'zenit-lion':'zenit-lev', 'izhora':'xroniki-izory'};
+      var ANTON_LIST = ['pbp', 'tevredens-type', 'zenit-lion', 'avangard', 'ebenya', 'type-fashion', 'izhora', 'luns-muns', 'samurai', 'nowatorus', 'kontakt', 'shpala', 'purr-love', 'diksi-dino', 'terror'];
+      function item(p, a){
+        var pc = p && pBy[p], ac = a && aBy[a];
+        if (!pc && !ac) return null;
+        var cover = pc ? 'img/pasha/' + p + '.jpg' : ACOVER[a] ? 'img/anton/' + ACOVER[a] + '.jpg' : /^https?:/.test(ac.c) ? ac.c : AB + ac.c;
+        return {p: pc ? p : null, a: ac ? a : null, pc: pc, ac: ac, shared: !!(pc && ac),
+          title: pc ? pc.title : ac.t, meta: pc ? pc.meta : (ac.sub ? ac.sub + ' · ' : '') + (ac.tags || ''), cover: cover};
       }
-      layout(0);
-      (function loop(t){ if (s2el.classList.contains('on') || document.documentElement.classList.contains('flat')) layout(t); requestAnimationFrame(loop); })(0);
-      addEventListener('resize', function(){ layout(performance.now()); });
+      var L = {
+        both: SHARED.map(function(s){ return item(s[0], s[1]); }),
+        pasha: PP.map(function(c){ return item(c.slug, p2a[c.slug]); }),
+        anton: ANTON_LIST.map(function(id){ return item(a2p[id], id); })
+      };
+      Object.keys(L).forEach(function(k){ L[k] = L[k].filter(Boolean); });
+      return {L: L, PB: PB, AB: AB, AA: AA};
+    })();
+    (function(){
+      var s2el = document.getElementById('s2'), grid = document.getElementById('s2grid'), more = document.getElementById('s2more');
+      var tabs = [].slice.call(s2el.querySelectorAll('.s2-tab'));
+      var HEAD = {pasha:'<img src="img/head-pasha.png" alt="">', anton:'<img src="img/head-anton.png" alt="">'};
+      function esc(s){ return String(s == null ? '' : s).replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+      tabs.forEach(function(t){ t.querySelector('.tb-n').textContent = WORKS.L[t.dataset.tab].length; });
+      var cur = 'both';
+      window.s2Tab = function(){ return cur; };
+      function render(tab){
+        cur = tab;
+        tabs.forEach(function(t){ t.setAttribute('aria-selected', t.dataset.tab === tab); });
+        grid.innerHTML = WORKS.L[tab].map(function(it, i){
+          var who = it.shared ? 'both' : it.p ? 'pasha' : 'anton';
+          var c = who === 'anton' ? '#ff2b2b' : '#ff6a13';
+          var tag = who === 'both' ? 'PASHA_ &amp; ANTON_' : who === 'pasha' ? 'PASHA_' : 'ANTON_';
+          return '<button class="cs" type="button" data-i="' + i + '" style="--col:' + (i % 3) + ';--c:' + c + '">' +
+            '<span class="cs-img"><img src="' + esc(it.cover) + '" alt="" loading="lazy"><span class="cs-tag mono">' + tag + '</span><span class="cs-open mono">Смотреть кейс ↗</span></span>' +
+            '<span class="cs-cap">' + (it.shared ? '<span class="cs-heads">' + HEAD.pasha + HEAD.anton + '</span>' : '') + '<span>' + esc(it.title) + '</span></span>' +
+            '<span class="cs-meta mono">' + esc(it.meta) + '</span></button>';
+        }).join('');
+        more.innerHTML = tab === 'both' ? '' :
+          '<a class="cv-go" style="--c:' + (tab === 'pasha' ? '#ff6a13' : '#ff2b2b') + '" href="' + (tab === 'pasha' ? WORKS.PB : WORKS.AB) + '" target="_blank" rel="noopener">Все кейсы ' + (tab === 'pasha' ? 'Паши' : 'Антона') + ' на сайте <i>↗</i></a>';
+        if (window.s2Changed) window.s2Changed();
+      }
+      tabs.forEach(function(t){ t.addEventListener('click', function(){ if (t.dataset.tab !== cur) render(t.dataset.tab); }); });
+      grid.addEventListener('click', function(e){
+        var b = e.target.closest('.cs'); if (!b) return;
+        openCase(WORKS.L[cur][+b.dataset.i]);
+      });
+      render('both');
+
+      // ---- «портянка» кейса ----
+      var cv = document.getElementById('cv'), panel = document.getElementById('cvPanel'), body = document.getElementById('cvBody');
+      var hd = {pasha: cv.querySelector('.cv-hd-pasha'), anton: cv.querySelector('.cv-hd-anton')};
+      var lastFocus = null, sayT = {}, mode = null, said = {}, nextAt = 0, turn = 'pasha';
+      // реплики: свой кейс — хвастается, чужой — стебёт, общий — «без меня бы ничего не вышло»
+      var LINES = {
+        own: {
+          pasha: ['Мой кейс. Смотри и учись.', 'Это я ещё скромно показал.', 'Листай дальше — дальше лучше.', 'Вот это я понимаю — идея.', 'Тендер? Выиграли, конечно.', 'Каждая строчка тут — моя.'],
+          anton: ['Мой кейс. Смотри и учись.', 'Каждый пиксель — мой.', 'Листай дальше — дальше красивее.', 'Шрифт, кстати, тоже я.', 'Вот это я понимаю — визуал.', 'Сетка ровная, как мой характер.']
+        },
+        other: {
+          pasha: ['Это что за фигня?', 'Красиво. А идея где?', 'Ну такое… на троечку.', 'Кто это вообще согласовал?', 'Я бы сделал лучше. И быстрее.', 'Листай быстрее, тут скучно.', 'Ладно, вот этот кадр ничего.'],
+          anton: ['Это что за фигня?', 'Идея норм. А визуал кто делал?', 'Шрифт не тот. Да и всё не то.', 'Кто это вообще согласовал?', 'Я бы сделал лучше. И красивее.', 'Листай быстрее, тут скучно.', 'Ладно, вот этот кадр ничего.']
+        },
+        both: {
+          pasha: ['Без меня бы ничего не вышло.', 'Идея — моя, если что.', 'Он тут только кофе носил.', 'Скажи ему, что это я придумал.', 'Ладно, вместе — сила.', 'Лучший кейс. Потому что мой.'],
+          anton: ['Без меня бы ничего не вышло.', 'Визуал — мой, если что.', 'Он тут только слайды листал.', 'Без моего дизайна это был бы бриф.', 'Ладно, вместе — сила.', 'Лучший кейс. Потому что мой.']
+        }
+      };
+      function role(who){ return mode.shared ? 'both' : (mode[who === 'pasha' ? 'p' : 'a'] ? 'own' : 'other'); }
+      function say(who){
+        var list = LINES[role(who)][who], n;
+        do { n = Math.floor(Math.random() * list.length); } while (list.length > 1 && n === said[who]);
+        said[who] = n;
+        var box = hd[who].querySelector('.cv-say'), out = box.querySelector('span'), str = list[n], i = 0;
+        clearTimeout(sayT[who]); box.classList.add('on'); out.textContent = '';
+        hd[who].classList.remove('talk'); void hd[who].offsetWidth; hd[who].classList.add('talk');
+        (function step(){ out.textContent = str.slice(0, ++i); if (i < str.length) sayT[who] = setTimeout(step, 26 + Math.random() * 24); })();
+      }
+      function blocksHTML(it){
+        var h = '', P = WORKS.PB, A = WORKS.AB, AA = WORKS.AA;
+        function img(src, w, ht){ return '<img src="' + esc(src) + '" alt="" loading="lazy"' + (w && ht ? ' width="' + w + '" height="' + ht + '"' : '') + '>'; }
+        function pBlock(b){
+          if (b.t === 'img') return img(P + b.src, b.w, b.h);
+          if (b.t === 'loop') return '<video src="' + esc(P + b.src) + '" muted loop autoplay playsinline></video>';
+          if (b.t === 'text') return '<p class="cv-txt">' + esc(b.text) + '</p>';
+          if (b.t === 'embed') return '<div class="cv-vid"><iframe src="' + esc(b.src) + '" loading="lazy" allow="autoplay; fullscreen; picture-in-picture; encrypted-media" allowfullscreen title="video"></iframe></div>';
+          if (b.t === 'row') return '<div class="cv-row" style="grid-template-columns:' + b.items.map(function(x){ return (x.w && x.h ? (x.w / x.h).toFixed(3) : 1) + 'fr'; }).join(' ') + '">' + b.items.map(pBlock).join('') + '</div>';
+          return '';
+        }
+        // Антон: та же логика, что у него на сайте (Behance → облегчённая картинка, Dprofile → ряды как на Dprofile)
+        function aBlocks(c){
+          function bh(p){ var o = AA.BH + p.slice(1); return {i: o.replace(/\/(max_3840_webp|fs_webp)\//, '/1400_webp/'), fb: o}; }
+          function own(p){ return /^https?:/.test(p) ? p : A + p; }
+          if (c.img) return c.img.map(function(p){ return Array.isArray(p) ? {row: p.map(function(i){ return {i: own(i), fr: 1}; })} : {i: own(p)}; });
+          if (c.b) {
+            var id = c.b.split('/')[0];
+            return (AA.BEH[id] || []).map(function(m){
+              if (typeof m === 'object' && m.r) return {row: m.r.map(function(x){ var o = bh('~' + x[0]); o.fr = x[1]; return o; })};
+              if (typeof m === 'object') return m.t ? {t: m.t} : {};
+              return m.charAt(0) === '~' ? bh(m) : {v: m};
+            });
+          }
+          var did = c.d.split('/')[0];
+          var bl = (AA.DPF[did] || []).map(function(m){ return typeof m === 'string' ? {i: AA.DP + m.split('|')[0], w: +(m.split('|')[1] || 0)} : m; });
+          var key = function(b){ return b.i && b.i.split('/').pop().slice(0, 6); }, out = [];
+          var rows = (AA.DROWS[did] || []).map(function(s){ return s.split(',').map(function(x){ return x.split(':'); }); });
+          for (var k = 0; k < bl.length; k++) {
+            var r = rows.find(function(r){ return r[0][0] === key(bl[k]); });
+            if (r && r.every(function(x, j){ return key(bl[k + j]) === x[0]; })) { out.push({row: r.map(function(x, j){ return {i: bl[k + j].i, fr: +x[1]}; })}); k += r.length - 1; }
+            else out.push(bl[k]);
+          }
+          return out;
+        }
+        function aImg(b){ return '<img src="' + esc(b.i) + '"' + (b.fb ? ' data-fb="' + esc(b.fb) + '"' : '') + ' alt="" loading="lazy">'; }
+        function aHTML(c){
+          var s = '';
+          if (AA.DESC && AA.DESC[c.id]) s += '<p class="cv-txt">' + esc(AA.DESC[c.id]) + '</p>';
+          aBlocks(c).forEach(function(b){
+            if (b.row) s += '<div class="cv-row" style="grid-template-columns:' + b.row.map(function(x){ return (x.fr || 1) + 'fr'; }).join(' ') + '">' + b.row.map(aImg).join('') + '</div>';
+            else if (b.t) s += '<p class="cv-txt">' + esc(b.t) + '</p>';
+            else if (b.v) s += '<div class="cv-vid"><iframe src="' + esc(b.v) + '" loading="lazy" allow="autoplay; fullscreen; picture-in-picture; encrypted-media" allowfullscreen title="video"></iframe></div>';
+            else if (b.i) s += aImg(b);
+          });
+          return s;
+        }
+        if (it.pc) {
+          var c = it.pc, info = '';
+          ['role', 'Задача', 'Решение', 'Результат', 'awards'].forEach(function(k){
+            if (c[k]) info += '<dt>' + (k === 'role' ? 'Роль Паши' : k === 'awards' ? 'Награды' : k) + '</dt><dd>' + esc(c[k]) + '</dd>';
+          });
+          if (info) h += '<dl class="cv-info">' + info + '</dl>';
+        }
+        // у общего кейса картинки берём оттуда, где их больше
+        var pN = it.pc ? it.pc.blocks.length + (it.pc.video || []).length : 0, aN = it.ac ? aBlocks(it.ac).length : 0;
+        if (it.pc && pN >= aN) {
+          (it.pc.video || []).forEach(function(v){ h += '<video src="' + esc(P + v.src) + '" poster="' + esc(P + v.poster) + '" controls playsinline preload="none"></video>'; });
+          h += it.pc.blocks.map(pBlock).join('');
+        } else h += aHTML(it.ac);
+        h += '<div class="cv-end">';
+        if (it.pc) h += '<a class="cv-go" style="--c:#ff6a13" href="' + P + '#case/' + it.p + '" target="_blank" rel="noopener">Кейс на сайте Паши <i>↗</i></a>';
+        if (it.ac) h += '<a class="cv-go" style="--c:#ff2b2b" href="' + A + '#/case/' + it.a + '" target="_blank" rel="noopener">Кейс на сайте Антона <i>↗</i></a>';
+        return h + '</div>';
+      }
+      function openCase(it){
+        if (!it) return;
+        mode = it; said = {}; lastFocus = document.activeElement;
+        document.getElementById('cvK').innerHTML = it.shared ? '[ <b style="color:#ff6a13">PASHA_</b> &amp; <b style="color:#ff2b2b">ANTON_</b> общий кейс ]' : it.p ? '[ <b style="color:#ff6a13">PASHA_</b> creative ]' : '[ <b style="color:#ff2b2b">ANTON_</b> art director ]';
+        document.getElementById('cvT').textContent = it.title;
+        document.getElementById('cvM').textContent = it.meta;
+        body.innerHTML = blocksHTML(it);
+        body.querySelectorAll('img[data-fb]').forEach(function(im){ im.addEventListener('error', function(){ if (im.dataset.fb) { im.src = im.dataset.fb; im.removeAttribute('data-fb'); } }); });
+        panel.scrollTop = 0;
+        cv.hidden = false; document.body.classList.add('lb-lock');
+        requestAnimationFrame(function(){ cv.classList.add('open'); });
+        cv.querySelector('.cv-x').focus({preventScroll:true});
+        ['pasha', 'anton'].forEach(function(w){ hd[w].querySelector('.cv-say').classList.remove('on'); });
+        // первым говорит хозяин кейса, следом второй
+        var first = it.shared ? (Math.random() < .5 ? 'pasha' : 'anton') : it.p ? 'pasha' : 'anton', second = first === 'pasha' ? 'anton' : 'pasha';
+        sayT.a = setTimeout(function(){ say(first); }, 450);
+        sayT.b = setTimeout(function(){ say(second); }, 1900);
+        turn = first; nextAt = 700;
+      }
+      function closeCase(){
+        if (cv.hidden) return;
+        cv.classList.remove('open'); document.body.classList.remove('lb-lock');
+        Object.keys(sayT).forEach(function(k){ clearTimeout(sayT[k]); });
+        setTimeout(function(){ if (!cv.classList.contains('open')) { cv.hidden = true; body.innerHTML = ''; } }, 300);
+        if (lastFocus) lastFocus.focus({preventScroll:true});
+      }
+      cv.addEventListener('click', function(e){ if (e.target.closest('[data-close]')) closeCase(); });
+      addEventListener('keydown', function(e){ if (e.key === 'Escape' && !cv.hidden) closeCase(); });
+      // листаешь кейс — головы по очереди комментируют
+      panel.addEventListener('scroll', function(){
+        if (panel.scrollTop > nextAt) { nextAt = panel.scrollTop + 650 + Math.random() * 300; say(turn); turn = turn === 'pasha' ? 'anton' : 'pasha'; }
+      }, {passive:true});
     })();
 
     // 1. Подгоняем заголовки под ширину сцены (как на КВ — во всю ширину)
@@ -958,18 +1186,42 @@
         new IntersectionObserver(function(es){ if (es[0].isIntersecting) countAwards(); }).observe(s3);
         var topDark = function(){ var r = s5.getBoundingClientRect(); document.documentElement.classList.toggle('top-dark', r.top < 46 && r.bottom > 46); };
         addEventListener('scroll', topDark, {passive:true}); topDark();
+        // плитки кейсов проявляются, когда доезжают до экрана
+        var csIO = new IntersectionObserver(function(es){ es.forEach(function(e){ if (e.isIntersecting) { e.target.classList.add('in'); csIO.unobserve(e.target); } }); }, {rootMargin: '0px 0px -8% 0px'});
+        window.s2Changed = function(){ s2.querySelectorAll('.s2-grid .cs').forEach(function(c){ csIO.observe(c); }); };
+        window.s2Changed();
         return;
       }
       document.getElementById('awardsNum').textContent = '0';
       // таймлайн (в «экранах» прокрутки): каждый следующий экран собирается «лесенкой» из полос,
-      // предыдущий уходит в расфокус; первый экран к тому же рассыпается на квадраты
-      var LEN = 1.6, HOLD = .5;
+      // предыдущий уходит в расфокус; первый экран к тому же рассыпается на квадраты.
+      // Экран 2 стоит дольше: пока он на месте, скролл прокручивает плитки кейсов под шапкой с табами.
+      var LEN = 1.6, HOLD = .5, EXTRA = 0;
       var SEGS = [{from:hero, to:s2}, {from:s2, to:s3}, {from:s3, to:s4}, {from:s4, to:s5}];
-      SEGS.forEach(function(sg, i){ sg.a = i * (LEN + HOLD); });
-      var TOTAL = SEGS[SEGS.length - 1].a + LEN + .3;
-      var STOPS = [0].concat(SEGS.map(function(sg){ return sg.a + LEN; }));   // где каждый экран стоит целиком
+      var TOTAL, STOPS;
+      var s2scroll = s2.querySelector('.s2-scroll'), s2head = s2.querySelector('.s2-head');
       function sizeIntro(){ intro.style.height = ((TOTAL + 1) * innerHeight) + 'px'; }
-      sizeIntro();
+      function layout(){
+        s2.style.setProperty('--s2top', (s2head.offsetHeight + innerHeight * .02) + 'px');
+        EXTRA = Math.max(0, (s2scroll.offsetHeight - innerHeight) / innerHeight);
+        var a = 0;
+        SEGS.forEach(function(sg, i){ sg.a = a; a += LEN + HOLD + (i === 0 ? EXTRA : 0); });
+        TOTAL = SEGS[SEGS.length - 1].a + LEN + .3;
+        STOPS = [0].concat(SEGS.map(function(sg){ return sg.a + LEN; }));   // где каждый экран стоит целиком
+        sizeIntro();
+      }
+      layout();
+      // какие плитки видны при данном сдвиге сетки — им класс in (появление)
+      function reveal(off, list){
+        var lim = innerHeight * .92 + off;
+        (list || s2.querySelectorAll('.s2-grid .cs')).forEach(function(c){ if (c.offsetTop < lim) c.classList.add('in'); });
+      }
+      window.s2Changed = function(){
+        var u = (scrollY - intro.offsetTop) / innerHeight, past = u > STOPS[1];
+        layout(); N = 0; build();
+        if (past) window.scrollTo({top: intro.offsetTop + STOPS[1] * innerHeight, behavior: 'instant'});
+        update();
+      };
       window.goScreen = function(i){ window.scrollTo({top: intro.offsetTop + STOPS[i] * innerHeight, behavior: 'smooth'}); };
       var ticking = false, heroLeft = false, N = 0;
       function show(l, on){ if (l === hero) l.style.visibility = on ? '' : 'hidden'; else if (l === s2) l.classList.toggle('on', on); else l.classList.toggle('vis', on); }
@@ -990,6 +1242,12 @@
             c.querySelectorAll('[id]').forEach(function(e){ e.removeAttribute('id'); });
             c.querySelectorAll('a, button').forEach(function(e){ e.setAttribute('tabindex', '-1'); });
             c.classList.add('on', 'vis');
+            if (sg.to === s2) {
+              // в полосах экран 2 — в начальном положении: сетка не сдвинута, видны плитки первого экрана
+              var real = s2.querySelectorAll('.s2-grid .cs');
+              c.querySelector('.s2-scroll').style.transform = '';
+              c.querySelectorAll('.s2-grid .cs').forEach(function(t, j){ t.classList.toggle('in', real[j] && real[j].offsetTop < innerHeight * .92); t.style.transition = 'none'; });
+            }
             c.style.left = (-i * 100 / N) + 'vw';
             c.style.transformOrigin = ((i + .5) * 100 / N) + 'vw 50%';
             st.appendChild(c); b.appendChild(st); sg.strips.push({el: st, inner: c});
@@ -1032,6 +1290,10 @@
             s.inner.style.filter = e < 1 ? 'blur(' + ((1 - e) * 22).toFixed(1) + 'px)' : '';
           });
         });
+        // экран 2 стоит — скролл двигает сетку кейсов, плитки проявляются по мере появления
+        var off = Math.min(EXTRA, Math.max(0, u - STOPS[1])) * innerHeight;
+        s2scroll.style.transform = off ? 'translateY(' + (-off).toFixed(1) + 'px)' : '';
+        reveal(off);
         if (u >= SEGS[1].a + LEN * .8) countAwards();
         document.documentElement.classList.toggle('top-dark', u >= SEGS[3].a + LEN * .6);   // под головами-«домой» чёрный экран
         drawBar();
@@ -1066,7 +1328,8 @@
 
       build(); update();
       addEventListener('scroll', onScroll, {passive:true});
-      addEventListener('resize', function(){ sizeIntro(); build(); update(); });
+      addEventListener('resize', function(){ layout(); N = 0; build(); update(); });
+      addEventListener('load', function(){ layout(); update(); });
     })();
 
     // 3. «Кто мы»: клик по голове — голова крупно + экран со скроллом сайта и кнопкой
