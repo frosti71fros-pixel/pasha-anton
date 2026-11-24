@@ -1319,12 +1319,15 @@
         if (Math.random() < .35) s.obs.push({t:'award', x:W + 70, y:s.G - rnd(110, 150), r:12});
         s.gap = rnd(.75, 1.5) * (380 / s.speed) + .35;
       },
-      // герой целиком: туловище-капсула в цвете игрока, руки в рукавах, ноги в тёмных штанах, кеды; сверху — голова.
-      // позы: бег (ноги и руки в противофазе), прыжок (рука вверх, колени подтянуты), подкат (пригнулся)
+      // герой: 3D-голова на пиксельном 8-битном теле. Тело рисуется скелетом (бег / прыжок / подкат)
+      // в маленький холст 40×42, где 1 пиксель = 3 px поля: сначала контур, потом плоские цвета,
+      // затем жёсткий порог прозрачности — и холст растягивается без сглаживания, получаются крупные пиксели.
+      PX:3,
       hero: function(){
-        var s = this, k = who, X = s.X, y = s.y, duck = s.duck && !s.air, ph = s.dist / 30;
-        var top = COL[k], topB = mix(top, '#000000', .22), pants = s.night ? '#5a5a66' : '#2f2f37', pantsB = s.night ? '#474751' : '#1f1f25';
-        var skin = '#f1d2c6', hipX = X, hipY, lean, thF, shF, thB, shB, aF1, aF2, aB1, aB2;
+        var s = this, k = who, X = s.X, y = s.y, duck = s.duck && !s.air, ph = s.dist / 30, P = this.PX;
+        var top = COL[k], topD = mix(top, '#000000', .3), pants = s.night ? '#5a5a66' : '#34343d', pantsD = s.night ? '#45454f' : '#22222a';
+        var skin = '#f1d2c6', line = s.night ? '#e9e9e6' : INK;
+        var hipX = X, hipY, lean, thF, shF, thB, shB, aF1, aF2, aB1, aB2;
         if (duck) { hipX = X - 4; hipY = y - 12; lean = -.95; thF = 1.45; shF = 1.6; thB = 1.2; shB = .5; aF1 = 1.0; aF2 = 1.6; aB1 = -1.3; aB2 = -.7; }
         else if (s.air) { hipY = y - 34; lean = .12; thF = 1.15; shF = -.15; thB = -.35; shB = -1.35; aF1 = 1.35; aF2 = .7; aB1 = -1.55; aB2 = -1.0; }
         else {
@@ -1334,25 +1337,57 @@
           aF1 = -sn * .9; aF2 = aF1 + 1.3; aB1 = sn * .9; aB2 = aB1 + 1.3;
         }
         var shX = hipX + Math.sin(lean) * 27, shY = hipY - Math.cos(lean) * 27;
+        var OX = X - 60, OY = y - 114, PW = 40, PH = 42;
+        if (!s.pix) { s.pix = document.createElement('canvas'); s.pix.width = PW; s.pix.height = PH; s.pg = s.pix.getContext('2d', {willReadFrequently:true}); }
+        var g = s.pg;
+        g.setTransform(1, 0, 0, 1, 0, 0); g.clearRect(0, 0, PW, PH);
+        g.setTransform(1 / P, 0, 0, 1 / P, -OX / P, -OY / P);
+        function lmb(x, y0, a1, l1, a2, l2, w, c){
+          var kx = x + Math.sin(a1) * l1, ky = y0 + Math.cos(a1) * l1, ex = kx + Math.sin(a2) * l2, ey = ky + Math.cos(a2) * l2;
+          g.strokeStyle = c; g.lineWidth = w; g.lineCap = 'square'; g.lineJoin = 'miter';
+          g.beginPath(); g.moveTo(x, y0); g.lineTo(kx, ky); g.lineTo(ex, ey); g.stroke();
+          return {x:ex, y:ey};
+        }
+        // o — утолщение для контура; в проходе контура всё рисуется цветом линии
+        function body(o){
+          var c = function(col){ return o ? line : col; };
+          // шарф развевается за спиной
+          var fl = Math.sin(s.dist / 9) * .35;
+          lmb(shX - 4, shY + 2, -2.0 + fl, 11, -2.3 - fl, 9, 5 + o, c(COL[rival()]));
+          // дальние рука и нога — темнее
+          var hb = lmb(shX - 2, shY + 3, aB1, 13, aB2, 11, 7 + o, c(topD));
+          g.fillStyle = c(mix(skin, '#000000', .15)); g.fillRect(hb.x - 3 - o / 2, hb.y - 3 - o / 2, 6 + o, 6 + o);
+          var fb = lmb(hipX - 2, hipY, thB, 17, shB, 16, 9 + o, c(pantsD));
+          g.fillStyle = c('#d9d9de'); g.fillRect(fb.x - 4 - o / 2, fb.y - 3 - o / 2, 13 + o, 6 + o);
+          // туловище: прямоугольник, спина в тени
+          g.save(); g.translate(hipX, hipY); g.rotate(lean);
+          g.fillStyle = c(top); g.fillRect(-13 - o / 2, -33 - o / 2, 26 + o, 38 + o);
+          if (!o) { g.fillStyle = topD; g.fillRect(-13, -33, 7, 38); g.fillStyle = mix(top, '#ffffff', .45); g.fillRect(7, -30, 3, 14); }
+          g.restore();
+          // ближние нога и рука
+          var ff = lmb(hipX + 2, hipY, thF, 17, shF, 16, 9 + o, c(pants));
+          g.fillStyle = c('#fff'); g.fillRect(ff.x - 4 - o / 2, ff.y - 3 - o / 2, 13 + o, 6 + o);
+          if (!o) { g.fillStyle = COL[k]; g.fillRect(ff.x - 1, ff.y - 1, 6, 2); }   // полоска на кеде
+          var hf = lmb(shX + 2, shY + 3, aF1, 13, aF2, 11, 7 + o, c(top));
+          g.fillStyle = c(skin); g.fillRect(hf.x - 3 - o / 2, hf.y - 3 - o / 2, 6 + o, 6 + o);
+        }
+        body(2 * P); body(0);
+        // жёсткий порог прозрачности — без полупрозрачных краёв, чистые пиксели
+        var d = g.getImageData(0, 0, PW, PH), a = d.data;
+        for (var i = 3; i < a.length; i += 4) a[i] = a[i] > 110 ? 255 : 0;
+        g.putImageData(d, 0, 0);
+        // пиксельная буква на груди: P — Паша, A — Антон
+        if (!duck) {
+          var L = k === 'pasha' ? ['111', '101', '111', '100', '100'] : ['010', '101', '111', '101', '101'];
+          var cx = Math.round((hipX + Math.sin(lean) * 17 - OX) / P), cy = Math.round((hipY - Math.cos(lean) * 17 - OY) / P);
+          g.setTransform(1, 0, 0, 1, 0, 0); g.fillStyle = '#fff';
+          L.forEach(function(row, r){ for (var j = 0; j < 3; j++) if (row[j] === '1') g.fillRect(cx - 1 + j, cy - 3 + r, 1, 1); });
+        }
         ctx.save();
         if (s.sq) { ctx.translate(X, y); ctx.scale(1 + s.sq * .1, 1 - s.sq * .12); ctx.translate(-X, -y); }
-        function shoe(p){ ctx.fillStyle = INK; ctx.beginPath(); ctx.ellipse(p.x + 3, p.y + 1, 8, 4.5, 0, 0, 6.283); ctx.fill(); ctx.fillStyle = 'rgba(255,255,255,.5)'; ctx.fillRect(p.x - 3, p.y + 3.5, 13, 1.5); }
-        // дальние рука и нога — темнее
-        var handB = limb(shX - 2, shY + 2, aB1, 13, aB2, 12, 8, topB); ball(handB.x, handB.y, 4.5, mix(skin, '#000000', .12));
-        shoe(limb(hipX - 2, hipY, thB, 17, shB, 17, 10, pantsB));
-        // туловище: капсула с фарфоровым градиентом
-        ctx.save(); ctx.translate(hipX, hipY); ctx.rotate(lean);
-        var g = ctx.createRadialGradient(-6, -26, 2, 0, -14, 28);
-        g.addColorStop(0, mix(top, '#ffffff', .55)); g.addColorStop(.45, top); g.addColorStop(1, mix(top, '#000000', .3));
-        ctx.fillStyle = g; rrect(-13, -33, 26, 38, 12); ctx.fill();
-        ctx.fillStyle = 'rgba(255,255,255,.45)'; rrect(-9, -29, 5, 18, 2.5); ctx.fill();
+        ctx.imageSmoothingEnabled = false; ctx.drawImage(s.pix, OX, OY, PW * P, PH * P);
         ctx.restore();
-        // ближние нога и рука
-        shoe(limb(hipX + 2, hipY, thF, 17, shF, 17, 10, pants));
-        var hand = limb(shX + 2, shY + 2, aF1, 13, aF2, 12, 8, top);
-        ball(hand.x, hand.y, 4.5, skin);
-        ctx.restore();
-        // голова: смотрит вперёд по бегу
+        // голова: живая 3D, смотрит вперёд по бегу
         var hx = hipX + Math.sin(lean) * 50, hy = hipY - Math.cos(lean) * 50, tilt = s.air ? -.2 : lean * .5 + Math.sin(ph * 2) * .04;
         head(k, hx, hy, 56, tilt, NATIVE[k]);
       },
@@ -1756,10 +1791,11 @@
       text(t1.toUpperCase(), 0, 0, '400 66px ' + DISPLAY, '#fff');
       ctx.restore();
       if (over) {
-        var who2 = rival(), pre = NAME[who2] + '_: ', body = game.line.toUpperCase(), ty = y + 136;
+        // реплика соперника: вместо имени — его голова, повёрнута к тексту
+        var who2 = rival(), body = game.line.toUpperCase(), ty = y + 136;
         var n = reduce ? body.length : clamp(Math.floor((stateT - .35) * 34), 0, body.length);
-        text(pre, x + 18, ty, '500 14px ' + MONO, COL[who2], 'left');
-        var px = x + 18 + ctx.measureText(pre).width;
+        head(who2, x + 34, ty - 2, 36, Math.sin(stateT * 6) * .08, NATIVE[who2]);
+        var px = x + 60;
         text(body.slice(0, n), px, ty, '500 14px ' + MONO, '#fff', 'left');
         if (n < body.length || Math.floor(stateT * 2.5) % 2 === 0) { ctx.fillStyle = COL[who2]; ctx.fillRect(px + ctx.measureText(body.slice(0, n)).width + 3, ty - 8, 8, 16); }
         var my = y + 172, bx = x + 96, bw = w - 192, k = clamp(score / Math.max(1, best0, score), 0, 1) * ease(clamp((stateT - .4) / .9, 0, 1));
