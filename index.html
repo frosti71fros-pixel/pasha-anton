@@ -309,7 +309,7 @@
   .menu-foot a:hover{color:#fff}
 
   /* игровой автомат: кнопка рядом с бургером в том же стиле */
-  .arcade-btn{position:fixed;left:84px;top:20px;z-index:70;width:52px;height:52px;display:grid;place-items:center;background:#fff;color:#000;border:3px solid #000;padding:0}
+  .arcade-btn{position:fixed;left:20px;bottom:20px;z-index:70;width:52px;height:52px;display:grid;place-items:center;background:#fff;color:#000;border:3px solid #000;padding:0}
   .arcade-btn svg{display:block;width:28px;height:28px}
   .arcade-btn:hover{background:#000;color:#fff;border-color:#fff;outline:2px solid #000}
   .arcade-btn .ic-x{display:none}
@@ -409,6 +409,20 @@
   html{scrollbar-width:none;-ms-overflow-style:none}
   html::-webkit-scrollbar{display:none;width:0;height:0}
 
+  /* две головы справа сверху — ссылка на первый экран; при скролле крутятся,
+     на тёмных экранах (и в меню / автомате) от голов остаются только горящие красные глаза */
+  .home{position:fixed;right:34px;top:14px;z-index:70;display:flex;align-items:center;height:64px}
+  .hm-h{position:relative;display:block;height:64px;will-change:transform}
+  .hm-h + .hm-h{margin-left:-6px}
+  .hm-h img{display:block;height:100%;width:auto;transition:filter .35s ease, opacity .35s ease, transform .25s cubic-bezier(.2,.8,.2,1)}
+  .home:hover .hm-h img{transform:scale(1.12)}
+  .hm-h i{position:absolute;aspect-ratio:1;border-radius:50%;transform:translate(-50%,-50%);background:radial-gradient(circle,#fff 0 14%,#ff3b2b 38%,rgba(255,30,30,.55) 52%,rgba(255,30,30,0) 72%);opacity:0;transition:opacity .35s ease;pointer-events:none}
+  html.top-dark .hm-h img,html:has(#burger[aria-expanded="true"]) .hm-h img,html:has(#arcadeBtn[aria-expanded="true"]) .hm-h img{filter:brightness(0);opacity:0}
+  html.top-dark .hm-h i,html:has(#burger[aria-expanded="true"]) .hm-h i,html:has(#arcadeBtn[aria-expanded="true"]) .hm-h i{opacity:1;animation:eyeglow 2.4s ease-in-out infinite}
+  @keyframes eyeglow{0%,100%{filter:brightness(1)}50%{filter:brightness(1.35) drop-shadow(0 0 3px #ff2b2b)}92%{opacity:1}95%{opacity:.15}98%{opacity:1}}
+  @media (hover:none){.home{right:16px}}
+  footer{padding-left:max(var(--pad), 88px) !important}   /* место под кнопку автомата слева внизу */
+
   footer{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px 24px;padding:18px var(--pad);border-top:1px solid var(--line);color:var(--muted)}
 </style>
 </head>
@@ -421,6 +435,10 @@
   <svg class="ic-cab" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 21v-3.5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2V21z"/><path d="M12 15.5V9" stroke-width="2.4"/><circle cx="12" cy="6" r="3.6" fill="currentColor" stroke="none"/><rect x="15.5" y="12.6" width="3.6" height="2.9" fill="currentColor" stroke="none"/></svg>
   <svg class="ic-x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
 </button>
+<a class="home" id="home" href="#hero" aria-label="На первый экран">
+  <span class="hm-h"><img src="img/head-pasha.png" alt=""><i style="left:15%;top:56%;width:17%"></i><i style="left:43%;top:56%;width:17%"></i></span>
+  <span class="hm-h"><img src="img/head-anton.png" alt=""><i style="left:51.5%;top:58%;width:14%"></i><i style="left:82%;top:58.5%;width:14%"></i></span>
+</a>
 <section class="arcade" id="arcade" aria-label="Мини-игры" hidden>
   <div class="ar-side">
     <span class="mono ar-k">[ <b>ARCADE_</b> мини-игры ]</span>
@@ -924,6 +942,8 @@
         window.goScreen = function(i){ [hero, s2, s3, s4, s5][i].scrollIntoView({behavior: 'smooth'}); };
         s2.classList.add('on');
         new IntersectionObserver(function(es){ if (es[0].isIntersecting) countAwards(); }).observe(s3);
+        var topDark = function(){ var r = s5.getBoundingClientRect(); document.documentElement.classList.toggle('top-dark', r.top < 46 && r.bottom > 46); };
+        addEventListener('scroll', topDark, {passive:true}); topDark();
         return;
       }
       document.getElementById('awardsNum').textContent = '0';
@@ -999,6 +1019,7 @@
           });
         });
         if (u >= SEGS[1].a + LEN * .8) countAwards();
+        document.documentElement.classList.toggle('top-dark', u >= SEGS[3].a + LEN * .6);   // под головами-«домой» чёрный экран
         drawBar();
       }
       function onScroll(){ if (!ticking) { ticking = true; requestAnimationFrame(update); } }
@@ -1973,6 +1994,33 @@
     btn.addEventListener('click', function(){ setArcade(!isOpen); btn.blur(); });
     burger.addEventListener('click', function(){ if (isOpen) setArcade(false); }, true);
     select(0);
+  })();
+</script>
+<script>
+  // головы-«домой»: клик — на первый экран (закрыв меню / автомат); при скролле головы крутятся навстречу друг другу,
+  // скорость скролла добавляет подпрыгивание
+  (function(){
+    var home = document.getElementById('home'), hs = home.querySelectorAll('.hm-h');
+    var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    home.addEventListener('click', function(e){
+      e.preventDefault();
+      var b = document.getElementById('burger'), a = document.getElementById('arcadeBtn');
+      if (a.getAttribute('aria-expanded') === 'true') a.click();
+      if (b.getAttribute('aria-expanded') === 'true') b.click();
+      if (window.goScreen) goScreen(0); else scrollTo({top:0, behavior:'smooth'});
+    });
+    if (reduce) return;
+    var ang = 0, vel = 0, last = scrollY, raf = 0;
+    function tick(){
+      var target = scrollY / innerHeight * 180;   // пол-оборота на каждый экран прокрутки
+      var d = target - ang; vel = vel * .82 + d * .045; ang += vel;
+      var jump = Math.min(14, Math.abs(scrollY - last) * .25); last = scrollY;
+      hs[0].style.transform = 'translateY(' + (-jump).toFixed(1) + 'px) rotate(' + ang.toFixed(2) + 'deg)';
+      hs[1].style.transform = 'translateY(' + (-jump * .7).toFixed(1) + 'px) rotate(' + (-ang).toFixed(2) + 'deg)';
+      raf = (Math.abs(d) > .05 || Math.abs(vel) > .05 || jump > .1) ? requestAnimationFrame(tick) : 0;
+    }
+    addEventListener('scroll', function(){ if (!raf) raf = requestAnimationFrame(tick); }, {passive:true});
+    raf = requestAnimationFrame(tick);
   })();
 </script>
 </body>
