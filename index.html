@@ -83,7 +83,7 @@
   .lk.on{opacity:1}
 
   /* реплика в стиле «system log»: чёрная карточка, моно, метки-квадратики по углам, фраза цельная */
-  .bubble{position:absolute;z-index:6;width:max-content;min-width:260px;max-width:min(440px, calc((100vw - var(--S)) / 2 - 80px));padding:14px 18px 14px;background:#0b0b0c;color:#fff;pointer-events:none;opacity:0;transition:opacity .15s ease}
+  .bubble{position:absolute;z-index:6;width:max-content;min-width:min(260px, calc((100vw - var(--S)) / 2 - 76px));max-width:min(440px, calc((100vw - var(--S)) / 2 - 76px));padding:14px 18px 14px;background:#0b0b0c;color:#fff;pointer-events:none;opacity:0;transition:opacity .15s ease}
   /* метки по углам с контрастным контуром — видны и на белом, и на тёмном фоне */
   .bubble::before,.bubble::after{content:"";position:absolute;top:-4px;width:8px;height:8px;background:#fff;box-shadow:0 0 0 1.5px #000}
   .bubble::before{left:-4px}.bubble::after{right:-4px}
@@ -1119,6 +1119,10 @@
       bubble.classList.remove('typed');
       el.innerHTML = '<span class="tw-size"></span><span class="tw-out"><span class="tx"></span></span>';
       el.firstChild.appendChild(document.createTextNode(text));
+      // длинное слово («вордовский») не влезает в карточку на ноутбуке — уменьшаем шрифт, пока не влезет
+      el.style.fontSize = '';
+      var fs = parseFloat(getComputedStyle(el).fontSize);
+      while (el.scrollWidth > el.clientWidth + 1 && fs > 11) { fs -= 1; el.style.fontSize = fs + 'px'; }
       var tx = el.querySelector('.tx'), i = 0;
       if (reduce) { tx.textContent = text; bubble.classList.add('typed'); if (done) done(); return; }
       function step(){
