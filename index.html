@@ -379,7 +379,7 @@
   .aw .s3-num em{font-style:normal;font-size:13px;font-weight:700;letter-spacing:.08em;color:#0b0b0c;line-height:1}
   .aw .s3-num small{font:700 13px/1.45 var(--mono);letter-spacing:.06em;color:#0b0b0c;text-transform:uppercase}
   /* надзаголовок одной строкой и «21 AWARDS» — одним размером, очень крупно */
-  .aw-over{margin:0 0 1svh;font-size:14px;font-weight:700;letter-spacing:.08em;color:#0b0b0c;text-transform:uppercase}
+  .aw-over{margin:0 0 3svh;font-size:14px;font-weight:700;letter-spacing:.08em;color:#0b0b0c;text-transform:uppercase}
   .aw-over b{color:#ff6a13}
   .aw-big{margin:0;font-family:var(--display);font-weight:400;text-transform:uppercase;font-size:min(24svh,15vw);line-height:.82;white-space:nowrap;color:#0b0b0c}
   .aw.on-pasha .aw-over,.aw.on-anton .aw-over,.aw.on-pasha .aw-over b,.aw.on-anton .aw-over b{color:#0b0b0c}
@@ -393,6 +393,7 @@
   .aw .s4-col[data-who="pasha"]{padding:1svh clamp(12px,2vw,32px) 3svh clamp(24px,3.5vw,56px)}
   .aw .s4-info{padding-top:3svh}
   .aw .s4-col > *{grid-row:auto}
+  .aw .s4-col{overflow:visible}   /* голова при наведении увеличивается — не обрезаем */
   .aw .s4-col + .s4-col{border-left:0}
   .aw .s4-col[data-who="pasha"]{flex-direction:row-reverse}
   .aw .s4-col[data-who="pasha"] .s4-info{align-items:flex-end;text-align:right}
@@ -445,8 +446,17 @@
   .pl-bar b{position:absolute;left:0;top:0;bottom:0;width:0;background:#0b0b0c;transition:width .35s ease}
   @media (max-width:800px){.pl-h{width:46vw}}
   .aw{transition:background-color .35s ease}
-  .aw.on-pasha{background-color:#ff6a13}
-  .aw.on-anton{background-color:#ff2b2b}
+  .aw-sq{position:absolute;inset:0;z-index:0;display:grid;pointer-events:none}
+  .aw-sq i{display:block;background:var(--sqc,#ff6a13);transform:scale(0);transition:transform .32s cubic-bezier(.2,.8,.2,1);transition-delay:var(--d,0s)}
+  .aw.on-pasha .aw-sq i,.aw.on-anton .aw-sq i{transform:scale(1.04)}
+  .aw::before{z-index:1}
+  .aw-fit{z-index:2}
+  /* наведение: голова и имя влетают из расфокуса с зумом, как заголовки первого экрана и карточки слайдера */
+  @keyframes awhead{0%{filter:blur(14px);transform:scale(1.35,1.15)}60%{filter:blur(2px)}100%{filter:none;transform:scale(1.1) rotate(-2deg)}}
+  @keyframes awname{0%{filter:blur(16px);transform:scale(1.3,1.12);opacity:.4}60%{filter:blur(3px)}100%{filter:none;transform:none;opacity:1}}
+  .aw.on-pasha .s4-col[data-who="pasha"] .s4-head img,.aw.on-anton .s4-col[data-who="anton"] .s4-head img{animation:awhead .5s cubic-bezier(.2,.8,.2,1)}
+  .aw.on-pasha .s4-col[data-who="pasha"] .s4-name,.aw.on-anton .s4-col[data-who="anton"] .s4-name{animation:awname .5s cubic-bezier(.2,.8,.2,1)}
+  .aw.on-pasha .s4-col[data-who="pasha"] .s4-aw b,.aw.on-anton .s4-col[data-who="anton"] .s4-aw b{animation:awname .55s cubic-bezier(.2,.8,.2,1) .05s backwards}
   .aw.on-pasha .s4-aw b,.aw.on-anton .s4-aw b,.aw.on-pasha .s4-k b,.aw.on-anton .s4-k b,.aw.on-pasha .s3-k b,.aw.on-anton .s3-k b{color:#0b0b0c}
   .aw.on-pasha .s3-num small,.aw.on-anton .s3-num small,.aw.on-pasha .s4-k,.aw.on-anton .s4-k,.aw.on-pasha .s3-k,.aw.on-anton .s3-k{color:#0b0b0c}
   .aw.on-pasha .s4-col[data-who="pasha"] .s4-head img,.aw.on-anton .s4-col[data-who="anton"] .s4-head img{transform:scale(1.1) rotate(-2deg)}
@@ -848,7 +858,7 @@
   <section class="scr s3 aw" id="s3" aria-label="Награды">
     <div class="aw-fit">
     <div class="aw-top">
-      <p class="aw-over mono s3-k">[ <b>AWARDS_</b> ] фестивальная награда на&nbsp;двоих и&nbsp;ещё 12&nbsp;шорт-листов</p>
+      <p class="aw-over mono s3-k">фестивальная награда на&nbsp;двоих и&nbsp;ещё 12&nbsp;шорт-листов</p>
       <h2 class="aw-big"><span id="awardsNum">21</span> Awards</h2>
       <ul class="s3-fests mono"><li>Silver Mercury</li><li>Red Apple</li><li>Marspo Awards</li><li>Нейротренд</li><li>Sreda</li><li>Dprofile Award</li><li>White Square</li></ul>
     </div>
@@ -860,7 +870,7 @@
           <span class="mono s4-k s4-role">[ <b>CREATIVE_</b> ]</span>
           <h2 class="s4-name">Pasha</h2>
           <div class="s4-aw"><b>15</b><span>медалей<br>фестивалей</span></div>
-          <button class="s4-more" type="button" data-who="pasha">Подробнее о&nbsp;Паше <i>→</i></button>
+          <button class="s4-more" type="button" data-who="pasha">Подробнее о&nbsp;Паше</button>
         </div>
       </div>
       <div class="s4-col" data-who="anton" style="--c:#ff2b2b">
@@ -869,7 +879,7 @@
           <span class="mono s4-k s4-role">[ <b>ART DIRECTOR_</b> ]</span>
           <h2 class="s4-name">Anton</h2>
           <div class="s4-aw"><b>6</b><span>наград<br>и 3 шорт-листа</span></div>
-          <button class="s4-more" type="button" data-who="anton">Подробнее об&nbsp;Антоне <i>→</i></button>
+          <button class="s4-more" type="button" data-who="anton">Подробнее об&nbsp;Антоне</button>
         </div>
       </div>
     </div>
@@ -1732,11 +1742,26 @@
     // кнопка «Подробнее о …» — профиль героя: крупная голова, описание с его сайта, ссылки
     (function(){
       var s3 = document.getElementById('s3'), s4 = document.getElementById('s4'); if (!s4) return;
+      // фон в цвет героя проявляется квадратиками в случайном порядке (и так же исчезает)
+      var sq = document.createElement('div'); sq.className = 'aw-sq'; sq.setAttribute('aria-hidden', 'true');
+      s3.insertBefore(sq, s3.firstChild);
+      function buildSq(){
+        var S = innerWidth < 800 ? 48 : 72, cols = Math.ceil(s3.clientWidth / S) || 20, rows = Math.ceil(s3.clientHeight / S) || 12;
+        sq.style.gridTemplateColumns = 'repeat(' + cols + ',1fr)'; sq.style.gridTemplateRows = 'repeat(' + rows + ',1fr)';
+        sq.innerHTML = new Array(cols * rows + 1).join('<i></i>');
+      }
+      buildSq(); addEventListener('resize', buildSq);
+      function shuffleDelays(){ [].forEach.call(sq.children, function(c){ c.style.setProperty('--d', (Math.random() * .35).toFixed(3) + 's'); }); }
+      var COLS = {pasha: '#ff6a13', anton: '#ff2b2b'};
       s4.querySelectorAll('.s4-col').forEach(function(col){
         var who = col.dataset.who;
         col.querySelectorAll('.s4-head, .s4-more').forEach(function(el){
-          el.addEventListener('mouseenter', function(){ if (matchMedia('(hover:hover)').matches) s3.classList.add('on-' + who); });
-          el.addEventListener('mouseleave', function(){ s3.classList.remove('on-' + who); });
+          el.addEventListener('mouseenter', function(){
+            if (!matchMedia('(hover:hover)').matches) return;
+            shuffleDelays(); sq.style.setProperty('--sqc', COLS[who]);
+            s3.classList.remove('on-pasha', 'on-anton'); s3.classList.add('on-' + who);
+          });
+          el.addEventListener('mouseleave', function(){ shuffleDelays(); s3.classList.remove('on-' + who); });
         });
       });
       var TGI = '<svg class="tg-ic" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M21.9 4.3 18.7 19.4c-.2 1-.9 1.3-1.7.8l-4.8-3.6-2.3 2.2c-.3.3-.5.5-1 .5l.3-4.9 8.9-8c.4-.3-.1-.5-.6-.2L6.5 13.1 1.8 11.6c-1-.3-1-1 .2-1.5L20.5 3c.9-.3 1.6.2 1.4 1.3z"/></svg>';
