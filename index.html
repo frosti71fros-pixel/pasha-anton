@@ -327,10 +327,15 @@
   .ar-list button:hover{opacity:1;transform:translateX(16px)}
   .ar-list button[aria-pressed="true"]{opacity:1;color:var(--c)}
   .ar-list button[aria-pressed="true"] .d{display:block}
-  .ar-who{display:flex;flex-wrap:wrap;align-items:center;gap:10px;font-size:12px;letter-spacing:.08em;color:#8a8a90}
-  .ar-who button{padding:8px 12px;border:1.5px solid #fff;background:none;color:#fff;font:inherit;letter-spacing:inherit;text-transform:inherit}
-  .ar-who button b{color:var(--c);font-weight:500}
-  .ar-who button[aria-pressed="true"]{background:#fff;color:#000}
+  /* выбор головы: крупные кнопки с головой, выбранная — в цвете персонажа */
+  .ar-who{display:flex;flex-wrap:wrap;align-items:center;gap:12px}
+  .ar-who-k{width:100%;font-size:13px;letter-spacing:.08em;color:#fff}
+  .ar-who button{display:inline-flex;align-items:center;gap:10px;padding:6px 18px 6px 8px;border:3px solid #fff;background:none;color:#fff;font:600 16px/1 var(--mono);letter-spacing:.06em;opacity:.55;transition:opacity .2s,background .2s,color .2s,border-color .2s}
+  .ar-who button img{width:auto;height:40px;transition:transform .3s cubic-bezier(.2,.8,.2,1)}
+  .ar-who button:hover{opacity:1}
+  .ar-who button:hover img{transform:scale(1.12) rotate(-4deg)}
+  .ar-who button[aria-pressed="true"]{opacity:1;background:var(--c);border-color:var(--c);color:#000}
+  .ar-who button[aria-pressed="true"] img{transform:scale(1.15)}
   .ar-keys{font-size:11px;letter-spacing:.06em;color:#8a8a90;line-height:1.7}
   .ar-stage{justify-self:center;display:flex;flex-direction:column;gap:12px;min-width:0;width:min(100%, calc((82svh - 56px) * 4 / 3))}
   .ar-bar{display:flex;justify-content:space-between;gap:16px;font-size:12px;letter-spacing:.08em;color:#8a8a90}
@@ -388,11 +393,11 @@
 <section class="arcade" id="arcade" aria-label="Мини-игры" hidden>
   <div class="ar-side">
     <span class="mono ar-k">[ <b>ARCADE_</b> мини-игры ]</span>
-    <ol class="ar-list" id="arList"></ol>
-    <div class="ar-who mono">Играю за
-      <button type="button" data-who="pasha" aria-pressed="true" style="--c:#ff6a13">[ <b>PASHA_</b> ]</button>
-      <button type="button" data-who="anton" aria-pressed="false" style="--c:#ff2b2b">[ <b>ANTON_</b> ]</button>
+    <div class="ar-who mono"><span class="ar-who-k">Играю за</span>
+      <button type="button" data-who="pasha" aria-pressed="true" style="--c:#ff6a13"><img src="img/head-pasha.png" alt="">PASHA_</button>
+      <button type="button" data-who="anton" aria-pressed="false" style="--c:#ff2b2b"><img src="img/head-anton.png" alt="">ANTON_</button>
     </div>
+    <ol class="ar-list" id="arList"></ol>
     <p class="mono ar-keys" id="arKeys"></p>
   </div>
   <div class="ar-stage">
