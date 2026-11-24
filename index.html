@@ -65,6 +65,11 @@
     background-image:radial-gradient(circle, #fff 1.1px, transparent 1.6px);background-size:16px 16px}
   .bg-pasha::after{background-position:calc(50vw - 8px) 0}
   .bg-anton::after{background-position:-8px 0}
+  /* экран 2: при наведении на карточку — на фоне быстрое слайд-шоу из картинок этого кейса под сеткой точек */
+  .s2-bg{left:0;right:0;width:100%}
+  .s2.bg-on .s2-bg{opacity:1}
+  .s2-title{transition:color .3s}
+  .s2.bg-on .s2-title{color:#fff;mix-blend-mode:difference}
 
   /* реплики голов в стиле видеотрекинга: рамка вокруг головы → линия-выноска → инфо-панель */
   .trk{position:absolute;left:7%;right:7%;top:6%;bottom:3%;border:1.5px solid var(--c);opacity:0;transition:opacity .2s ease, transform .6s cubic-bezier(.2,.8,.2,1);pointer-events:none}
@@ -617,6 +622,7 @@
 
   <section class="s2" id="s2" aria-label="Кейсы">
     <div class="s2-in">
+      <div class="bg s2-bg" aria-hidden="true"><div class="slides"></div></div>
       <div class="s2-head">
         <h2 class="s2-title">All cases</h2>
         <div class="s2-tabs" role="tablist" aria-label="Чьи кейсы">
@@ -831,13 +837,47 @@
         cards = [].slice.call(wheel.querySelectorAll('.wc'));
         cards.forEach(function(c, i){
           c._lift = 0;
-          c.addEventListener('mouseenter', function(){ hover = i; });
-          c.addEventListener('mouseleave', function(){ if (hover === i) hover = -1; });
+          c.addEventListener('mouseenter', function(){ hover = i; if (c.dataset.i) bgShow(WORKS.L[cur][+c.dataset.i]); });
+          c.addEventListener('mouseleave', function(){ if (hover === i) hover = -1; bgHide(); });
         });
         hover = -1;
         idx = focus != null ? focus : (expanded || isMob() ? 0 : (cards.length - 1) / 2);
         if (!keep) pos = idx;
         layout(0);
+      }
+      // фон при наведении: картинки именно этого кейса (из его «портянки»), в случайном порядке, жёсткие склейки как на первом экране
+      var bgBox = s2el.querySelector('.s2-bg .slides'), bgTimer = 0, bgOff = 0, bgKey = null;
+      function caseImgs(it){
+        if (it._imgs) return it._imgs;
+        var tmp = document.createElement('div'); tmp.innerHTML = blocksHTML(it);
+        var list = [it.cover].concat([].map.call(tmp.querySelectorAll('img'), function(im){ return im.getAttribute('src'); }));
+        list = list.filter(function(s, i){ return s && list.indexOf(s) === i; });
+        for (var i = list.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)), x = list[i]; list[i] = list[j]; list[j] = x; }
+        return (it._imgs = list.slice(0, 14));
+      }
+      function bgShow(it){
+        clearTimeout(bgOff);
+        if (reduce || isMob()) return;
+        var key = (it.p || '') + '|' + (it.a || '');
+        if (key !== bgKey) {
+          bgKey = key; clearInterval(bgTimer); bgBox.innerHTML = '';
+          var srcs = caseImgs(it), ready = [], n = 0;
+          srcs.forEach(function(src, i){
+            var im = new Image(); im.className = 'slide'; im.alt = '';
+            im.onload = function(){ if (bgKey !== key) return; bgBox.appendChild(im); ready.push(im); if (ready.length === 1) im.classList.add('on'); };
+            im.src = src;
+          });
+          bgTimer = setInterval(function(){
+            if (ready.length < 2) return;
+            var prev = ready[n % ready.length]; n = (n + 1 + Math.floor(Math.random() * (ready.length - 1))) % ready.length;
+            prev.classList.remove('on'); ready[n].classList.add('on');
+          }, 180);
+        }
+        s2el.classList.add('bg-on');
+      }
+      function bgHide(){
+        clearTimeout(bgOff);
+        bgOff = setTimeout(function(){ s2el.classList.remove('bg-on'); clearInterval(bgTimer); bgKey = null; }, 160);
       }
       function render(tab){
         cur = tab; shown = PAGE; expanded = false;
