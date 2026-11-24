@@ -180,7 +180,7 @@
   .wc:hover .wc-cover{animation:coverwhoosh .55s cubic-bezier(.2,.8,.2,1)}
   @keyframes coverwhoosh{0%{filter:blur(16px);transform:scale(1.35,1.15)}60%{filter:blur(3px)}100%{filter:none;transform:scale(1.06)}}
   @media (prefers-reduced-motion:reduce){.wc:hover .wc-cover{animation:none}}
-  .wc{--w:min(34vw,56svh);position:absolute;left:50%;top:0;width:var(--w);height:calc(var(--w) * .7);margin-left:calc(var(--w) / -2);padding:0;border:0;overflow:hidden;background:#111;color:#fff;text-align:left;font:inherit;border-radius:16px;box-shadow:0 30px 60px -30px rgba(0,0,0,.45);transform-origin:50% 50%;will-change:transform}
+  .wc{--w:min(27vw,46svh);position:absolute;left:50%;top:0;width:var(--w);height:calc(var(--w) * .7);margin-left:calc(var(--w) / -2);padding:0;border:0;overflow:hidden;background:#111;color:#fff;text-align:left;font:inherit;border-radius:16px;box-shadow:0 30px 60px -30px rgba(0,0,0,.45);transform-origin:50% 50%;will-change:transform}
   .wc-cover{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .5s cubic-bezier(.2,.8,.2,1)}
   .wc::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.2),transparent 30%,transparent 50%,rgba(0,0,0,.6));pointer-events:none}
   .wc-num{position:absolute;right:14px;top:8px;z-index:1;font-family:var(--display);font-size:calc(var(--w) * .15);line-height:1;color:#fff}
@@ -191,23 +191,21 @@
   .wc-hd img + img{margin-left:calc(var(--w) * -.03)}
   .wc-t b{padding:5px 8px;background:var(--c);color:#000;font:700 clamp(13px,1.25vw,19px)/1 var(--body);text-transform:uppercase}
   .wc-meta i{font-style:normal;font-size:10px;letter-spacing:.06em;text-transform:uppercase;padding:3px 6px;background:#0b0b0c;color:#fff}
-  .wc-open{position:absolute;right:14px;bottom:12px;z-index:1;padding:6px 10px;background:#fff;color:#000;border:2px solid #000;font-size:11px;letter-spacing:.06em;opacity:0;transform:translateY(6px);transition:opacity .2s,transform .2s}
   .wc:hover .wc-cover{transform:scale(1.06)}
-  .wc:hover .wc-open{opacity:1;transform:none}
   .wc:hover .wc-hd img{animation:popnod .5s ease}
+  /* «Show more» — такая же карточка в колесе: чёрная, огромная надпись */
+  .wc-more{display:flex;flex-direction:column;justify-content:center;align-items:center;gap:12px;background:#0b0b0c;color:#fff}
+  .wc-more::after{display:none}
+  .wc-more-t{font-family:var(--display);text-transform:uppercase;font-size:calc(var(--w) * .2);line-height:.82;text-align:center;transition:transform .4s cubic-bezier(.2,.8,.2,1)}
+  .wc-more-n{padding:4px 8px;background:#ff6a13;color:#000;font-size:12px;letter-spacing:.08em;text-transform:uppercase}
+  .wc-more:hover .wc-more-t{animation:coverwhoosh .55s cubic-bezier(.2,.8,.2,1)}
   .wc:hover{box-shadow:0 0 0 4px #fff,0 0 0 7px #000,0 40px 70px -30px rgba(0,0,0,.55)}
-  .s2-nav{position:absolute;left:0;right:0;bottom:3.5svh;z-index:3;display:flex;justify-content:center;align-items:center;gap:14px;font-size:12px;letter-spacing:.08em;color:#6d6d72;text-transform:uppercase}
-  .s2-nav button{width:40px;height:40px;display:grid;place-items:center;padding:0;background:#fff;color:#000;border:3px solid #000;font:600 18px/1 var(--mono)}
-  .s2-nav button:hover{background:#000;color:#fff}
-  .s2-nav button:disabled{opacity:.3;pointer-events:none}
-  .s2-nav b{color:#000;font-weight:600}
   @media (max-width:800px){
     .s2-head{top:11svh}
     .wc{--w:80vw}
     .s2-tab{font-size:12px;padding:5px 12px 5px 6px}
     .tb-h img{height:26px}
-    .s2-nav .s2-hint{display:none}
-  }
+    }
 
   /* кейс: «портянка» во всю высоту, но не на весь экран; по бокам головы комментируют */
   .cv{position:fixed;inset:0;z-index:80;display:flex;justify-content:center;align-items:center;opacity:0;transition:opacity .25s ease}
@@ -628,7 +626,6 @@
         </div>
       </div>
       <div class="wheel" id="wheel"></div>
-      <div class="s2-nav mono"><button type="button" class="s2-prev" aria-label="Предыдущий кейс">←</button><span><b class="s2-i">01</b> / <span class="s2-n">04</span></span><button type="button" class="s2-next" aria-label="Следующий кейс">→</button><span class="s2-hint">скролл — листать</span></div>
     </div>
   </section>
  <div class="strips" id="strips" aria-hidden="true"></div>
@@ -807,27 +804,21 @@
     (function(){
       var s2el = document.getElementById('s2'), wheel = document.getElementById('wheel');
       var tabs = [].slice.call(s2el.querySelectorAll('.s2-tab'));
-      var nav = s2el.querySelector('.s2-nav'), navI = nav.querySelector('.s2-i'), navN = nav.querySelector('.s2-n');
-      var prevB = nav.querySelector('.s2-prev'), nextB = nav.querySelector('.s2-next');
       var HEAD = {pasha:'<img src="img/head-pasha.png" alt="">', anton:'<img src="img/head-anton.png" alt="">'};
       function esc(s){ return String(s == null ? '' : s).replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
       function pad2(n){ return (n < 10 ? '0' : '') + n; }
       tabs.forEach(function(t){ t.querySelector('.tb-n').textContent = WORKS.L[t.dataset.tab].length; });
-      var cur = 'both', cards = [], idx = 0, pos = 0, rot = 0, target = 0, hover = -1;
-      // колесо: карточка idx — по центру, остальные веером по дуге; pos плавно догоняет idx
-      function syncNav(){
-        navI.textContent = pad2(idx + 1); navN.textContent = pad2(cards.length);
-        prevB.disabled = idx <= 0; nextB.disabled = idx >= cards.length - 1;
-      }
-      function go(i){ idx = Math.max(0, Math.min(cards.length - 1, i)); syncNav(); }
+      // сначала 4 кейса веером + большая карточка «Show more»; скролл в это время листает сайт дальше.
+      // После «Show more» колесо раскрывается: скролл поворачивает его по одной карточке, в конце — дальше по сайту
+      var PAGE = 4, cur = 'both', shown = PAGE, expanded = false, cards = [], idx = 0, pos = 0, rot = 0, target = 0, hover = -1;
+      function isMob(){ return (s2el.clientWidth || innerWidth) <= 800; }
+      function go(i){ idx = Math.max(0, Math.min(cards.length - 1, i)); }
       window.s2Wheel = {
-        step: function(d){ var n = idx + d; if (n < 0 || n >= cards.length) return false; go(n); return true; },
-        reset: function(){ go(0); pos = 0; layout(0); }
+        step: function(d){ if (!expanded && !isMob()) return false; var n = idx + d; if (n < 0 || n >= cards.length) return false; go(n); return true; }
       };
-      function render(tab){
-        cur = tab;
-        tabs.forEach(function(t){ t.setAttribute('aria-selected', t.dataset.tab === tab); });
-        wheel.innerHTML = WORKS.L[tab].map(function(it, i){
+      function build(focus, keep){
+        var list = WORKS.L[cur], rest = list.length - shown;
+        wheel.innerHTML = list.slice(0, shown).map(function(it, i){
           var who = it.shared ? 'both' : it.p ? 'pasha' : 'anton';
           var c = who === 'both' ? '#fff' : who === 'pasha' ? '#ff6a13' : '#ff2b2b';
           // имя героя на карточке не пишем — вместо него голова (у общего кейса две)
@@ -835,33 +826,45 @@
           return '<button class="wc" type="button" data-i="' + i + '" style="--c:' + c + '" aria-label="' + esc(it.title) + '">' +
             '<img class="wc-cover" src="' + esc(it.cover) + '" alt="" loading="lazy">' +
             '<span class="wc-num">' + pad2(i + 1) + '</span>' +
-            '<span class="wc-meta mono"><span class="wc-t"><span class="wc-hd">' + heads + '</span><b>' + esc(it.title) + '</b></span><i>' + esc(it.meta) + '</i></span>' +
-            '<span class="wc-open mono">Смотреть ↗</span></button>';
-        }).join('');
+            '<span class="wc-meta mono"><span class="wc-t"><span class="wc-hd">' + heads + '</span><b>' + esc(it.title) + '</b></span><i>' + esc(it.meta) + '</i></span></button>';
+        }).join('') + (rest > 0 ? '<button class="wc wc-more" type="button" data-more="1" aria-label="Показать ещё кейсы"><span class="wc-more-t">Show<br>more</span><span class="wc-more-n mono">+' + rest + ' ' + (rest === 1 ? 'кейс' : rest < 5 ? 'кейса' : 'кейсов') + '</span></button>' : '');
         cards = [].slice.call(wheel.querySelectorAll('.wc'));
         cards.forEach(function(c, i){
           c._lift = 0;
           c.addEventListener('mouseenter', function(){ hover = i; });
           c.addEventListener('mouseleave', function(){ if (hover === i) hover = -1; });
         });
-        hover = -1; idx = 0; pos = 0; syncNav(); layout(0);
+        hover = -1;
+        idx = focus != null ? focus : (expanded || isMob() ? 0 : (cards.length - 1) / 2);
+        if (!keep) pos = idx;
+        layout(0);
+      }
+      function render(tab){
+        cur = tab; shown = PAGE; expanded = false;
+        tabs.forEach(function(t){ t.setAttribute('aria-selected', t.dataset.tab === tab); });
+        build();
         if (window.s2Changed) window.s2Changed();
+      }
+      function showMore(){
+        var first = shown;
+        shown = Math.min(WORKS.L[cur].length, shown + PAGE); expanded = true;
+        build(first, true);
       }
       function layout(t){
         var H = s2el.clientHeight || innerHeight, W = s2el.clientWidth || innerWidth;
         var w = cards.length ? cards[0].offsetWidth : 400, mob = W <= 800;
-        var R = mob ? W * 3 :Math.max(H * 2, W * 1.1), cy = H * (mob ? .6 : .52) + R;
-        var STEP = (w * (mob ? 1.06 : 1.02) / R) * 180 / Math.PI;
+        var R = mob ? W * 3 : Math.max(H * 2, W * 1.1), cy = H * (mob ? .6 : .52) + R;
+        var STEP = (w * (mob ? 1.06 : .74) / R) * 180 / Math.PI;
         var sway = reduce ? 0 : Math.sin(t / 2600) * 1.2;
         pos += (idx - pos) * .12; if (Math.abs(idx - pos) < .001) pos = idx;
         rot += (target + sway - rot) * .06;
         cards.forEach(function(c, i){
           c._lift += ((i === hover ? 1 : 0) - c._lift) * .18;
           var rel = i - pos, a = rel * STEP + rot, far = Math.abs(rel);
-          c.style.transform = 'translate(0,' + cy.toFixed(1) + 'px) translateY(-50%) rotate(' + a.toFixed(2) + 'deg) translateY(' + (-R - c._lift * 24).toFixed(1) + 'px) scale(' + (1 - Math.min(far, 3) * .06 + c._lift * .3).toFixed(3) + ')';
+          c.style.transform = 'translate(0,' + cy.toFixed(1) + 'px) translateY(-50%) rotate(' + a.toFixed(2) + 'deg) translateY(' + (-R - c._lift * 24).toFixed(1) + 'px) scale(' + (1 - Math.min(far, 3) * .05 + c._lift * .3).toFixed(3) + ')';
           c.style.zIndex = i === hover ? 200 : 100 - Math.round(far * 10);
-          c.style.opacity = far > 3.2 ? 0 : 1;
-          c.style.pointerEvents = far > 3.2 ? 'none' : '';
+          c.style.opacity = far > 3.6 ? 0 : 1;
+          c.style.pointerEvents = far > 3.6 ? 'none' : '';
         });
       }
       s2el.addEventListener('mousemove', function(e){
@@ -869,8 +872,6 @@
         target = -((e.clientX - r.left) / r.width - .5) * 6;
       });
       s2el.addEventListener('mouseleave', function(){ target = 0; });
-      prevB.addEventListener('click', function(){ go(idx - 1); });
-      nextB.addEventListener('click', function(){ go(idx + 1); });
       // свайп по колесу — листать
       var sw = null;
       wheel.addEventListener('pointerdown', function(e){ sw = {x: e.clientX, y: e.clientY, moved: false}; });
@@ -878,11 +879,12 @@
       wheel.addEventListener('pointerup', function(e){
         if (!sw) return;
         var dx = e.clientX - sw.x, dy = e.clientY - sw.y;
-        if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) go(idx + (dx < 0 ? 1 : -1));
+        if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) go(Math.round(idx) + (dx < 0 ? 1 : -1));
         setTimeout(function(){ sw = null; }, 0);
       });
       wheel.addEventListener('click', function(e){
         var b = e.target.closest('.wc'); if (!b || (sw && sw.moved)) return;
+        if (b.dataset.more) { showMore(); return; }
         openCase(WORKS.L[cur][+b.dataset.i]);
       });
       tabs.forEach(function(t){ t.addEventListener('click', function(){ if (t.dataset.tab !== cur) render(t.dataset.tab); }); });
