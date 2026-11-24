@@ -368,12 +368,14 @@
   .aw .s3-num span{display:flex;flex-direction:column;align-items:flex-start;gap:1.6svh;font-size:min(11svh,8vw);padding-bottom:.6svh;text-align:left}
   .aw .s3-num small{font:500 12px/1.45 var(--mono);letter-spacing:.06em;color:var(--muted);text-transform:uppercase}
   .aw .s3-fests li{background:#fff;border-width:2px}
-  .aw .s4{position:relative;z-index:1;flex:1;min-height:0;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:none;row-gap:0;border-top:3px solid #000}
+  .aw .s4{position:relative;z-index:1;flex:1;min-height:0;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:none;row-gap:0}
   /* колонка: большая голова и рядом роль, имя, число наград и кнопка; голова смотрит на свой текст —
      Паша (на исходнике смотрит влево) справа от текста, Антон (смотрит вправо) — слева */
-  .aw .s4-col{grid-row:auto;display:flex;align-items:center;justify-content:center;gap:clamp(20px,3vw,56px);padding:3svh clamp(24px,3.5vw,56px)}
+  .aw .s4-col{grid-row:auto;display:flex;align-items:center;justify-content:flex-start;gap:clamp(20px,3vw,56px);padding:3svh clamp(24px,3.5vw,56px) 3svh clamp(12px,2vw,32px)}
+  /* головы прижаты к центру экрана: у Паши колонка идёт справа налево, у Антона — слева направо */
+  .aw .s4-col[data-who="pasha"]{padding:3svh clamp(12px,2vw,32px) 3svh clamp(24px,3.5vw,56px)}
   .aw .s4-col > *{grid-row:auto}
-  .aw .s4-col + .s4-col{border-left:3px solid #000}
+  .aw .s4-col + .s4-col{border-left:0}
   .aw .s4-col[data-who="pasha"]{flex-direction:row-reverse}
   .aw .s4-col[data-who="pasha"] .s4-info{align-items:flex-end;text-align:right}
   .s4-head{position:relative;flex:none;height:min(34svh,20vw)}   /* не кнопка: обычный курсор, без подсказки */
@@ -397,7 +399,7 @@
     .aw .s4-col,.aw .s4-col[data-who="pasha"]{flex-direction:row;padding:28px 20px}
     .aw .s4-col[data-who="pasha"] .s4-info{align-items:flex-start;text-align:left}
     .aw .s4-col[data-who="pasha"] .s4-aw{flex-direction:row}
-    .aw .s4-col + .s4-col{border-left:0;border-top:3px solid #000}
+    .aw .s4-col + .s4-col{border-left:0;border-top:0}
     .s4-head{height:30vw}
     .aw .s4-name{font-size:14vw}
   }
@@ -622,7 +624,7 @@
 <section class="arcade" id="arcade" aria-label="Мини-игры" hidden>
   <div class="ar-side">
     <span class="mono ar-k">[ <b>ARCADE_</b> мини-игры ]</span>
-    <p class="ar-lead">Устал листать кейсы? Передохни — поиграй в&nbsp;игрушки.</p>
+    <p class="ar-lead">Устал листать кейсы? Передохни — поиграй в&nbsp;игрушки</p>
     <div class="ar-who mono"><span class="ar-who-k">Играю за</span>
       <button type="button" data-who="pasha" aria-pressed="true" style="--c:#ff6a13"><img src="img/head-pasha.png" alt="">PASHA_</button>
       <button type="button" data-who="anton" aria-pressed="false" style="--c:#ff2b2b"><img src="img/head-anton.png" alt="">ANTON_</button>
@@ -650,7 +652,7 @@
     <li><a href="#top" data-i="0"><span class="mono">01</span>Creative Couple</a></li>
     <li><a href="#s2" data-i="1"><span class="mono">02</span>All cases</a></li>
     <li><a href="#s3" data-i="2"><span class="mono">03</span>Awards</a></li>
-    <li><a href="#s5" data-i="3"><span class="mono">04</span>Pick a head</a></li>
+    <li><a href="#s5" data-i="3"><span class="mono">04</span>Contact us</a></li>
   </ol>
   <div class="menu-foot mono">
     <a href="https://t.me/cherkun" target="_blank" rel="noopener" style="--c:#ff6a13">[ <b>PASHA_</b> <svg class="tg-ic" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M21.9 4.3 18.7 19.4c-.2 1-.9 1.3-1.7.8l-4.8-3.6-2.3 2.2c-.3.3-.5.5-1 .5l.3-4.9 8.9-8c.4-.3-.1-.5-.6-.2L6.5 13.1 1.8 11.6c-1-.3-1-1 .2-1.5L20.5 3c.9-.3 1.6.2 1.4 1.3z"/></svg> ]</a>
@@ -745,7 +747,7 @@
 
   <!-- 5. Кому написать -->
   <section class="scr s5" id="s5" aria-label="Контакты">
-    <h2 class="s5-title">Pick a head</h2>
+    <h2 class="s5-title">Contact us</h2>
     <div class="s5-row">
       <a class="pick" href="https://t.me/cherkun" target="_blank" rel="noopener" style="--c:#ff6a13">
         <span class="pick-say mono" aria-hidden="true"><b>PASHA_:</b><span class="ps-t"></span></span>
@@ -760,7 +762,7 @@
         <span class="mono pick-at">визуал, шрифты, айдентика</span>
       </a>
     </div>
-    <p class="mono s5-sub">Пишите любому — второй всё равно будет в курсе. Ответим за 24 часа.</p>
+    <p class="mono s5-sub">Пишите любому — второй всё равно будет в курсе. Ответим за 24 часа</p>
   </section>
   </div>
   </div>
@@ -805,6 +807,7 @@
     var hero = document.getElementById('hero'), stage = document.getElementById('stage');
 
     // 0. Типограф: без висячих предлогов/союзов (короткое слово + неразрывный пробел), тире не отрывается
+    window.nbsp = function(s){ return nbsp(s); };   // для текстов, которые появляются позже (реплики, кейсы, попапы)
     function nbsp(s){
       var prev;
       do {
@@ -882,7 +885,7 @@
           return '<button class="wc" type="button" data-i="' + i + '" style="--c:' + c + '" aria-label="' + esc(it.title) + '">' +
             '<img class="wc-cover" src="' + esc(it.cover) + '" alt="" loading="lazy">' +
             '<span class="wc-num">' + pad2(i + 1) + '</span>' +
-            '<span class="wc-meta mono"><span class="wc-t"><span class="wc-hd">' + heads + '</span><b>' + esc(it.title) + '</b></span><i>' + esc(it.meta) + '</i></span></button>';
+            '<span class="wc-meta mono"><span class="wc-t"><span class="wc-hd">' + heads + '</span><b>' + esc(nbsp(it.title)) + '</b></span><i>' + esc(nbsp(it.meta)) + '</i></span></button>';
         }).join('') + (rest > 0 ? '<button class="wc wc-more" type="button" data-more="1" aria-label="Смотреть ещё кейсы"><span class="wc-more-c"><svg class="wc-more-a" viewBox="0 0 48 48" aria-hidden="true"><path d="M8 21h23l-9.5-9.5 4.2-4.2L42.4 24 25.7 40.7l-4.2-4.2L31 27H8z" fill="currentColor"/></svg></span><span class="wc-more-s mono">Смотреть ещё</span><span class="wc-more-n mono">+' + rest + ' ' + (rest === 1 ? 'кейс' : rest < 5 ? 'кейса' : 'кейсов') + '</span></button>' : '');
         cards = [].slice.call(wheel.querySelectorAll('.wc'));
         cards.forEach(function(c, i){
@@ -990,16 +993,16 @@
       // реплики: свой кейс — хвастается, чужой — стебёт, общий — «без меня бы ничего не вышло»
       var LINES = {
         own: {
-          pasha: ['Мой кейс. Смотри и учись.', 'Это я ещё скромно показал.', 'Листай дальше — дальше лучше.', 'Вот это я понимаю — идея.', 'Тендер? Выиграли, конечно.', 'Каждая строчка тут — моя.'],
-          anton: ['Мой кейс. Смотри и учись.', 'Каждый пиксель — мой.', 'Листай дальше — дальше красивее.', 'Шрифт, кстати, тоже я.', 'Вот это я понимаю — визуал.', 'Сетка ровная, как мой характер.']
+          pasha: ['Мой кейс. Смотри и учись', 'Это я ещё скромно показал', 'Листай дальше — дальше лучше', 'Вот это я понимаю — идея', 'Тендер? Выиграли, конечно', 'Каждая строчка тут — моя'],
+          anton: ['Мой кейс. Смотри и учись', 'Каждый пиксель — мой', 'Листай дальше — дальше красивее', 'Шрифт, кстати, тоже я', 'Вот это я понимаю — визуал', 'Сетка ровная, как мой характер']
         },
         other: {
-          pasha: ['Это что за фигня?', 'Красиво. А идея где?', 'Ну такое… на троечку.', 'Кто это вообще согласовал?', 'Я бы сделал лучше. И быстрее.', 'Листай быстрее, тут скучно.', 'Ладно, вот этот кадр ничего.'],
-          anton: ['Это что за фигня?', 'Идея норм. А визуал кто делал?', 'Шрифт не тот. Да и всё не то.', 'Кто это вообще согласовал?', 'Я бы сделал лучше. И красивее.', 'Листай быстрее, тут скучно.', 'Ладно, вот этот кадр ничего.']
+          pasha: ['Это что за фигня?', 'Красиво. А идея где?', 'Ну такое… на троечку', 'Кто это вообще согласовал?', 'Я бы сделал лучше. И быстрее', 'Листай быстрее, тут скучно', 'Ладно, вот этот кадр ничего'],
+          anton: ['Это что за фигня?', 'Идея норм. А визуал кто делал?', 'Шрифт не тот. Да и всё не то', 'Кто это вообще согласовал?', 'Я бы сделал лучше. И красивее', 'Листай быстрее, тут скучно', 'Ладно, вот этот кадр ничего']
         },
         both: {
-          pasha: ['Без меня бы ничего не вышло.', 'Идея — моя, если что.', 'Он тут только кофе носил.', 'Скажи ему, что это я придумал.', 'Ладно, вместе — сила.', 'Лучший кейс. Потому что мой.'],
-          anton: ['Без меня бы ничего не вышло.', 'Визуал — мой, если что.', 'Он тут только слайды листал.', 'Без моего дизайна это был бы бриф.', 'Ладно, вместе — сила.', 'Лучший кейс. Потому что мой.']
+          pasha: ['Без меня бы ничего не вышло', 'Идея — моя, если что', 'Он тут только кофе носил', 'Скажи ему, что это я придумал', 'Ладно, вместе — сила', 'Лучший кейс. Потому что мой'],
+          anton: ['Без меня бы ничего не вышло', 'Визуал — мой, если что', 'Он тут только слайды листал', 'Без моего дизайна это был бы бриф', 'Ладно, вместе — сила', 'Лучший кейс. Потому что мой']
         }
       };
       function role(who){ return mode.shared ? 'both' : (mode[who === 'pasha' ? 'p' : 'a'] ? 'own' : 'other'); }
@@ -1007,18 +1010,19 @@
         var list = LINES[role(who)][who], n;
         do { n = Math.floor(Math.random() * list.length); } while (list.length > 1 && n === said[who]);
         said[who] = n;
-        var box = hd[who].querySelector('.cv-say'), out = box.querySelector('span'), str = list[n], i = 0;
+        var box = hd[who].querySelector('.cv-say'), out = box.querySelector('span'), str = nbsp(list[n]), i = 0;
         clearTimeout(sayT[who]); box.classList.add('on'); out.textContent = '';
         hd[who].classList.remove('talk'); void hd[who].offsetWidth; hd[who].classList.add('talk');
         (function step(){ out.textContent = str.slice(0, ++i); if (i < str.length) sayT[who] = setTimeout(step, 26 + Math.random() * 24); })();
       }
+      function tidy(s){ s = nbsp(String(s || '')); return /\n\s*\n/.test(s.trim()) ? s : s.replace(/([^.…])\.\s*$/, '$1'); }
       function blocksHTML(it){
         var h = '', P = WORKS.PB, A = WORKS.AB, AA = WORKS.AA;
         function img(src, w, ht){ return '<img src="' + esc(src) + '" alt="" loading="lazy"' + (w && ht ? ' width="' + w + '" height="' + ht + '"' : '') + '>'; }
         function pBlock(b){
           if (b.t === 'img') return img(P + b.src, b.w, b.h);
           if (b.t === 'loop') return '<video src="' + esc(P + b.src) + '" muted loop autoplay playsinline></video>';
-          if (b.t === 'text') return '<p class="cv-txt">' + esc(b.text) + '</p>';
+          if (b.t === 'text') return '<p class="cv-txt">' + esc(tidy(b.text)) + '</p>';
           if (b.t === 'embed') return '<div class="cv-vid"><iframe src="' + esc(b.src) + '" loading="lazy" allow="autoplay; fullscreen; picture-in-picture; encrypted-media" allowfullscreen title="video"></iframe></div>';
           if (b.t === 'row') return '<div class="cv-row" style="grid-template-columns:' + b.items.map(function(x){ return (x.w && x.h ? (x.w / x.h).toFixed(3) : 1) + 'fr'; }).join(' ') + '">' + b.items.map(pBlock).join('') + '</div>';
           return '';
@@ -1050,10 +1054,10 @@
         function aImg(b){ return '<img src="' + esc(b.i) + '"' + (b.fb ? ' data-fb="' + esc(b.fb) + '"' : '') + ' alt="" loading="lazy">'; }
         function aHTML(c){
           var s = '';
-          if (AA.DESC && AA.DESC[c.id]) s += '<p class="cv-txt">' + esc(AA.DESC[c.id]) + '</p>';
+          if (AA.DESC && AA.DESC[c.id]) s += '<p class="cv-txt">' + esc(tidy(AA.DESC[c.id])) + '</p>';
           aBlocks(c).forEach(function(b){
             if (b.row) s += '<div class="cv-row" style="grid-template-columns:' + b.row.map(function(x){ return (x.fr || 1) + 'fr'; }).join(' ') + '">' + b.row.map(aImg).join('') + '</div>';
-            else if (b.t) s += '<p class="cv-txt">' + esc(b.t) + '</p>';
+            else if (b.t) s += '<p class="cv-txt">' + esc(tidy(b.t)) + '</p>';
             else if (b.v) s += '<div class="cv-vid"><iframe src="' + esc(b.v) + '" loading="lazy" allow="autoplay; fullscreen; picture-in-picture; encrypted-media" allowfullscreen title="video"></iframe></div>';
             else if (b.i) s += aImg(b);
           });
@@ -1062,7 +1066,7 @@
         if (it.pc) {
           var c = it.pc, info = '';
           ['role', 'Задача', 'Решение', 'Результат', 'awards'].forEach(function(k){
-            if (c[k]) info += '<dt>' + (k === 'role' ? 'Роль Паши' : k === 'awards' ? 'Награды' : k) + '</dt><dd>' + esc(c[k]) + '</dd>';
+            if (c[k]) info += '<dt>' + (k === 'role' ? 'Роль Паши' : k === 'awards' ? 'Награды' : k) + '</dt><dd>' + esc(tidy(c[k])) + '</dd>';
           });
           if (info) h += '<dl class="cv-info">' + info + '</dl>';
         }
@@ -1379,14 +1383,17 @@
         i = Math.max(0, Math.min(STOPS.length - 1, i));
         var from = scrollY, to = stopY(i), d = Math.abs(to - from) / innerHeight;
         if (Math.abs(to - from) < 2) { window.scrollTo({top: to, behavior: 'auto'}); return; }
-        var dur = reduce ? 0 : Math.min(1500, 650 + d * 260), t0 = performance.now();
+        var dur = reduce ? 0 : Math.min(1100, 520 + d * 200), t0 = performance.now();
         if (anim) cancelAnimationFrame(anim.raf);
         anim = {to: i};
-        (function step(t){
-          var k = dur ? Math.min(1, (t - t0) / dur) : 1, e = k < .5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2;
+        (function step(){
+          var k = dur ? Math.min(1, (performance.now() - t0) / dur) : 1, e = k < .5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2;
           window.scrollTo({top: from + (to - from) * e, behavior: 'auto'});
-          if (k < 1) anim.raf = requestAnimationFrame(step); else anim = null;
-        })(t0);
+          if (k < 1) { anim.raf = requestAnimationFrame(step); return; }
+          anim = null;
+          // жест, сделанный во время перехода, не теряется — следующий переход стартует сразу
+          if (queued) { var q = queued; queued = 0; gesture(q); }
+        })();
       }
       window.goScreen = animateTo;
       function overlayOpen(){
@@ -1402,7 +1409,7 @@
         animateTo(i + dir);
       }
       // жест мыши/тачпада: срабатывает один раз, инерция тачпада после этого игнорируется, пока колесо не затихнет
-      var lastWheel = 0, wheelHold = false;
+      var lastWheel = 0, wheelHold = false, queued = 0;
       addEventListener('wheel', function(e){
         if (overlayOpen() || e.ctrlKey || Math.abs(e.deltaY) < Math.abs(e.deltaX)) return;
         var dir = e.deltaY > 0 ? 1 : -1;
@@ -1410,7 +1417,9 @@
         else if (dir > 0 && nearest() === STOPS.length - 1 && !anim) return;
         e.preventDefault();
         var now = performance.now(), gap = now - lastWheel; lastWheel = now;
-        if (anim || (wheelHold && gap < 180)) return;
+        // новый жест (после паузы) во время перехода — в очередь; инерция того же жеста — игнорируется
+        if (anim) { if (gap >= 180 && Math.abs(e.deltaY) >= 4) queued = dir; return; }
+        if (wheelHold && gap < 180) return;
         if (Math.abs(e.deltaY) < 4) return;
         wheelHold = true;
         gesture(dir);
@@ -1601,7 +1610,7 @@
     menu.addEventListener('mouseleave', function(){ mouse = null; });
     function tease(h, i){
       var n; do { n = Math.floor(Math.random() * TEASE[i].length); } while (n === h.last);
-      h.last = n; h.say.querySelector('span').textContent = TEASE[i][n];
+      h.last = n; h.say.querySelector('span').textContent = window.nbsp(TEASE[i][n]);
       h.say.classList.add('on'); h.sayT = 100; h.cool = 70;
     }
     function dvdStart(){
@@ -1694,8 +1703,8 @@
     var DISPLAY = '"SCHABO", "Arial Narrow", sans-serif', MONO = '"IBM Plex Mono", ui-monospace, monospace';
     var DIRS = {up:{x:0, y:-1}, down:{x:0, y:1}, left:{x:-1, y:0}, right:{x:1, y:0}};
     // реплики напарника в карточке конца игры
-    var WIN = ['Повезло. Реванш?', 'Я поддавался.', 'Ладно, это было красиво.', 'Окей, это твой кейс.'];
-    var LOSE = ['Ну я же говорил.', 'Дай сюда, покажу как надо.', 'Это был мой кейс!', 'Ещё разок? Я подожду.', 'Хорошо, что заказчик не видел.'];
+    var WIN = ['Повезло. Реванш?', 'Я поддавался', 'Ладно, это было красиво', 'Окей, это твой кейс'];
+    var LOSE = ['Ну я же говорил', 'Дай сюда, покажу как надо', 'Это был мой кейс!', 'Ещё разок? Я подожду', 'Хорошо, что заказчик не видел'];
     var who = 'pasha';
     function rival(){ return who === 'pasha' ? 'anton' : 'pasha'; }
     function rnd(a, b){ return a + Math.random() * (b - a); }
@@ -2276,17 +2285,17 @@
     // попап в конце игры: выбранный герой зовёт прислать бриф (фразы разные, смысл один) + кнопка в его Telegram
     var popEl = document.getElementById('arPop'), popT = popEl.querySelector('.ar-pop-t'), popTimer = 0, popType = 0;
     var BRIEF = [
-      'Всё, наигрался? Давай присылай бриф, не тяни.',
-      'Поиграли — и хватит. Кидай бриф, сделаем.',
-      'Рекорд рекордом, а бриф сам себя не пришлёт.',
+      'Всё, наигрался? Давай присылай бриф, не тяни',
+      'Поиграли — и хватит. Кидай бриф, сделаем',
+      'Рекорд рекордом, а бриф сам себя не пришлёт',
       'Перерыв окончен. Где бриф?',
-      'Хорош играть. Пиши — обсудим задачу.',
-      'Играем мы хорошо, а работаем ещё лучше. Жду бриф.'
+      'Хорош играть. Пиши — обсудим задачу',
+      'Играем мы хорошо, а работаем ещё лучше. Жду бриф'
     ];
     var TGIC = '<svg class="tg-ic" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M21.9 4.3 18.7 19.4c-.2 1-.9 1.3-1.7.8l-4.8-3.6-2.3 2.2c-.3.3-.5.5-1 .5l.3-4.9 8.9-8c.4-.3-.1-.5-.6-.2L6.5 13.1 1.8 11.6c-1-.3-1-1 .2-1.5L20.5 3c.9-.3 1.6.2 1.4 1.3z"/></svg>';
     var TG = {pasha:{url:'https://t.me/cherkun', to:'Паше', role:'creative'}, anton:{url:'https://t.me/veji7', to:'Антону', role:'art director'}};
     function showPop(){
-      var t = TG[who], str = pick(BRIEF), i = 0, go = popEl.querySelector('.ar-pop-go');
+      var t = TG[who], str = window.nbsp(pick(BRIEF)), i = 0, go = popEl.querySelector('.ar-pop-go');
       popEl.style.setProperty('--c', COL[who]);
       popEl.querySelector('.ar-pop-h').src = 'img/head-' + who + '.png';
       popEl.style.setProperty('--fx', NATIVE[who]);   // голова слева от текста — смотрит на него (вправо)
@@ -2519,8 +2528,8 @@
   (function(){
     var s5 = document.getElementById('s5'), says = s5.querySelectorAll('.pick-say');
     var LINES = [
-      ['Сразу говорю: я женат.', 'Жена разрешает работать допоздна. Иногда.', 'Кольцо на пальце, идеи в голове.', 'Отвечу между семейными ужинами.', 'Женат. Но на тендеры хожу один.'],
-      ['А я — разведён.', 'Разведён. Зато дедлайны не ревнуют.', 'Теперь всё время — на ваш бренд.', 'Свободен для новых проектов.', 'Холост и готов к брифу.']
+      ['Сразу говорю: я женат', 'Жена разрешает работать допоздна. Иногда', 'Кольцо на пальце, идеи в голове', 'Отвечу между семейными ужинами', 'Женат. Но на тендеры хожу один'],
+      ['А я — разведён', 'Разведён. Зато дедлайны не ревнуют', 'Теперь всё время — на ваш бренд', 'Свободен для новых проектов', 'Холост и готов к брифу']
     ];
     var used = [-1, -1], who = 0, timer = 0, running = false;
     function visible(){
@@ -2533,7 +2542,7 @@
       // первые реплики — «женат» и «разведён», дальше случайные без повторов подряд
       if (used[who] < 0) n = 0; else do { n = 1 + Math.floor(Math.random() * (list.length - 1)); } while (n === used[who]);
       used[who] = n;
-      var str = list[n], i = 0;
+      var str = window.nbsp(list[n]), i = 0;
       out.textContent = ''; box.classList.add('on');
       (function type(){
         out.textContent = str.slice(0, ++i);
