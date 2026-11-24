@@ -1100,21 +1100,31 @@
   })();
 </script>
 <script>
-  // 5. Игровой автомат: кнопка рядом с бургером, 4 классические мини-игры с нашими головами.
-  //    Всё рисуется на одном canvas в логических координатах 640×480 (4:3).
+  // 5. Игровой автомат: кнопка рядом с бургером, 5 классических мини-игр с нашими головами.
+  //    Всё рисуется на canvas в логических координатах 640×480 (4:3) в стиле сайта:
+  //    точечная сетка, зерно, карточки «system log» с печатью текста, заголовки с расфокусом,
+  //    переходы «лесенкой» из вертикальных полос, инверсия при аварии.
   (function(){
     var btn = document.getElementById('arcadeBtn'), box = document.getElementById('arcade'), burger = document.getElementById('burger');
-    var cv = document.getElementById('arCv'), ctx = cv.getContext('2d');
+    var cv = document.getElementById('arCv'), mctx = cv.getContext('2d'), ctx = mctx;
+    var buf = document.createElement('canvas'), bctx = buf.getContext('2d');     // кадр для перехода «лесенкой»
+    var prev = document.createElement('canvas'), pctx = prev.getContext('2d');   // предыдущий кадр, уходит в расфокус
     var list = document.getElementById('arList'), elScore = document.getElementById('arScore'), elBest = document.getElementById('arBest');
     var elName = document.getElementById('arName'), elKeys = document.getElementById('arKeys');
+    var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
     var W = 640, H = 480, INK = '#0b0b0c', BG = '#e9e9e6';
     var COL = {pasha:'#ff6a13', anton:'#ff2b2b'}, NAME = {pasha:'PASHA', anton:'ANTON'};
     var DISPLAY = '"SCHABO", "Arial Narrow", sans-serif', MONO = '"IBM Plex Mono", ui-monospace, monospace';
     var DIRS = {up:{x:0, y:-1}, down:{x:0, y:1}, left:{x:-1, y:0}, right:{x:1, y:0}};
+    // реплики напарника в карточке конца игры
+    var WIN = ['Повезло. Реванш?', 'Я поддавался.', 'Ладно, это было красиво.', 'Окей, это твой кейс.'];
+    var LOSE = ['Ну я же говорил.', 'Дай сюда, покажу как надо.', 'Это был мой кейс!', 'Ещё разок? Я подожду.', 'Хорошо, что заказчик не видел.'];
     var who = 'pasha';
     function rival(){ return who === 'pasha' ? 'anton' : 'pasha'; }
     function rnd(a, b){ return a + Math.random() * (b - a); }
+    function pick(a){ return a[Math.floor(Math.random() * a.length)]; }
     function clamp(v, a, b){ return Math.max(a, Math.min(b, v)); }
+    function ease(t){ return 1 - Math.pow(1 - t, 3); }
 
     // головы: исходник 1400 px → основа 384 px → спрайт под нужный размер (с кэшем)
     var base = {}, cache = {}, scale = 1;
@@ -1154,13 +1164,139 @@
       ctx.fillStyle = fill; ctx.fillRect(x, y, w, h);
       ctx.lineWidth = 3; ctx.strokeStyle = INK; ctx.strokeRect(x + 1.5, y + 1.5, w - 3, h - 3);
     }
+    // точечная сетка, как поверх слайд-шоу на первом экране
+    function dots(ox, color){
+      ctx.fillStyle = color;
+      for (var x = ((ox % 16) + 16) % 16; x < W; x += 16) for (var y = 16; y < H; y += 16) ctx.fillRect(x - 1, y - 1, 2, 2);
+    }
+    // зерно, как на фоне колонок «Pasha & Anton»: шум 128 px, прыгает рывками
+    var grain = (function(){
+      var c = document.createElement('canvas'), x, d, i, v; c.width = c.height = 128; x = c.getContext('2d'); d = x.createImageData(128, 128);
+      for (i = 0; i < d.data.length; i += 4) { v = Math.random() * 255 | 0; d.data[i] = d.data[i + 1] = d.data[i + 2] = v; d.data[i + 3] = 255; }
+      x.putImageData(d, 0, 0); return c;
+    })();
+    var gx = 0, gy = 0, gt = 0;
+    function drawGrain(dark){
+      if (++gt % 4 === 0) { gx = rnd(0, 128); gy = rnd(0, 128); }
+      ctx.save(); ctx.globalAlpha = dark ? .07 : .11; ctx.globalCompositeOperation = dark ? 'screen' : 'multiply';
+      ctx.translate(-gx, -gy); ctx.fillStyle = ctx.createPattern(grain, 'repeat'); ctx.fillRect(gx, gy, W, H); ctx.restore();
+    }
 
-    // осколки и всплывающие очки
-    var parts = [], pops = [], shake = 0;
+    // осколки, всплывающие очки, тряска, вспышка-инверсия, переход «лесенкой»
+    var parts = [], pops = [], shake = 0, fx = {strip:0, flash:0};
     function burst(x, y, color, n){ for (var i = 0; i < n; i++) parts.push({x:x, y:y, vx:rnd(-220, 220), vy:rnd(-280, 40), s:rnd(4, 9), t:rnd(.4, .8), c:color}); }
-    function pop(str, x, y, color){ pops.push({s:str, x:x, y:y, t:1, c:color}); }
+    function pop(str, x, y, color, big){ pops.push({s:str, x:x, y:y, t:1, c:color, big:!!big}); }
+    function crash(){ shake = 1; fx.flash = 1; }
+    function stripIn(){
+      if (reduce || !cv.width) return;
+      prev.width = cv.width; prev.height = cv.height; pctx.drawImage(cv, 0, 0); fx.strip = 1;
+    }
 
-    // ---------- 01. SNAKE HEAD: змейка, еда — голова напарника ----------
+    // ---------- 01. HEAD RUNNER: раннер сбоку, прыгать через правки и дедлайны ----------
+    var runner = {
+      id:'runner', name:'Head Runner', desc:'Раннер: перепрыгивай правки и дедлайны',
+      keys:'Space / ↑ / тап — прыжок (держи — выше) · ↓ — пригнуться · P — пауза',
+      G:384, X:118,
+      WORDS:['ТЗ', 'ПРАВКИ', 'ДЕДЛАЙН', 'АСАП', 'V12', 'ТЕНДЕР', 'ФИНАЛ_2'],
+      reset: function(){
+        this.y = this.G; this.vy = 0; this.air = false; this.hold = false; this.duck = false; this.sq = 0;
+        this.speed = 330; this.dist = 0; this.bonus = 0; this.obs = []; this.gap = 1.2; this.scroll = 0; this.dust = 0;
+        this.night = false; this.nextFlip = 500;
+      },
+      dark: function(){ return this.night; },
+      dotX: function(){ return -this.scroll * .5; },
+      ink: function(){ return this.night ? '#fff' : INK; },
+      jump: function(){
+        if (this.air) return;
+        this.vy = -840; this.air = true; this.hold = true; burst(this.X, this.G, this.ink(), 6);
+      },
+      release: function(){ this.hold = false; if (this.vy < -480) this.vy = -480; },
+      action: function(down){ if (down) this.jump(); else this.release(); },
+      key: function(d, down){
+        if (d === 'up') { if (down) this.jump(); else this.release(); }
+        if (d === 'down') this.duck = down;
+      },
+      pointer: function(t){ if (t === 'down') this.jump(); if (t === 'up') this.release(); },
+      swipe: function(d){ if (d === 'down') { var s = this; s.duck = true; setTimeout(function(){ s.duck = false; }, 450); } },
+      spawn: function(){
+        var s = this, sc = s.dist / 10;
+        if (sc > 150 && Math.random() < .3) {
+          // голова напарника летит навстречу: низко — прыгать, высоко — пригнуться
+          s.obs.push({t:'head', x:W + 60, y:Math.random() < .5 ? s.G - 66 : s.G - 24, r:24, ph:rnd(0, 6)});
+        } else {
+          var word = pick(s.WORDS), n = sc > 300 && Math.random() < .35 ? 2 : 1;
+          ctx.font = '600 13px ' + MONO;
+          var w = Math.max(36, ctx.measureText(word).width + 20), h = Math.round(rnd(38, 66));
+          for (var i = 0; i < n; i++) s.obs.push({t:'box', x:W + 20 + i * (w + 4), w:w, h:h, word:word});
+        }
+        if (Math.random() < .35) s.obs.push({t:'award', x:W + 70, y:s.G - rnd(110, 150), r:12});
+        s.gap = rnd(.75, 1.5) * (380 / s.speed) + .35;
+      },
+      update: function(dt){
+        var s = this;
+        s.speed = Math.min(920, s.speed + dt * 11);
+        var dx = s.speed * dt; s.dist += dx; s.scroll += dx;
+        var sc = Math.floor(s.dist / 10) + s.bonus; if (sc !== score) setScore(sc);
+        if (Math.floor(s.dist / 10) >= s.nextFlip) {   // каждые 500 — смена дня и ночи «лесенкой»
+          s.nextFlip += 500; stripIn(); s.night = !s.night;
+          pop(s.night ? 'Night shift' : 'Day shift', W / 2, 160, COL[who], true);
+        }
+        var g = s.hold && s.vy < 0 ? 1900 : 3000; if (s.duck && s.air) g = 5200;
+        s.vy += g * dt; s.y += s.vy * dt;
+        if (s.y >= s.G) { if (s.air) { s.sq = 1; burst(s.X, s.G, s.ink(), 5); } s.y = s.G; s.vy = 0; s.air = false; }
+        s.sq *= .85;
+        s.gap -= dt; if (s.gap <= 0) s.spawn();
+        var duck = s.duck && !s.air, py = s.y - (duck ? 21 : 32), pr = duck ? 19 : 25;
+        for (var i = 0; i < s.obs.length; i++) {
+          var o = s.obs[i];
+          o.x -= dx + (o.t === 'head' ? 70 * dt : 0);
+          if (o.t === 'box') {
+            var cx = clamp(s.X, o.x, o.x + o.w), cy = clamp(py, s.G - o.h, s.G);
+            if (Math.pow(s.X - cx, 2) + Math.pow(py - cy, 2) < Math.pow(pr * .9, 2)) { crash(); return gameOver('Ouch!'); }
+          } else if (o.t === 'head') {
+            if (Math.hypot(s.X - o.x, py - o.y) < pr + o.r - 6) { crash(); return gameOver('Ouch!'); }
+          } else if (!o.got && Math.hypot(s.X - o.x, py - o.y) < pr + o.r + 4) {
+            o.got = true; s.bonus += 25; burst(o.x, o.y, COL[who], 12); pop('+25', o.x, o.y - 24, s.ink());
+          }
+        }
+        s.obs = s.obs.filter(function(o){ return o.x + (o.w || 40) > -60 && !o.got; });
+        s.dust -= dt;
+        if (!s.air && s.dust <= 0) { s.dust = .07; parts.push({x:s.X - 22, y:s.G - 2, vx:-s.speed * .3 + rnd(-30, 30), vy:rnd(-90, -20), s:rnd(3, 6), t:.35, c:s.ink()}); }
+      },
+      draw: function(){
+        var s = this, ink = s.ink(), t = performance.now() / 1000;
+        // дальний план: огромные слова сайта плывут медленно
+        ctx.save(); ctx.globalAlpha = s.night ? .1 : .07;
+        ctx.font = '400 210px ' + DISPLAY; ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic'; ctx.fillStyle = ink;
+        var line = 'CREATIVE COUPLE · PASHA & ANTON · ', lw = ctx.measureText(line).width, off = -((s.scroll * .15) % lw);
+        ctx.fillText(line, off, 330); ctx.fillText(line, off + lw, 330);
+        ctx.restore();
+        // земля: толстая линия и бегущие штрихи
+        ctx.fillStyle = ink; ctx.fillRect(0, s.G, W, 4);
+        for (var x = -(s.scroll % 48); x < W; x += 48) ctx.fillRect(x, s.G + 14, 18, 3);
+        for (x = -((s.scroll + 20) % 96); x < W; x += 96) ctx.fillRect(x, s.G + 30, 8, 3);
+        s.obs.forEach(function(o){
+          if (o.t === 'box') {
+            box3(o.x, s.G - o.h, o.w, o.h, s.night ? '#fff' : INK);
+            text(o.word, o.x + o.w / 2, s.G - o.h + 16, '600 13px ' + MONO, s.night ? INK : '#fff');
+            ctx.fillStyle = COL[rival()]; ctx.fillRect(o.x - 3, s.G - o.h - 3, 7, 7); ctx.fillRect(o.x + o.w - 4, s.G - o.h - 3, 7, 7);
+          } else if (o.t === 'head') {
+            head(rival(), o.x, o.y + Math.sin(t * 6 + o.ph) * 4, 52, Math.sin(t * 4 + o.ph) * .2, -1);
+          } else {
+            ctx.save(); ctx.translate(o.x, o.y + Math.sin(t * 5) * 3); ctx.rotate(t * 3); box3(-10, -10, 20, 20, COL[who]); ctx.restore();
+          }
+        });
+        // игрок: на земле подпрыгивает на бегу, в прыжке наклоняется, при приземлении сплющивается
+        var duck = s.duck && !s.air, bob = s.air ? 0 : Math.abs(Math.sin(s.dist / 26)) * 6;
+        var tilt = s.air ? -.25 : Math.sin(s.dist / 52) * .12;
+        var sx = duck ? 1.2 : 1 + s.sq * .12, sy = duck ? .66 : 1 - s.sq * .15;
+        head(who, s.X, s.y - 32 * sy - bob, 64, tilt, sx, sy);
+        text(String(Math.floor(s.dist / 10) + s.bonus).padStart(5, '0'), W - 20, 44, '400 46px ' + DISPLAY, ink, 'right');
+        text('SPEED ×' + (s.speed / 330).toFixed(1), W - 20, 76, '500 11px ' + MONO, ink, 'right');
+      }
+    };
+
+    // ---------- 02. SNAKE HEAD: змейка, еда — голова напарника ----------
     var snake = {
       id:'snake', name:'Snake Head', desc:'Змейка: съешь напарника, не врежься в хвост',
       keys:'Стрелки / WASD или свайп · Space — пауза',
@@ -1192,7 +1328,7 @@
         if (s.q.length) s.dir = s.q.shift();
         var h = s.body[0], n = {x:h.x + s.dir.x, y:h.y + s.dir.y};
         var self = s.body.some(function(b, i){ return i < s.body.length - 1 && b.x === n.x && b.y === n.y; });
-        if (n.x < 0 || n.y < 0 || n.x >= s.CO || n.y >= s.RO || self) { shake = 1; return gameOver('Crash!'); }
+        if (n.x < 0 || n.y < 0 || n.x >= s.CO || n.y >= s.RO || self) { crash(); return gameOver('Crash!'); }
         s.body.unshift(n);
         if (n.x === s.food.x && n.y === s.food.y) {
           setScore(score + 1); s.gulp = 1; s.step = Math.max(.065, s.step * .96);
@@ -1202,8 +1338,6 @@
       },
       draw: function(){
         var s = this, C = s.CS, t = performance.now() / 1000;
-        ctx.fillStyle = 'rgba(11,11,12,.16)';
-        for (var gx = C; gx < W; gx += C) for (var gy = C; gy < H; gy += C) ctx.fillRect(gx - 1, gy - 1, 2, 2);
         head(rival(), (s.food.x + .5) * C, (s.food.y + .5) * C, 42 + Math.sin(t * 6) * 3, Math.sin(t * 3) * .15);
         for (var i = s.body.length - 1; i > 0; i--) box3(s.body[i].x * C + 2, s.body[i].y * C + 2, C - 4, C - 4, COL[who]);
         var h = s.body[0], k = 1 + s.gulp * .25;
@@ -1211,13 +1345,13 @@
       }
     };
 
-    // ---------- 02. HEAD TENNIS: голова на голову против компьютера, до 7 ----------
+    // ---------- 03. HEAD TENNIS: голова на голову против компьютера, до 7 ----------
     var tennis = {
       id:'tennis', name:'Head Tennis', desc:'Теннис: голова на голову, до 7 очков',
       keys:'Мышь / палец или ↑ ↓ (W S) · Space — пауза',
       PH:86, PX:48, HW:30,
       reset: function(){
-        this.p = {y:H / 2, sq:0}; this.a = {y:H / 2, sq:0}; this.ps = 0; this.as = 0;
+        this.p = {y:H / 2, sq:0}; this.a = {y:H / 2, sq:0}; this.ps = 0; this.as = 0; this.won = false;
         this.up = this.down = 0; this.ptr = null; this.serve(1);
       },
       serve: function(d){ this.b = {x:W / 2, y:H / 2, vx:d * 280, vy:rnd(-150, 150), r:9, trail:[]}; this.wait = .9; },
@@ -1243,12 +1377,12 @@
         }
         if (b.vx < 0 && b.x - b.r < PX + HW && b.x > PX - HW && Math.abs(b.y - p.y) < PH / 2 + b.r) hit(p, 1, PX + HW + b.r);
         if (b.vx > 0 && b.x + b.r > AX - HW && b.x < AX + HW && Math.abs(b.y - a.y) < PH / 2 + b.r) hit(a, -1, AX - HW - b.r);
-        if (b.x < -40) { s.as++; shake = .6; pop('+1 ' + NAME[rival()], W * .75, H / 2 - 90, COL[rival()]); if (!s.end()) s.serve(-1); }
-        else if (b.x > W + 40) { s.ps++; setScore(s.ps); pop('+1 ' + NAME[who], W * .25, H / 2 - 90, COL[who]); if (!s.end()) s.serve(1); }
+        if (b.x < -40) { s.as++; shake = .6; pop('+1 ' + NAME[rival()], W * .75, H / 2 - 90, COL[rival()], true); if (!s.end()) s.serve(-1); }
+        else if (b.x > W + 40) { s.ps++; setScore(s.ps); pop('+1 ' + NAME[who], W * .25, H / 2 - 90, COL[who], true); if (!s.end()) s.serve(1); }
       },
       end: function(){
-        if (this.ps >= 7) { gameOver(NAME[who] + ' wins!'); return true; }
-        if (this.as >= 7) { gameOver(NAME[rival()] + ' wins!'); return true; }
+        if (this.ps >= 7) { this.won = true; gameOver(NAME[who] + ' wins!'); return true; }
+        if (this.as >= 7) { crash(); gameOver(NAME[rival()] + ' wins!'); return true; }
         return false;
       },
       draw: function(){
@@ -1264,7 +1398,7 @@
       }
     };
 
-    // ---------- 03. BRICK HEAD: кирпичи, мяч — голова игрока ----------
+    // ---------- 04. BRICK HEAD: кирпичи, мяч — голова игрока ----------
     var brick = {
       id:'brick', name:'Brick Head', desc:'Кирпичи: разбей стену головой',
       keys:'Мышь / палец или ← → (A D) · Space — пауза',
@@ -1309,8 +1443,8 @@
           else b.vy = dy > 0 ? Math.abs(b.vy) : -Math.abs(b.vy);
           break;
         }
-        if (!s.bricks.some(function(k){ return k.on; })) { s.lvl++; pop('LEVEL ' + s.lvl, W / 2, H / 2, COL[who]); s.build(); s.stick(); }
-        if (b.y - b.r > H) { s.lives--; shake = .8; if (s.lives <= 0) gameOver('Game over'); else s.stick(); }
+        if (!s.bricks.some(function(k){ return k.on; })) { s.lvl++; stripIn(); pop('Level ' + s.lvl, W / 2, H / 2, COL[who], true); s.build(); s.stick(); }
+        if (b.y - b.r > H) { s.lives--; shake = .8; if (s.lives <= 0) { crash(); gameOver('Game over'); } else s.stick(); }
       },
       draw: function(){
         var s = this, p = s.pad;
@@ -1322,7 +1456,7 @@
       }
     };
 
-    // ---------- 04. WHACK A HEAD: бить напарника, свою голову не трогать ----------
+    // ---------- 05. WHACK A HEAD: бить напарника, свою голову не трогать ----------
     var whack = {
       id:'whack', name:'Whack a Head', desc:'Бей по голове: 30 секунд, своих не трогать',
       keys:'Клик / тап по голове напарника · своя голова — минус 3',
@@ -1340,7 +1474,7 @@
           s.next = rnd(.35, .8) - heat * .2;
           var free = s.holes.filter(function(h){ return !h.k; });
           if (free.length) {
-            var h = free[Math.floor(Math.random() * free.length)];
+            var h = pick(free);
             h.k = Math.random() < .25 ? who : rival(); h.dir = 1; h.stay = rnd(.55, 1.1) - heat * .3; h.bonk = 0; h.hit = false;
           }
         }
@@ -1358,8 +1492,8 @@
           var top = h.y - 104 * h.up - 6;
           if (Math.abs(x - h.x) < 58 && y > top && y < h.y + 16) {
             h.hit = true; h.bonk = 1; h.dir = -1;
-            if (h.k === rival()) { setScore(score + 1); pop('+1', h.x, top, COL[rival()]); burst(h.x, top + 30, COL[rival()], 12); }
-            else { setScore(Math.max(0, score - 3)); pop('-3 СВОЙ!', h.x, top, INK); shake = .5; }
+            if (h.k === rival()) { setScore(score + 1); pop('+1', h.x, top, COL[rival()], true); burst(h.x, top + 30, COL[rival()], 12); }
+            else { setScore(Math.max(0, score - 3)); pop('-3 СВОЙ!', h.x, top, INK); shake = .5; fx.flash = .7; }
             return;
           }
         }
@@ -1383,23 +1517,29 @@
     };
 
     // ---------- движок ----------
-    var GAMES = [snake, tennis, brick, whack], game = GAMES[0], state = 'ready', score = 0, raf = 0, last = 0, isOpen = false;
+    var GAMES = [runner, snake, tennis, brick, whack], game = GAMES[0];
+    var state = 'ready', stateT = 0, score = 0, best0 = 0, raf = 0, last = 0, isOpen = false;
+    function setState(s){ state = s; stateT = 0; }
     function bestKey(){ return 'pa-arcade-' + game.id; }
     function getBest(){ try { return +localStorage.getItem(bestKey()) || 0; } catch (e) { return 0; } }
     function setScore(n){
       score = n; elScore.textContent = n;
       if (n > getBest()) { try { localStorage.setItem(bestKey(), n); } catch (e) {} elBest.textContent = n; }
     }
-    function gameOver(t){ state = 'over'; game.overText = t; }
+    function gameOver(t){
+      game.overText = t; game.record = score > 0 && score > best0;
+      game.line = pick(game.won || game.record ? WIN : LOSE);
+      setState('over');
+    }
     function start(){
-      if (state === 'pause') { state = 'play'; return; }
-      game.reset(); parts = []; pops = []; setScore(0); state = 'play';
+      if (state === 'pause') { setState('play'); return; }
+      best0 = getBest(); stripIn(); game.reset(); parts = []; pops = []; setScore(0); setState('play');
     }
     function select(i){
       game = GAMES[i];
       [].forEach.call(list.querySelectorAll('button'), function(b, j){ b.setAttribute('aria-pressed', i === j); });
       elName.textContent = game.name; elKeys.textContent = game.keys;
-      game.reset(); parts = []; pops = []; state = 'ready'; score = 0; elScore.textContent = 0; elBest.textContent = getBest();
+      stripIn(); game.reset(); parts = []; pops = []; setState('ready'); score = 0; elScore.textContent = 0; elBest.textContent = getBest();
     }
     GAMES.forEach(function(g, i){
       var li = document.createElement('li');
@@ -1420,40 +1560,100 @@
       });
     });
 
+    // карточка в стиле реплик с первого экрана: метки по углам, заголовок влетает с расфокусом,
+    // реплика напарника печатается с курсором, шкала «счёт / рекорд»
     function card(){
-      ctx.fillStyle = 'rgba(233,233,230,.72)'; ctx.fillRect(0, 0, W, H);
-      var t1, t2;
-      if (state === 'ready') { t1 = game.name; t2 = 'SPACE / КЛИК — СТАРТ'; }
-      else if (state === 'pause') { t1 = 'Pause'; t2 = 'SPACE / КЛИК — ДАЛЬШЕ'; }
-      else { t1 = game.overText || 'Game over'; t2 = 'СЧЁТ ' + score + ' · SPACE / КЛИК — ЕЩЁ РАЗ'; }
-      var w = 460, h = 176, x = (W - w) / 2, y = (H - h) / 2;
+      var dark = game.dark && game.dark();
+      ctx.fillStyle = dark ? 'rgba(11,11,12,.55)' : 'rgba(233,233,230,.72)'; ctx.fillRect(0, 0, W, H);
+      var over = state === 'over', w = 480, h = over ? 236 : 176, x = (W - w) / 2, y = (H - h) / 2, t1, hint;
+      if (state === 'ready') { t1 = game.name; hint = 'SPACE / КЛИК — СТАРТ'; }
+      else if (state === 'pause') { t1 = 'Pause'; hint = 'SPACE / КЛИК — ДАЛЬШЕ'; }
+      else { t1 = game.overText || 'Game over'; hint = 'SPACE / КЛИК — ЕЩЁ РАЗ'; }
       ctx.fillStyle = INK; ctx.fillRect(x, y, w, h);
+      if (dark) { ctx.lineWidth = 2; ctx.strokeStyle = '#fff'; ctx.strokeRect(x, y, w, h); }
       [x - 4, x + w - 4].forEach(function(cx){ ctx.fillStyle = '#fff'; ctx.fillRect(cx, y - 4, 8, 8); ctx.lineWidth = 1.5; ctx.strokeStyle = INK; ctx.strokeRect(cx, y - 4, 8, 8); });
       text('[ ' + NAME[who] + '_ ]', x + 18, y + 24, '500 11px ' + MONO, COL[who], 'left');
-      text('ARCADE', x + w - 18, y + 24, '500 11px ' + MONO, '#8a8a90', 'right');
-      text(t1.toUpperCase(), W / 2, y + 88, '400 66px ' + DISPLAY, '#fff');
-      text(t2, W / 2, y + h - 26, '500 13px ' + MONO, COL[who]);
+      text(over && game.record ? 'NEW RECORD' : 'ARCADE', x + w - 18, y + 24, '500 11px ' + MONO, over && game.record ? COL[who] : '#8a8a90', 'right');
+      var e = ease(clamp(stateT / .45, 0, 1)), sc = 1.35 - .35 * e, bl = (1 - e) * 18;
+      ctx.save(); ctx.translate(W / 2, y + 84); ctx.scale(sc, 1 + (sc - 1) * .45); ctx.globalAlpha = .35 + .65 * e;
+      if (bl > .3 && !reduce) ctx.filter = 'blur(' + (bl * scale / 2).toFixed(1) + 'px)';
+      text(t1.toUpperCase(), 0, 0, '400 66px ' + DISPLAY, '#fff');
+      ctx.restore();
+      if (over) {
+        var who2 = rival(), pre = NAME[who2] + '_: ', body = game.line.toUpperCase(), ty = y + 136;
+        var n = reduce ? body.length : clamp(Math.floor((stateT - .35) * 34), 0, body.length);
+        text(pre, x + 18, ty, '500 14px ' + MONO, COL[who2], 'left');
+        var px = x + 18 + ctx.measureText(pre).width;
+        text(body.slice(0, n), px, ty, '500 14px ' + MONO, '#fff', 'left');
+        if (n < body.length || Math.floor(stateT * 2.5) % 2 === 0) { ctx.fillStyle = COL[who2]; ctx.fillRect(px + ctx.measureText(body.slice(0, n)).width + 3, ty - 8, 8, 16); }
+        var my = y + 172, bx = x + 96, bw = w - 192, k = clamp(score / Math.max(1, best0, score), 0, 1) * ease(clamp((stateT - .4) / .9, 0, 1));
+        text('SCORE ' + score, x + 18, my, '500 10px ' + MONO, '#8a8a90', 'left');
+        ctx.fillStyle = '#2a2a2e'; ctx.fillRect(bx, my - 1.5, bw, 3);
+        ctx.fillStyle = COL[who]; ctx.fillRect(bx, my - 1.5, bw * k, 3);
+        text('BEST ' + Math.max(best0, score), x + w - 18, my, '500 10px ' + MONO, '#8a8a90', 'right');
+      }
+      text(hint, W / 2, y + h - 24, '500 13px ' + MONO, COL[who]);
+    }
+    function render(){
+      var dark = game.dark && game.dark();
+      ctx.setTransform(scale, 0, 0, scale, 0, 0); ctx.globalAlpha = 1; ctx.filter = 'none';
+      ctx.fillStyle = dark ? INK : BG; ctx.fillRect(0, 0, W, H);
+      if (shake) ctx.translate(rnd(-1, 1) * shake * 10, rnd(-1, 1) * shake * 10);
+      dots(game.dotX ? game.dotX() : 0, dark ? 'rgba(255,255,255,.16)' : 'rgba(11,11,12,.14)');
+      game.draw();
+      parts.forEach(function(p){ ctx.fillStyle = p.c; ctx.fillRect(p.x - p.s / 2, p.y - p.s / 2, p.s, p.s); });
+      pops.forEach(function(p){
+        var age = 1 - p.t;
+        ctx.save(); ctx.globalAlpha = Math.min(1, p.t * 2.5); ctx.translate(p.x, p.y);
+        if (p.big) {   // крупная надпись влетает с расфокусом, как заголовки на первом экране
+          var e = ease(clamp(age / .35, 0, 1)), sc = 1.35 - .35 * e;
+          ctx.scale(sc, sc); if (e < 1 && !reduce) ctx.filter = 'blur(' + ((1 - e) * 14 * scale / 2).toFixed(1) + 'px)';
+          text(p.s.toUpperCase(), 0, 0, '400 56px ' + DISPLAY, p.c);
+        } else text(p.s, 0, 0, '600 20px ' + MONO, p.c);
+        ctx.restore();
+      });
+      ctx.setTransform(scale, 0, 0, scale, 0, 0);
+      drawGrain(dark);
+      if (state !== 'play') card();
+    }
+    // переход «лесенкой»: новый кадр собирается из вертикальных полос от центра к краям, старый уходит в расфокус
+    function compose(dt){
+      var p = 1 - fx.strip, CW = cv.width, CH = cv.height, N = 8, c = (N - 1) / 2, sw = CW / N, i, d, e, inset, s, cx;
+      mctx.setTransform(1, 0, 0, 1, 0, 0); mctx.fillStyle = INK; mctx.fillRect(0, 0, CW, CH);
+      mctx.save();
+      var k = 1 - .06 * p; mctx.translate(CW / 2, CH / 2); mctx.scale(k, k); mctx.translate(-CW / 2, -CH / 2);
+      mctx.filter = 'blur(' + (p * 13 * scale).toFixed(1) + 'px) grayscale(' + p.toFixed(2) + ')';
+      mctx.drawImage(prev, 0, 0); mctx.restore();
+      for (i = 0; i < N; i++) {
+        d = Math.abs(i - c) / c; e = ease(clamp((p - d * .3) / .6, 0, 1)); if (e <= 0) continue;
+        inset = (1 - e) * CH / 2; s = 1 + (1 - e) * .7; cx = (i + .5) * sw;
+        mctx.save(); mctx.beginPath(); mctx.rect(i * sw, inset, sw + 1, CH - inset * 2); mctx.clip();
+        mctx.translate(cx + (i - c) * (1 - e) * -.05 * CW, CH / 2); mctx.scale(s, s); mctx.translate(-cx, -CH / 2);
+        if (e < 1) mctx.filter = 'blur(' + ((1 - e) * 11 * scale).toFixed(1) + 'px)';
+        mctx.drawImage(buf, 0, 0); mctx.restore();
+      }
+      fx.strip = Math.max(0, fx.strip - dt / .75);
     }
     function frame(t){
       raf = requestAnimationFrame(frame);
-      var dt = Math.min(.033, (t - last) / 1000 || 0); last = t;
+      var dt = Math.min(.033, (t - last) / 1000 || 0); last = t; stateT += dt;
       if (state === 'play') game.update(dt);
       parts = parts.filter(function(p){ p.t -= dt; p.x += p.vx * dt; p.y += p.vy * dt; p.vy += 700 * dt; return p.t > 0; });
-      pops = pops.filter(function(p){ p.t -= dt * 1.2; p.y -= 40 * dt; return p.t > 0; });
-      shake = Math.max(0, shake - dt * 2.5);
-      ctx.setTransform(scale, 0, 0, scale, 0, 0);
-      ctx.fillStyle = BG; ctx.fillRect(0, 0, W, H);
-      if (shake) ctx.translate(rnd(-1, 1) * shake * 10, rnd(-1, 1) * shake * 10);
-      game.draw();
-      parts.forEach(function(p){ ctx.fillStyle = p.c; ctx.fillRect(p.x - p.s / 2, p.y - p.s / 2, p.s, p.s); });
-      pops.forEach(function(p){ ctx.globalAlpha = Math.min(1, p.t * 2); text(p.s, p.x, p.y, '600 20px ' + MONO, p.c); ctx.globalAlpha = 1; });
-      ctx.setTransform(scale, 0, 0, scale, 0, 0);
-      if (state !== 'play') card();
+      pops = pops.filter(function(p){ p.t -= dt * (p.big ? .9 : 1.2); p.y -= (p.big ? 12 : 40) * dt; return p.t > 0; });
+      shake = Math.max(0, shake - dt * 2.5); fx.flash = Math.max(0, fx.flash - dt * 5);
+      var tr = fx.strip > 0;
+      if (tr && (buf.width !== cv.width || buf.height !== cv.height)) { buf.width = cv.width; buf.height = cv.height; }
+      ctx = tr ? bctx : mctx; render(); ctx = mctx;
+      if (tr) compose(dt);
+      if (fx.flash > .55) {   // вспышка-инверсия, как заголовки в режиме difference
+        mctx.setTransform(1, 0, 0, 1, 0, 0); mctx.globalCompositeOperation = 'difference';
+        mctx.fillStyle = '#fff'; mctx.fillRect(0, 0, cv.width, cv.height); mctx.globalCompositeOperation = 'source-over';
+      }
     }
     function resize(){
       var r = cv.getBoundingClientRect(); if (!r.width) return;
       var d = Math.min(2, devicePixelRatio || 1);
-      cv.width = Math.round(r.width * d); cv.height = Math.round(r.height * d); scale = cv.width / W; cache = {};
+      cv.width = Math.round(r.width * d); cv.height = Math.round(r.height * d); scale = cv.width / W; cache = {}; fx.strip = 0;
     }
     addEventListener('resize', function(){ if (isOpen) resize(); });
 
@@ -1463,18 +1663,21 @@
       if (!isOpen) return;
       if (e.key === 'Escape') { setArcade(false); return; }
       if (e.code === 'Enter' && e.target.closest && e.target.closest('button')) return;
-      if (e.code === 'Space' || e.code === 'Enter' || e.code === 'KeyP') {
+      if (e.code === 'KeyP') { e.preventDefault(); if (state === 'play') setState('pause'); else if (state === 'pause') setState('play'); return; }
+      if (e.code === 'Space' || e.code === 'Enter') {
         e.preventDefault(); if (e.repeat) return;
-        if (state === 'play') state = 'pause'; else start();
+        if (state !== 'play') start();
+        else if (game.action) game.action(true);   // в раннере Space — прыжок
+        else setState('pause');
         return;
       }
       var d = KEY[e.code]; if (!d) return;
       e.preventDefault();
-      if (state === 'play' && game.key) game.key(d, true);
+      if (state === 'play' && game.key && !e.repeat) game.key(d, true);
     });
     addEventListener('keyup', function(e){
       if (!isOpen) return;
-      if (e.code === 'Space') e.preventDefault();
+      if (e.code === 'Space') { e.preventDefault(); if (state === 'play' && game.action) game.action(false); }
       var d = KEY[e.code]; if (d && game.key) game.key(d, false);
     });
     // мышь / палец: клик стартует, движение ведёт ракетку, свайп поворачивает змейку
@@ -1491,10 +1694,12 @@
     cv.addEventListener('pointerup', function(e){
       if (!down) return;
       var p = pos(e), dx = p.x - down.x, dy = p.y - down.y; down = null;
-      if (state === 'play' && game.swipe && Math.max(Math.abs(dx), Math.abs(dy)) > 20)
+      if (state !== 'play') return;
+      if (game.pointer) game.pointer('up', p.x, p.y);
+      if (game.swipe && Math.max(Math.abs(dx), Math.abs(dy)) > 20)
         game.swipe(Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? 'right' : 'left') : (dy > 0 ? 'down' : 'up'));
     });
-    document.addEventListener('visibilitychange', function(){ if (document.hidden && state === 'play') state = 'pause'; });
+    document.addEventListener('visibilitychange', function(){ if (document.hidden && state === 'play') setState('pause'); });
 
     // открыть / закрыть, как меню; бургер и автомат не открыты одновременно
     function setArcade(open){
@@ -1508,7 +1713,7 @@
           if (!raf) { last = performance.now(); raf = requestAnimationFrame(frame); }
         });
       } else {
-        if (state === 'play') state = 'pause';
+        if (state === 'play') setState('pause');
         box.classList.remove('open'); document.body.classList.remove('lb-lock');
         setTimeout(function(){ if (!isOpen) { box.hidden = true; cancelAnimationFrame(raf); raf = 0; } }, 250);
       }
