@@ -76,6 +76,9 @@
   .lk{fill:none;stroke-width:1.5;opacity:0;transition:opacity .2s ease}
   .lk-pasha,.lk-anton{stroke:#fff;stroke-width:2}
   .lk-dot{fill:#fff;stroke:none}
+  /* у героя на светлом фоне (на которого не навели) выноска чёрная */
+  .hero.bg-on-pasha .lk-anton,.hero.bg-on-anton .lk-pasha{stroke:#000}
+  .hero.bg-on-pasha .lk-dot-anton,.hero.bg-on-anton .lk-dot-pasha{fill:#000}
   .lk.on{opacity:1}
 
   /* реплика в стиле «system log»: чёрная карточка, моно, метки-квадратики по углам, фраза цельная */
