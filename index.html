@@ -183,6 +183,17 @@
   .s2-tab:hover .tb-h img{animation:popnod .5s ease}
   .wheel{position:absolute;inset:0;touch-action:pan-y;pointer-events:none}
   .wc{pointer-events:auto}
+  /* листание кейсов — две большие круглые стрелки по бокам (скролл ведёт к следующему экрану) */
+  .s2-arr{position:absolute;top:52%;z-index:260;width:clamp(80px,9vw,132px);aspect-ratio:1;display:grid;place-items:center;padding:0;border-radius:50%;background:#fff;color:#000;border:3px solid #000;box-shadow:0 20px 40px -20px rgba(0,0,0,.45);transform:translateY(-50%);transition:background .2s,color .2s,transform .3s cubic-bezier(.2,.8,.2,1),opacity .2s}
+  .s2-arr svg{width:46%;height:auto}
+  .s2-arr-l{left:clamp(16px,3vw,48px)}
+  .s2-arr-r{right:clamp(30px,3.6vw,56px)}
+  .s2-arr:hover{background:#000;color:#fff;transform:translateY(-50%) scale(1.08)}
+  .s2-arr-l:hover svg{transform:translateX(-6%)}
+  .s2-arr-r:hover svg{transform:translateX(6%)}
+  .s2-arr svg{transition:transform .25s}
+  .s2-arr:disabled{opacity:.25;pointer-events:none}
+  @media (max-width:800px){.s2-arr{top:auto;bottom:6svh;transform:none;width:60px}.s2-arr:hover{transform:scale(1.05)}.s2-arr-r{right:16px}.s2-arr-l{left:auto;right:88px}}
   .wc:hover .wc-cover{animation:coverwhoosh .55s cubic-bezier(.2,.8,.2,1)}
   @keyframes coverwhoosh{0%{filter:blur(16px);transform:scale(1.35,1.15)}60%{filter:blur(3px)}100%{filter:none;transform:scale(1.06)}}
   @media (prefers-reduced-motion:reduce){.wc:hover .wc-cover{animation:none}}
@@ -683,6 +694,8 @@
         </div>
       </div>
       <div class="wheel" id="wheel"></div>
+      <button class="s2-arr s2-arr-l" type="button" aria-label="Предыдущий кейс"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M29 10 15 24l14 14" fill="none" stroke="currentColor" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/></svg></button>
+      <button class="s2-arr s2-arr-r" type="button" aria-label="Следующий кейс"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M19 10l14 14-14 14" fill="none" stroke="currentColor" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/></svg></button>
     </div>
   </section>
  <div class="strips" id="strips" aria-hidden="true"></div>
@@ -850,6 +863,9 @@
     })();
     (function(){
       var s2el = document.getElementById('s2'), wheel = document.getElementById('wheel');
+      var arrL = s2el.querySelector('.s2-arr-l'), arrR = s2el.querySelector('.s2-arr-r');
+      arrL.addEventListener('click', function(){ go(idx - 1); });
+      arrR.addEventListener('click', function(){ go(idx + 1); });
       var tabs = [].slice.call(s2el.querySelectorAll('.s2-tab'));
       var HEAD = {pasha:'<img src="img/head-pasha.png" alt="">', anton:'<img src="img/head-anton.png" alt="">'};
       function esc(s){ return String(s == null ? '' : s).replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
@@ -857,11 +873,12 @@
       tabs.forEach(function(t){ t.querySelector('.tb-n').textContent = WORKS.L[t.dataset.tab].length; });
       // сначала 4 кейса веером + большая карточка «Show more»; скролл в это время листает сайт дальше.
       // После «Show more» колесо раскрывается: скролл поворачивает его по одной карточке, в конце — дальше по сайту
-      var PAGE = 4, cur = 'both', shown = PAGE, expanded = false, cards = [], idx = 0, pos = 0, rot = 0, target = 0, hover = -1;
+      var PAGE = 999, cur = 'both', shown = PAGE, expanded = false, cards = [], idx = 0, pos = 0, rot = 0, target = 0, hover = -1;
       function isMob(){ return (s2el.clientWidth || innerWidth) <= 800; }
-      function go(i){ idx = Math.max(0, Math.min(cards.length - 1, i)); }
+      function go(i){ idx = Math.max(0, Math.min(cards.length - 1, Math.round(i))); syncArr(); }
+      function syncArr(){ arrL.disabled = idx <= 0; arrR.disabled = idx >= cards.length - 1; }
       window.s2Wheel = {
-        step: function(d){ if (!expanded && !isMob()) return false; var n = idx + d; if (n < 0 || n >= cards.length) return false; go(n); return true; }
+        step: function(){ return false; }   // скролл кейсы не листает — только стрелки и свайп
       };
       function build(focus, keep){
         var list = WORKS.L[cur], rest = list.length - shown;
@@ -882,8 +899,9 @@
           c.addEventListener('mouseleave', function(){ if (hover === i) hover = -1; bgHide(); });
         });
         hover = -1;
-        idx = focus != null ? focus : (expanded || isMob() ? 0 : (cards.length - 1) / 2);
+        idx = focus != null ? focus : (isMob() ? 0 : Math.min(2, cards.length - 1));   // на старте по центру третий — веер заполнен с обеих сторон
         if (!keep) pos = idx;
+        syncArr();
         layout(0);
       }
       // фон при наведении: картинки именно этого кейса (из его «портянки»), в случайном порядке, жёсткие склейки как на первом экране
