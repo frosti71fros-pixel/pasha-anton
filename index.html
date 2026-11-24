@@ -342,6 +342,42 @@
   .chips{list-style:none;display:flex;flex-wrap:wrap;gap:8px}
   .chips li{padding:8px 12px;border:1.5px solid #000;font-size:12px;letter-spacing:.06em;text-transform:uppercase;transition:background .2s,color .2s}
   .chips li:hover{background:var(--c);color:#000}
+  /* 3 — награды одним экраном: сверху общий счёт и фестивали, ниже две колонки — голова и личные награды.
+     Фон — сетка точек, как на первом экране; колонки разделены чёрной линией, как рамки карточек */
+  .aw{display:flex;flex-direction:column}
+  .aw::before{content:"";position:absolute;inset:0;pointer-events:none;opacity:.24;background-image:radial-gradient(circle,#0b0b0c 1.1px,transparent 1.6px);background-size:16px 16px;background-position:-8px 0}
+  .aw-top{position:relative;z-index:1;flex:none;display:flex;flex-direction:column;align-items:center;gap:1.6svh;padding:6svh var(--pad) 3svh;text-align:center}
+  .aw .s3-num{padding-top:3.4svh;gap:1.4vw;align-items:flex-end}
+  .aw .s3-num b{font-size:min(25svh,19vw)}
+  .aw .s3-num span{display:flex;flex-direction:column;align-items:flex-start;gap:1.6svh;font-size:min(11svh,8vw);padding-bottom:.6svh;text-align:left}
+  .aw .s3-num small{font:500 12px/1.45 var(--mono);letter-spacing:.06em;color:var(--muted);text-transform:uppercase}
+  .aw .s3-fests li{background:#fff;border-width:2px}
+  .aw .s4{position:relative;z-index:1;flex:1;min-height:0;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:none;row-gap:0;border-top:3px solid #000}
+  .aw .s4-col{grid-row:auto;display:flex;align-items:flex-start;justify-content:center;gap:clamp(16px,2.4vw,40px);padding:5svh clamp(24px,3.5vw,56px) 3svh}
+  .aw .s4-col > *{grid-row:auto}
+  .aw .s4-col + .s4-col{border-left:3px solid #000}
+  /* голова смотрит на свой список: Паша (смотрит влево) — справа от текста, Антон (вправо) — слева */
+  .aw .s4-col[data-who="pasha"]{flex-direction:row-reverse}
+  .aw .s4 .head-btn{flex:none;width:auto;height:min(22svh,13vw);margin:0}
+  .aw .s4-info{flex:1;display:flex;flex-direction:column;align-items:flex-start;gap:1.3svh;min-width:0;max-width:440px}
+  /* колонки выровнены по верху: роль, имя со счётом, список и кнопка у обоих на одной высоте */
+  .aw .s4-list li{display:block}
+  .aw .s4-list li::before{display:inline-block;margin-right:10px}
+  .aw .s4-role{margin:0}
+  .aw .s4-nm{display:flex;align-items:flex-end;flex-wrap:wrap;gap:6px 16px}
+  .aw .s4-name{margin:0;font-size:min(10svh,6vw)}
+  .aw .s4-aw b{font-size:min(7svh,4.4vw)}
+  .aw .s4-aw span{font-size:14px}
+  .aw .s4-site{padding:9px 14px;font-size:14px;border-width:2px}
+  @media (max-width:800px){
+    .aw-top{padding-top:12svh}
+    .aw .s3-num b{font-size:30vw}
+    .aw .s4{grid-template-columns:1fr}
+    .aw .s4-col,.aw .s4-col[data-who="pasha"]{flex-direction:row;align-items:flex-start;padding:28px 20px}
+    .aw .s4-col + .s4-col{border-left:0;border-top:3px solid #000}
+    .aw .s4 .head-btn{height:26vw}
+    .aw .s4-name{font-size:12vw}
+  }
 
   /* 5 — кому написать */
   .s5{background:#0b0b0c;color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3svh;padding:5svh var(--pad)}
@@ -580,8 +616,7 @@
     <li><a href="#top" data-i="0"><span class="mono">01</span>Creative Couple</a></li>
     <li><a href="#s2" data-i="1"><span class="mono">02</span>All cases</a></li>
     <li><a href="#s3" data-i="2"><span class="mono">03</span>Awards</a></li>
-    <li><a href="#s4" data-i="3"><span class="mono">04</span>Pasha &amp; Anton</a></li>
-    <li><a href="#s5" data-i="4"><span class="mono">05</span>Pick a head</a></li>
+    <li><a href="#s5" data-i="3"><span class="mono">04</span>Pick a head</a></li>
   </ol>
   <div class="menu-foot mono">
     <a href="https://t.me/cherkun" target="_blank" rel="noopener" style="--c:#ff6a13">[ <b>PASHA_</b> <svg class="tg-ic" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M21.9 4.3 18.7 19.4c-.2 1-.9 1.3-1.7.8l-4.8-3.6-2.3 2.2c-.3.3-.5.5-1 .5l.3-4.9 8.9-8c.4-.3-.1-.5-.6-.2L6.5 13.1 1.8 11.6c-1-.3-1-1 .2-1.5L20.5 3c.9-.3 1.6.2 1.4 1.3z"/></svg> ]</a>
@@ -641,61 +676,49 @@
   <div class="echo echo-2" aria-hidden="true"></div>
 
   <!-- 3. Награды на двоих -->
-  <section class="scr s3" id="s3" aria-label="Награды">
-    <div class="s3-in">
+  <section class="scr s3 aw" id="s3" aria-label="Награды">
+    <div class="aw-top">
       <span class="mono s3-k">[ <b>AWARDS_</b> на двоих ]</span>
-      <div class="s3-num"><b id="awardsNum">21</b><span>Awards</span></div>
-      <p class="s3-sub">фестивальная награда на двоих — и ещё 12 шорт-листов</p>
+      <div class="s3-num"><b id="awardsNum">21</b><span>Awards<small>фестивальная награда на двоих<br>и ещё 12 шорт-листов</small></span></div>
       <ul class="s3-fests mono"><li>Silver Mercury</li><li>Red Apple</li><li>Marspo Awards</li><li>Нейротренд</li><li>Sreda</li><li>Dprofile Award</li><li>White Square</li></ul>
     </div>
-  </section>
-
-  <!-- 4. Разделение: награды и скиллы каждого -->
-  <section class="scr s4" id="s4" aria-label="Кто мы">
-    <div class="s4-col" data-who="pasha" style="--c:#ff6a13">
-      <div class="s4-bg" aria-hidden="true"><img class="s4-shot" src="img/site-pasha.jpg" alt="" loading="lazy"></div>
-      <div class="s4-top">
+    <!-- ниже — личные награды: голова и список рядом; наведение — за колонкой прокручивается сайт героя -->
+    <div class="s4" id="s4">
+      <div class="s4-col" data-who="pasha" style="--c:#ff6a13">
+        <div class="s4-bg" aria-hidden="true"><img class="s4-shot" src="img/site-pasha.jpg" alt="" loading="lazy"></div>
         <button class="head-btn" type="button" data-who="pasha" aria-label="Паша — показать сайт">
           <img src="img/head-pasha.png" width="1257" height="1400" alt="Паша — 3D-голова в розовой шапке с рыжей бородой">
           <span class="hint mono">Смотреть сайт</span>
         </button>
-        <div>
+        <div class="s4-info">
           <span class="mono s4-k s4-role">[ <b>CREATIVE_</b> ]</span>
-          <h2 class="s4-name">Pasha</h2>
-          <div class="s4-aw"><b>15</b><span>медалей фестивалей</span></div>
+          <div class="s4-nm"><h2 class="s4-name">Pasha</h2><div class="s4-aw"><b>15</b><span>медалей фестивалей</span></div></div>
+          <ul class="s4-list mono">
+            <li>Silver Mercury 2025 — золото <i>«Заклинатели»</i></li>
+            <li>Silver Mercury СЗФО 2026 — золото <i>«Хроники Ижоры»</i></li>
+            <li>Silver Mercury 2024–25 — серебро ×2, бронза</li>
+            <li>Red Apple 2024–25 — бронза ×4, шорт-листы ×9</li>
+          </ul>
+          <a class="s4-site" href="https://pavel-cherkun.github.io/cherkun/" target="_blank" rel="noopener">Сайт Паши <i>↗</i></a>
         </div>
       </div>
-      <ul class="s4-list mono">
-        <li>Silver Mercury 2025 — золото <i>«Заклинатели»</i></li>
-        <li>Silver Mercury СЗФО 2026 — золото <i>«Хроники Ижоры»</i></li>
-        <li>Silver Mercury 2024–25 — серебро ×2, бронза</li>
-        <li>Red Apple 2024–25 — бронза ×4, шорт-листы ×9</li>
-      </ul>
-      <span class="mono s4-k">[ <b>SKILL SET_</b> ]</span>
-      <ul class="chips mono"><li>Стратегия</li><li>Big idea</li><li>Копирайт</li><li>Сценарии</li><li>Продакшн</li><li>Защита тендеров</li><li>AI-пайплайны</li></ul>
-      <a class="s4-site" href="https://pavel-cherkun.github.io/cherkun/" target="_blank" rel="noopener">Сайт Паши — CHERKUN™ <i>↗</i></a>
-    </div>
-    <div class="s4-col" data-who="anton" style="--c:#ff2b2b">
-      <div class="s4-bg" aria-hidden="true"><img class="s4-shot" src="img/site-anton.jpg" alt="" loading="lazy"></div>
-      <div class="s4-top">
+      <div class="s4-col" data-who="anton" style="--c:#ff2b2b">
+        <div class="s4-bg" aria-hidden="true"><img class="s4-shot" src="img/site-anton.jpg" alt="" loading="lazy"></div>
         <button class="head-btn" type="button" data-who="anton" aria-label="Антон — показать сайт">
           <img src="img/head-anton.png" width="1378" height="1400" alt="Антон — 3D-голова в чёрной шапке с усами">
           <span class="hint mono">Смотреть сайт</span>
         </button>
-        <div>
+        <div class="s4-info">
           <span class="mono s4-k s4-role">[ <b>ART DIRECTOR_</b> ]</span>
-          <h2 class="s4-name">Anton</h2>
-          <div class="s4-aw"><b>6</b><span>наград и 3 шорт-листа</span></div>
+          <div class="s4-nm"><h2 class="s4-name">Anton</h2><div class="s4-aw"><b>6</b><span>наград и 3 шорт-листа</span></div></div>
+          <ul class="s4-list mono">
+            <li>Silver Mercury СЗФО — золото, серебро ×2, бронза</li>
+            <li>Marspo Awards — серебро, бронза</li>
+            <li>Шорт-листы — Sreda, Dprofile Award, White Square</li>
+          </ul>
+          <a class="s4-site" href="https://frosti71fros-pixel.github.io/anton-fros/" target="_blank" rel="noopener">Сайт Антона <i>↗</i></a>
         </div>
       </div>
-      <ul class="s4-list mono">
-        <li>Silver Mercury СЗФО — золото, серебро ×2, бронза</li>
-        <li>Marspo Awards — серебро, бронза</li>
-        <li>Шорт-листы — Sreda, Dprofile Award, White Square</li>
-      </ul>
-      <span class="mono s4-k">[ <b>SKILL SET_</b> ]</span>
-      <ul class="chips mono"><li>Branding</li><li>Identity</li><li>Packaging</li><li>Fonts</li><li>Illustration</li><li>Web</li><li>Motion</li><li>Production</li><li>Art direction</li></ul>
-      <a class="s4-site" href="https://frosti71fros-pixel.github.io/anton-fros/" target="_blank" rel="noopener">Сайт Антона — ANTON FROS <i>↗</i></a>
     </div>
   </section>
 
@@ -1295,7 +1318,7 @@
         (function tick(t){ var k = Math.min(1, (t - t0) / 1200); el.textContent = Math.round(to * (1 - Math.pow(1 - k, 3))); if (k < 1) requestAnimationFrame(tick); })(t0);
       }
       if (flat) {
-        window.goScreen = function(i){ [hero, s2, s3, s4, s5][i].scrollIntoView({behavior: 'smooth'}); };
+        window.goScreen = function(i){ [hero, s2, s3, s5][i].scrollIntoView({behavior: 'smooth'}); };
         s2.classList.add('on');
         new IntersectionObserver(function(es){ if (es[0].isIntersecting) countAwards(); }).observe(s3);
         var topDark = function(){ var r = s5.getBoundingClientRect(); document.documentElement.classList.toggle('top-dark', r.top < 46 && r.bottom > 46); };
@@ -1309,7 +1332,7 @@
       // Колесо/тачпад/клавиши не прокручивают свободно: один жест — переход целиком до следующего экрана (snap),
       // на экране 2 жест сначала листает колесо кейсов.
       var LEN = 1.6, HOLD = .5;
-      var SEGS = [{from:hero, to:s2}, {from:s2, to:s3}, {from:s3, to:s4}, {from:s4, to:s5}];
+      var SEGS = [{from:hero, to:s2}, {from:s2, to:s3}, {from:s3, to:s5}];   // экран наград и «кто мы» объединены
       SEGS.forEach(function(sg, i){ sg.a = i * (LEN + HOLD); });
       var TOTAL = SEGS[SEGS.length - 1].a + LEN + .3;
       var STOPS = [0].concat(SEGS.map(function(sg){ return sg.a + LEN; }));   // где каждый экран стоит целиком
@@ -1417,8 +1440,8 @@
         ticking = false;
         var u = (scrollY - intro.offsetTop) / innerHeight;   // сколько «экранов» прокручено внутри сцены
         // сброс: виден только первый экран
-        show(hero, true); [s2, s3, s4, s5].forEach(function(l){ show(l, false); });
-        [hero, s2, s3, s4].forEach(function(l){ l.style.transform = l.style.filter = ''; });
+        show(hero, true); [s2, s3, s5].forEach(function(l){ show(l, false); });
+        [hero, s2, s3].forEach(function(l){ l.style.transform = l.style.filter = ''; });
         SEGS.forEach(function(sg){ if (sg.box) sg.box.style.display = 'none'; });
         var p0 = clamp01(u / LEN);
         if (p0 > .02 && !heroLeft) { heroLeft = true; hero.dispatchEvent(new Event('mouseleave')); }
@@ -1444,7 +1467,7 @@
           });
         });
         if (u >= SEGS[1].a + LEN * .8) countAwards();
-        document.documentElement.classList.toggle('top-dark', u >= SEGS[3].a + LEN * .6);   // под головами-«домой» чёрный экран
+        document.documentElement.classList.toggle('top-dark', u >= SEGS[2].a + LEN * .6);   // под головами-«домой» чёрный экран
         drawBar();
       }
       function onScroll(){ if (!ticking) { ticking = true; requestAnimationFrame(update); } }
@@ -2461,7 +2484,21 @@
   })();
 </script>
 <script>
-  // полосы-«лесенка» для меню и автомата: 8 вертикальных полос, от центра к краям при открытии, от краёв к центру при закрытии
+  // экран наград: блоки двух колонок (роль, имя, список) одинаковой высоты — чтобы всё стояло ровно друг напротив друга
+  (function(){
+    var cols = document.querySelectorAll('.aw .s4-col');
+    function eq(){
+      ['.s4-role', '.s4-nm', '.s4-list'].forEach(function(sel){
+        var els = [].map.call(cols, function(c){ return c.querySelector(sel); });
+        els.forEach(function(e){ e.style.minHeight = ''; });
+        if (innerWidth <= 800) return;
+        var h = Math.max.apply(null, els.map(function(e){ return e.offsetHeight; }));
+        els.forEach(function(e){ e.style.minHeight = h + 'px'; });
+      });
+    }
+    eq(); addEventListener('resize', eq); addEventListener('load', eq);
+    if (document.fonts) document.fonts.ready.then(eq);
+  })();  // полосы-«лесенка» для меню и автомата: 8 вертикальных полос, от центра к краям при открытии, от краёв к центру при закрытии
   ['menu', 'arcade'].forEach(function(id){
     var box = document.getElementById(id), w = document.createElement('div'), N = 8, c = (N - 1) / 2;
     w.className = 'wipe'; w.setAttribute('aria-hidden', 'true');
