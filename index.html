@@ -595,6 +595,11 @@
   .arcade-btn{position:fixed;left:84px;top:20px;z-index:70;width:52px;height:52px;display:grid;place-items:center;background:#fff;color:#000;border:3px solid #000;padding:0}
   .arcade-btn svg{display:block;width:28px;height:28px}
   .arcade-btn:hover{background:#000;color:#fff;border-color:#fff;outline:2px solid #000}
+  /* рычажок джойстика периодически качается из стороны в сторону; на наведении — без пауз */
+  .arcade-btn .lever{transform-box:view-box;transform-origin:12px 15.5px;animation:lever 3.2s ease-in-out infinite}
+  .arcade-btn:hover .lever{animation-duration:.9s}
+  @keyframes lever{0%,55%,100%{transform:rotate(0)}62%{transform:rotate(-24deg)}72%{transform:rotate(22deg)}81%{transform:rotate(-14deg)}89%{transform:rotate(7deg)}95%{transform:rotate(0)}}
+  @media (prefers-reduced-motion:reduce){.arcade-btn .lever{animation:none}}
   .arcade-btn .ic-x{display:none}
   .arcade-btn[aria-expanded="true"] .ic-cab{display:none}
   .arcade-btn[aria-expanded="true"] .ic-x{display:block}
@@ -772,7 +777,7 @@
 <!-- бургер и меню -->
 <button class="burger" id="burger" type="button" aria-label="Меню" aria-expanded="false" aria-controls="menu"><i></i><i></i><i></i></button>
 <button class="arcade-btn" id="arcadeBtn" type="button" aria-label="Мини-игры" aria-expanded="false" aria-controls="arcade">
-  <svg class="ic-cab" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 21v-3.5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2V21z"/><path d="M12 15.5V9" stroke-width="2.4"/><circle cx="12" cy="6" r="3.6" fill="currentColor" stroke="none"/><rect x="15.5" y="12.6" width="3.6" height="2.9" fill="currentColor" stroke="none"/></svg>
+  <svg class="ic-cab" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 21v-3.5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2V21z"/><g class="lever"><path d="M12 15.5V9" stroke-width="2.4"/><circle cx="12" cy="6" r="3.6" fill="currentColor" stroke="none"/></g><rect x="15.5" y="12.6" width="3.6" height="2.9" fill="currentColor" stroke="none"/></svg>
   <svg class="ic-x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
 </button>
 <a class="home" id="home" href="#hero" aria-label="На первый экран">
