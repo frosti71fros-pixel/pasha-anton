@@ -1039,8 +1039,16 @@
         anton: ANTON_LIST.map(function(id){ return item(a2p[id], id); })
       };
       Object.keys(L).forEach(function(k){ if (L[k]) L[k] = L[k].filter(Boolean); });
-      var only = L.anton.filter(function(it){ return !it.shared; }), all = [];
-      for (var i = 0; i < Math.max(L.pasha.length, only.length); i++) { if (L.pasha[i]) all.push(L.pasha[i]); if (only[i]) all.push(only[i]); }
+      // порядок «Все кейсы»: Синегривый лев, Заклинатели, PBP, затем остальные общие, затем личные через один (Паша, Антон…)
+      var TOP = [['sinegrivyi-lev-talisman-fk-zenit', 'zenit-lion'], ['zaklinateli', null], [null, 'pbp']];
+      var used = {}, all = [];
+      function key(it){ return (it.p || '') + '|' + (it.a || ''); }
+      function add(it){ if (it && !used[key(it)]) { used[key(it)] = 1; all.push(it); } }
+      var pool = L.pasha.concat(L.anton);
+      TOP.forEach(function(t){ add(pool.filter(function(it){ return (t[0] && it.p === t[0]) || (t[1] && it.a === t[1]); })[0]); });
+      pool.forEach(function(it){ if (it.shared) add(it); });
+      var ownP = L.pasha.filter(function(it){ return !it.shared && !used[key(it)]; }), ownA = L.anton.filter(function(it){ return !it.shared && !used[key(it)]; });
+      for (var i = 0; i < Math.max(ownP.length, ownA.length); i++) { add(ownP[i]); add(ownA[i]); }
       L.both = all;
       return {L: L, PB: PB, AB: AB, AA: AA};
     })();
