@@ -519,7 +519,8 @@
   .s5-title{margin:0;font-family:var(--display);font-weight:400;text-transform:uppercase;font-size:min(17svh,16vw);line-height:.8}
   /* ролик между словами заголовка — высотой с прописные */
   .s5-vid{display:inline-block;vertical-align:baseline;height:.8em;margin:0 .04em;overflow:hidden;background:#000}
-  .s5-vid video{display:block;height:100%;width:auto}
+  /* верхние 9% кадра (бегущая строка) срезаны: ролик выше рамки и сдвинут вверх, низ совпадает с низом букв */
+  .s5-vid video{display:block;height:calc(.8em / .91);width:auto;margin-top:calc(.8em / .91 * -.09)}
   .s5-row{display:flex;gap:clamp(24px,6vw,120px)}
   .pick{position:relative;display:flex;flex-direction:column;align-items:center;gap:14px}
   /* реплики героев над головами: белая карточка, как на первом экране; выскакивает, когда экран открылся */
