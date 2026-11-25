@@ -1019,20 +1019,23 @@
       var SHARED = [['sinegrivyi-lev-talisman-fk-zenit', 'zenit-lion'], ['xroniki-izory', 'izhora'], ['purr-love', 'purr-love'], ['diksi-dino', 'diksi-dino']];
       var p2a = {}, a2p = {};
       SHARED.forEach(function(s){ p2a[s[0]] = s[1]; a2p[s[1]] = s[0]; });
-      var ACOVER = {'pbp':'pbp', 'tevredens-type':'tevredens-type', 'avangard':'avangard', 'ebenya':'ebenya', 'type-fashion':'typography-fashion', 'terror':'terror', 'belyi-kot':'belyi-kot', 'zenit-lion':'zenit-lev', 'izhora':'xroniki-izory-card', 'diksi-dino':'diksi-dino'};
-      var ACOVER_FIRST = {'diksi-dino':1, 'izhora':1};
-      var PCOVER = {'diksi-klipersy':'diksi-klipersy-card'};   // свой кроп превью для карточки (парень по центру)   // общие кейсы, где обложка берётся с сайта Антона
-      var ANTON_LIST = ['pbp', 'tevredens-type', 'zenit-lion', 'avangard', 'ebenya', 'type-fashion', 'izhora', 'luns-muns', 'samurai', 'nowatorus', 'kontakt', 'teremok', 'purr-love', 'diksi-dino', 'terror'];
+      var ACOVER = {'pbp':'pbp', 'tevredens-type':'tevredens-type', 'avangard':'avangard', 'ebenya':'ebenya', 'type-fashion':'typography-fashion', 'terror':'terror', 'belyi-kot':'belyi-kot', 'zenit-lion':'zenit-lev', 'izhora':'xroniki-izory-card', 'diksi-dino':'diksi-dino', 'apicenna':'apicenna'};
+      var ACOVER_FIRST = {'diksi-dino':1, 'izhora':1};   // общие кейсы, где обложка берётся с сайта Антона
+      // свои превью для карточек: Клипперсы, Заклинатели, Треснутые — обложки с Behance, Ozon — обложка Ozon Corp с Dprofile
+      var PCOVER = {'diksi-klipersy':'diksi-klipersy-card', 'zaklinateli':'zaklinateli-card', 'ozon-x-fandom-fest':'ozon-x-fandom-fest-card', 'tresnutye-3':'tresnutye-3-card'};
+      // общие кейсы, которых нет на сайте Паши: данные с сайта Антона, но кейс считается общим и есть во вкладке Паши
+      var A_SHARED = {'apicenna':1};
+      var ANTON_LIST = ['pbp', 'tevredens-type', 'zenit-lion', 'avangard', 'ebenya', 'type-fashion', 'izhora', 'luns-muns', 'samurai', 'nowatorus', 'kontakt', 'teremok', 'purr-love', 'diksi-dino', 'apicenna', 'terror'];
       function item(p, a){
         var pc = p && pBy[p], ac = a && aBy[a];
         if (!pc && !ac) return null;
         var cover = ac && ACOVER_FIRST[a] ? 'img/anton/' + ACOVER[a] + '.jpg' : pc ? 'img/pasha/' + (PCOVER[p] || p) + '.jpg' : ACOVER[a] ? 'img/anton/' + ACOVER[a] + '.jpg' : /^https?:/.test(ac.c) ? ac.c : AB + ac.c;
-        return {p: pc ? p : null, a: ac ? a : null, pc: pc, ac: ac, shared: !!(pc && ac),
+        return {p: pc ? p : null, a: ac ? a : null, pc: pc, ac: ac, shared: !!(pc && ac) || !!(ac && A_SHARED[a]),
           title: pc ? pc.title : ac.t, meta: pc ? pc.meta : (ac.sub ? ac.sub + ' · ' : '') + (ac.tags || ''), cover: cover};
       }
       var L = {
         both: null,   // «Все кейсы» — собираются ниже: Паша и Антон через один, общие — один раз
-        pasha: PP.map(function(c){ return item(c.slug, p2a[c.slug]); }),
+        pasha: PP.map(function(c){ return item(c.slug, p2a[c.slug]); }).concat(Object.keys(A_SHARED).map(function(id){ return item(null, id); })),
         anton: ANTON_LIST.map(function(id){ return item(a2p[id], id); })
       };
       Object.keys(L).forEach(function(k){ if (L[k]) L[k] = L[k].filter(Boolean); });
