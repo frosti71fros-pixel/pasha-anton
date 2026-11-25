@@ -517,6 +517,9 @@
   /* 5 — кому написать */
   .s5{background:#0b0b0c;color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3svh;padding:5svh var(--pad)}
   .s5-title{margin:0;font-family:var(--display);font-weight:400;text-transform:uppercase;font-size:min(17svh,16vw);line-height:.8}
+  /* ролик между словами заголовка — высотой с прописные */
+  .s5-vid{display:inline-block;vertical-align:-.06em;height:.86em;margin:0 .04em;overflow:hidden;background:#000}
+  .s5-vid video{display:block;height:100%;width:auto}
   .s5-row{display:flex;gap:clamp(24px,6vw,120px)}
   .pick{position:relative;display:flex;flex-direction:column;align-items:center;gap:14px}
   /* реплики героев над головами: белая карточка, как на первом экране; выскакивает, когда экран открылся */
@@ -926,7 +929,7 @@
 
   <!-- 5. Кому написать -->
   <section class="scr s5" id="s5" aria-label="Контакты">
-    <h2 class="s5-title">Contact us</h2>
+    <h2 class="s5-title">Contact <span class="s5-vid" aria-hidden="true"><video src="img/contact.mp4" autoplay muted loop playsinline preload="auto"></video></span> us</h2>
     <div class="s5-row">
       <a class="pick" href="https://t.me/cherkun" target="_blank" rel="noopener" style="--c:#ff6a13">
         <span class="pick-say mono" aria-hidden="true"><b>PASHA_:</b><span class="ps-t"></span></span>
