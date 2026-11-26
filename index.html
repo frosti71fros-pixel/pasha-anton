@@ -445,7 +445,7 @@
   .pl-k b{color:#ff6a13}
   .pl-bar{position:relative;display:block;width:min(220px,40vw);height:4px;background:#e4e4e2}
   .pl-bar b{position:absolute;left:0;top:0;bottom:0;width:0;background:#0b0b0c;transition:width .35s ease}
-  @media (max-width:800px){.pl-h{width:46vw}}
+  @media (max-width:800px){.pl-h{width:46vw}.pl-k{gap:10px;font-size:10px;letter-spacing:.06em;max-width:calc(100vw - 40px);white-space:nowrap}.pl-bar{width:24vw;flex:none}}
   .aw{transition:background-color .35s ease}
   .aw-cur{position:absolute;inset:0;z-index:0;pointer-events:none;clip-path:inset(0 100% 0 0)}
   /* второй герой уходит в расфокус */
@@ -753,17 +753,18 @@
     /* 2. кейсы: крупный заголовок, табы в одну строку со свайпом, без стрелок; фоном — картинки кейса на экране */
     .s2-title{font-size:16vw}
     .s2-head{top:96px;gap:14px}
-    .s2-tabs{flex-wrap:nowrap;justify-content:flex-start;width:100vw;margin:0 calc(-1 * var(--pad));padding:4px var(--pad) 6px;overflow-x:auto;overscroll-behavior-x:contain;scrollbar-width:none;-webkit-overflow-scrolling:touch}
-    .s2-tabs::-webkit-scrollbar{display:none}
-    .s2-tab{flex:none;white-space:nowrap}
-    /* видно, что табы листаются: последний обрезан краем экрана и тает, справа стрелка-подсказка; в конце ленты подсказка пропадает */
-    .s2-tabs{padding-right:64px;-webkit-mask-image:linear-gradient(90deg,#000 calc(100% - 72px),transparent);mask-image:linear-gradient(90deg,#000 calc(100% - 72px),transparent)}
-    .s2-tabs.end{-webkit-mask-image:none;mask-image:none}
-    .s2-swipe{position:absolute;right:10px;bottom:9px;z-index:251;display:grid;place-items:center;width:34px;height:34px;border-radius:50%;background:#000;color:#fff;pointer-events:none;animation:swipehint 1.6s ease-in-out infinite;transition:opacity .25s}
-    .s2-swipe svg{width:18px;height:18px}
-    .s2-head.end .s2-swipe{opacity:0}
-    @keyframes swipehint{0%,100%{transform:translateX(0)}50%{transform:translateX(-6px)}}
+    /* табы без текста: только головы и число кейсов — три в ряд на всю ширину */
+    .s2-tabs{align-self:stretch;flex-wrap:nowrap;justify-content:center;gap:8px}
+    .s2-tab{flex:1 1 0;min-width:0;justify-content:center;gap:8px;padding:6px 8px}
+    .s2-tab .tb-l{display:none}
+    .s2-tab .tb-h img{height:44px}
+    .s2-tab .tb-h img + img{margin-left:-12px}
+    .s2-tab sup{font:400 26px/1 var(--display);vertical-align:0;color:inherit;letter-spacing:0}
+    .s2-tab[aria-selected="true"] sup{color:var(--c)}
+    .s2-swipe{display:none}
     .s2-arr{display:none}
+    /* превью кейса отделено от фона обводкой, как при наведении на десктопе */
+    .wc{box-shadow:0 0 0 4px #fff,0 0 0 7px #000,0 30px 60px -30px rgba(0,0,0,.45)}
 
     /* 3. награды: сначала общий счёт, ниже герои; голова по центру текстового блока, кнопка во всю ширину в цвете героя */
     .aw-fit > .aw-top{order:0;padding:96px var(--pad) 3svh}
@@ -958,9 +959,9 @@
       <div class="s2-head">
         <h2 class="s2-title">All cases</h2>
         <div class="s2-tabs" role="tablist" aria-label="Чьи кейсы">
-          <button class="s2-tab" type="button" role="tab" data-tab="both" aria-selected="true" style="--c:#ff6a13"><span class="tb-h"><img src="img/head-pasha.png" alt=""><img src="img/head-anton.png" alt=""></span>Все кейсы <sup class="tb-n"></sup></button>
-          <button class="s2-tab" type="button" role="tab" data-tab="pasha" aria-selected="false" style="--c:#ff6a13"><span class="tb-h"><img src="img/head-pasha.png" alt=""></span>Кейсы Паши <sup class="tb-n"></sup></button>
-          <button class="s2-tab" type="button" role="tab" data-tab="anton" aria-selected="false" style="--c:#ff2b2b"><span class="tb-h"><img src="img/head-anton.png" alt=""></span>Кейсы Антона <sup class="tb-n"></sup></button>
+          <button class="s2-tab" type="button" role="tab" data-tab="both" aria-selected="true" style="--c:#ff6a13" aria-label="Все кейсы"><span class="tb-h"><img src="img/head-pasha.png" alt=""><img src="img/head-anton.png" alt=""></span><span class="tb-l">Все кейсы </span><sup class="tb-n"></sup></button>
+          <button class="s2-tab" type="button" role="tab" data-tab="pasha" aria-selected="false" style="--c:#ff6a13" aria-label="Кейсы Паши"><span class="tb-h"><img src="img/head-pasha.png" alt=""></span><span class="tb-l">Кейсы Паши </span><sup class="tb-n"></sup></button>
+          <button class="s2-tab" type="button" role="tab" data-tab="anton" aria-selected="false" style="--c:#ff2b2b" aria-label="Кейсы Антона"><span class="tb-h"><img src="img/head-anton.png" alt=""></span><span class="tb-l">Кейсы Антона </span><sup class="tb-n"></sup></button>
         </div>
         <span class="s2-swipe" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M9 5l7 7-7 7"/></svg></span>
       </div>
