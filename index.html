@@ -807,6 +807,10 @@
     .ar-list{gap:6px}
     .ar-list .t{font-size:13vw}
     .ar-list .d{margin:10px 0 22px;font-size:12px}
+    /* на телефоне все игры белые и у всех видно описание */
+    .ar-list button,.ar-list button[aria-pressed="true"]{opacity:1;color:#fff}
+    .ar-list button:hover{transform:none}
+    .ar-list .d{display:block;color:#a9a9ae}
     .ar-stage{display:none}
     .arcade.ar-full .ar-stage{display:flex;position:fixed;inset:0;z-index:5;width:auto;gap:12px;padding:16px;background:#0b0b0c;overflow:auto;overscroll-behavior:contain}
     html:has(.arcade.ar-full) .burger,html:has(.arcade.ar-full) .arcade-btn,html:has(.arcade.ar-full) .home{visibility:hidden}
