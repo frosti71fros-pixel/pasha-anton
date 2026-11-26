@@ -732,6 +732,91 @@
   /* подвал — часть последнего чёрного экрана: снизу, без отдельной прокрутки */
   .s5-foot{position:absolute;left:0;right:0;bottom:0;border-top:1px solid #2a2a2e;color:#8a8a90;font-size:11px;letter-spacing:.06em;text-transform:uppercase}
   html.flat .s5-foot{position:absolute}
+  .s5-sub span{display:block}
+  /* элементы, нужные только на телефоне */
+  .ar-top,.ar-ctl{display:none}
+
+  /* ===================== ТЕЛЕФОН ===================== */
+  @media (max-width:800px){
+    /* 1. первый экран: головы по очереди увеличиваются сами, фоном — кейсы героя на весь экран, реплики над и под головами */
+    .hero .bg{width:100%;left:0;right:0}
+    .hero .bubble{display:block;width:max-content;min-width:0;max-width:calc(100vw - 2 * var(--pad));padding:10px 12px}
+    .hero .links,.hero .trk{display:none}
+    .bubble-pasha,.bubble-pasha.mine{right:auto;left:0;top:auto;bottom:calc(100% + 16px)}
+    .bubble-anton,.bubble-anton.mine{left:auto;right:0;top:calc(100% + 16px)}
+    .b-head{font-size:10px}
+    .b-body{margin:8px 0;font-size:16px}
+    .bubble.mine .b-body{font-size:24px}
+    .b-foot{font-size:9px}
+    .stage{--S:min(calc(100vw - 2 * var(--pad)), calc(100svh - 320px))}
+
+    /* 2. кейсы: крупный заголовок, табы в одну строку со свайпом, без стрелок; фоном — картинки кейса на экране */
+    .s2-title{font-size:16vw}
+    .s2-head{top:96px;gap:14px}
+    .s2-tabs{flex-wrap:nowrap;justify-content:flex-start;width:100vw;margin:0 calc(-1 * var(--pad));padding:4px var(--pad) 6px;overflow-x:auto;overscroll-behavior-x:contain;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+    .s2-tabs::-webkit-scrollbar{display:none}
+    .s2-tab{flex:none;white-space:nowrap}
+    .s2-arr{display:none}
+
+    /* 3. награды: сначала общий счёт, ниже герои; голова по центру текстового блока, кнопка во всю ширину в цвете героя */
+    .aw-fit > .aw-top{order:0;padding:96px var(--pad) 3svh}
+    .aw-fit > .s4,html.flat .aw-fit > .s4{order:1;padding-top:0}
+    .aw .s4-col,.aw .s4-col[data-who="pasha"]{display:grid;grid-template-columns:36vw minmax(0,1fr);grid-template-rows:1fr auto 1fr auto;column-gap:16px;row-gap:10px;align-items:center;padding:20px var(--pad) 28px}
+    .aw .s4-info{display:contents}
+    .s4-head,.aw .s4-col .s4-head{grid-column:1;grid-row:1 / span 3 !important;align-self:center;width:36vw;height:auto}
+    .s4-head img{width:100%;height:auto}
+    .aw .s4-role{grid-column:2;grid-row:1 !important;align-self:end;justify-self:start}
+    .aw .s4-name{grid-column:2;grid-row:2 !important;font-size:15vw}
+    .aw .s4-aw{grid-column:2;grid-row:3 !important;align-self:start;gap:10px}
+    .aw .s4-aw b{font-size:19vw}
+    .aw .s4-col .s4-more{grid-column:1 / -1;grid-row:4 !important;width:100%;justify-content:center;margin-top:8px;padding:20px 16px;background:var(--c);color:#000;font-size:16px}
+    .aw .s4-col .s4-more:hover{background:#000;color:#fff;transform:none}
+
+    /* карточка героя: цифры крупнее, реплика по центру над головой и в пределах экрана */
+    .pf-stats{gap:14px 26px}
+    .pf-stats b{font-size:15vw}
+    .pf-say,.pf.is-anton .pf-say,.pf.is-pasha .pf-say{left:0;right:0;top:0;margin:0 auto;width:fit-content;max-width:100%;font-size:14px}
+
+    /* 5. контакты: реплики по центру над головой, финальная фраза — две строки, подвал под ней по центру */
+    .pick-say,.pick:first-child .pick-say,.pick:last-child .pick-say{left:50%;right:auto;top:-14px;max-width:calc(100vw - 2 * var(--pad));transform:translate(-50%,10px) scale(.9);transform-origin:50% 100%}
+    .pick-say.on,.pick:hover .pick-say{transform:translate(-50%,0)}
+    .s5{padding-top:96px;padding-bottom:0}
+    .s5-sub{font-size:3.15vw;font-weight:700;letter-spacing:0;color:#fff}
+    .s5-sub span{white-space:nowrap}
+    .s5-foot,html.flat .s5-foot{position:static;width:calc(100% + 2 * var(--pad));margin-top:4svh;flex-direction:column;align-items:center;text-align:center;padding:16px var(--pad) 20px !important}
+
+    /* меню: разделы крупно во всю ширину, белым; ссылки на Telegram одной строкой по центру */
+    .menu{padding:100px var(--pad) 40px;justify-content:center}
+    .menu a{opacity:1}
+    .menu-list{gap:1.2svh}
+    .menu-list a{display:block;color:#fff;line-height:.86;white-space:nowrap}
+    .menu-list a span{display:none}
+    .menu-list a:hover{transform:none}
+    .menu-foot{justify-content:center;flex-wrap:nowrap;gap:24px;margin-top:6svh;font-size:13px}
+    .dvd-say{white-space:normal;max-width:72vw}
+
+    /* игры: крупные названия, отступ после описания; поле открывается поверх, сверху название и крестик, снизу кнопки */
+    .ar-list{gap:6px}
+    .ar-list .t{font-size:13vw}
+    .ar-list .d{margin:10px 0 22px;font-size:12px}
+    .ar-stage{display:none}
+    .arcade.ar-full .ar-stage{display:flex;position:fixed;inset:0;z-index:5;width:auto;gap:12px;padding:16px;background:#0b0b0c;overflow:auto;overscroll-behavior:contain}
+    html:has(.arcade.ar-full) .burger,html:has(.arcade.ar-full) .arcade-btn,html:has(.arcade.ar-full) .home{visibility:hidden}
+    .ar-top{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:52px}
+    .ar-ttl{font:400 11vw/.85 var(--display);text-transform:uppercase;color:var(--c,#fff)}
+    .ar-x{flex:none;width:52px;height:52px;display:grid;place-items:center;padding:0;background:#fff;color:#000;border:3px solid #000}
+    .ar-x svg{width:24px;height:24px}
+    .ar-ctl{display:grid;gap:10px;margin-top:auto;padding-top:8px;user-select:none;-webkit-user-select:none;touch-action:none}
+    .ar-ctl.two{grid-template-columns:1fr 1fr}
+    .ar-ctl.pad{grid-template-columns:repeat(3,76px);grid-template-rows:repeat(3,64px);justify-content:center;gap:8px}
+    .ar-ctl.pad [data-d="up"]{grid-column:2;grid-row:1}.ar-ctl.pad [data-d="left"]{grid-column:1;grid-row:2}
+    .ar-ctl.pad [data-d="right"]{grid-column:3;grid-row:2}.ar-ctl.pad [data-d="down"]{grid-column:2;grid-row:3}
+    .ar-cb{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;min-height:84px;padding:8px;background:#fff;color:#000;border:3px solid #fff;outline:3px solid #000;outline-offset:-6px;font:700 13px/1 var(--mono);letter-spacing:.06em;text-transform:uppercase;touch-action:none}
+    .ar-ctl.pad .ar-cb{min-height:0}
+    .ar-cb i{font-style:normal;font-size:28px;line-height:1}
+    .ar-cb.on{background:var(--c,#ff6a13);border-color:var(--c,#ff6a13)}
+    .ar-hint{padding:14px;border:2px dashed #555;color:#c9c9cc;font:600 13px/1.4 var(--mono);letter-spacing:.06em;text-transform:uppercase;text-align:center}
+  }
 </style>
 </head>
 <body>
@@ -800,6 +885,7 @@
     <p class="mono ar-keys" id="arKeys"></p>
   </div>
   <div class="ar-stage">
+    <div class="ar-top"><b class="ar-ttl" id="arTtl"></b><button class="ar-x" id="arX" type="button" aria-label="Закрыть игру"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
     <div class="ar-bar mono"><span class="ar-bar-l"><button class="ar-play" id="arPlay" type="button">▶ Старт</button><span id="arName"></span></span><span>Счёт <b id="arScore">0</b> · Рекорд <b id="arBest">0</b></span></div>
     <div class="ar-screen"><canvas id="arCv"></canvas></div>
     <div class="ar-pop" id="arPop" hidden>
@@ -810,6 +896,7 @@
         <a class="ar-pop-go" href="https://t.me/cherkun" target="_blank" rel="noopener"></a>
       </div>
     </div>
+    <div class="ar-ctl mono" id="arCtl"></div>
   </div>
 </section>
 <nav class="menu" id="menu" aria-label="Меню" hidden>
@@ -945,7 +1032,7 @@
         <span class="mono pick-at">визуал, шрифты, айдентика</span>
       </a>
     </div>
-    <p class="mono s5-sub">Пишите любому — второй всё равно будет в курсе. Ответим за 24 часа</p>
+    <p class="mono s5-sub"><span>Пишите любому — второй всё равно будет в&nbsp;курсе</span><span>Ответим за&nbsp;24&nbsp;часа</span></p>
     <footer class="mono s5-foot">
       <span>© Pasha &amp; Anton, 2026</span>
       <span>Creative Couple — Saint Petersburg</span>
@@ -1066,7 +1153,9 @@
       // После «Show more» колесо раскрывается: скролл поворачивает его по одной карточке, в конце — дальше по сайту
       var PAGE = 999, cur = 'both', shown = PAGE, expanded = false, cards = [], idx = 0, pos = 0, rot = 0, target = 0, hover = -1;
       function isMob(){ return (s2el.clientWidth || innerWidth) <= 800; }
-      function go(i){ idx = Math.max(0, Math.min(cards.length - 1, Math.round(i))); syncArr(); }
+      function go(i){ idx = Math.max(0, Math.min(cards.length - 1, Math.round(i))); syncArr(); mobBg(); }
+      // на телефоне наведения нет: фон — картинки того кейса, что сейчас по центру
+      function mobBg(){ var c = cards[idx]; if (isMob() && c && c.dataset.i) bgShow(WORKS.L[cur][+c.dataset.i], true); }
       function syncArr(){ arrL.disabled = idx <= 0; arrR.disabled = idx >= cards.length - 1; }
       window.s2Wheel = {
         step: function(){ return false; }   // скролл кейсы не листает — только стрелки и свайп
@@ -1087,13 +1176,14 @@
         cards.forEach(function(c, i){
           c._lift = 0;
           c.addEventListener('mouseenter', function(){ hover = i; if (c.dataset.i) bgShow(WORKS.L[cur][+c.dataset.i]); });
-          c.addEventListener('mouseleave', function(){ if (hover === i) hover = -1; bgHide(); });
+          c.addEventListener('mouseleave', function(){ if (hover === i) hover = -1; if (!isMob()) bgHide(); });
         });
         hover = -1;
         idx = focus != null ? focus : (isMob() ? 0 : Math.min(2, cards.length - 1));   // на старте по центру третий — веер заполнен с обеих сторон
         if (!keep) pos = idx;
         syncArr();
         layout(0);
+        mobBg();
       }
       // фон при наведении: картинки именно этого кейса (из его «портянки»), в случайном порядке, жёсткие склейки как на первом экране
       var bgBox = s2el.querySelector('.s2-bg .slides'), bgTimer = 0, bgOff = 0, bgKey = null;
@@ -1105,9 +1195,9 @@
         for (var i = list.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)), x = list[i]; list[i] = list[j]; list[j] = x; }
         return (it._imgs = list.slice(0, 14));
       }
-      function bgShow(it){
+      function bgShow(it, force){
         clearTimeout(bgOff);
-        if (reduce || isMob()) return;
+        if (reduce || (isMob() && !force)) return;
         var key = (it.p || '') + '|' + (it.a || '');
         if (key !== bgKey) {
           bgKey = key; clearInterval(bgTimer); bgBox.innerHTML = '';
@@ -1526,6 +1616,14 @@
         setSide(e.clientX < r.left + r.width / 2 ? 'pasha' : 'anton');
       });
       hero.addEventListener('mouseleave', function(){ setSide(null); });
+    } else {
+      // телефон и планшет: наведения нет — головы сами по очереди увеличиваются, фоном идут их кейсы, реплики печатаются
+      var autoT = 0, autoWho = 'anton';
+      function autoStep(){ autoWho = autoWho === 'pasha' ? 'anton' : 'pasha'; setSide(autoWho); }
+      new IntersectionObserver(function(es){
+        if (es[0].isIntersecting) { if (!autoT) { autoStep(); autoT = setInterval(autoStep, 5200); } }
+        else { clearInterval(autoT); autoT = 0; setSide(null); }
+      }, {threshold:.4}).observe(hero);
     }
 
     // 2.5 Переход на второй экран «нарезкой»: шоурил собирается из вертикальных полос,
@@ -1964,9 +2062,21 @@
       dvdRaf = reduce ? 0 : requestAnimationFrame(dvdTick);
     }
     function dvdStop(){ cancelAnimationFrame(dvdRaf); dvdRaf = 0; }
+    // телефон: каждое название раздела крупно, ровно во всю ширину экрана
+    function fitMenu(){
+      var links = menu.querySelectorAll('.menu-list a'), mob = innerWidth <= 800;
+      [].forEach.call(links, function(a){
+        a.style.fontSize = ''; if (!mob) return;
+        var avail = a.parentNode.clientWidth;
+        a.style.display = 'inline-block'; a.style.fontSize = '100px';
+        var w = a.offsetWidth; a.style.display = '';
+        if (w) a.style.fontSize = Math.floor(100 * avail / w * .98) + 'px';
+      });
+    }
+    addEventListener('resize', function(){ if (!menu.hidden) fitMenu(); });
     function setMenu(open){
       burger.setAttribute('aria-expanded', open);
-      if (open) { menu.hidden = false; requestAnimationFrame(function(){ menu.classList.add('open'); dvdStart(); }); }
+      if (open) { menu.hidden = false; fitMenu(); if (document.fonts) document.fonts.ready.then(fitMenu); requestAnimationFrame(function(){ menu.classList.add('open'); dvdStart(); }); }
       else { menu.classList.remove('open'); setTimeout(function(){ if (!menu.classList.contains('open')) { menu.hidden = true; dvdStop(); } }, 760); }
     }
     burger.addEventListener('click', function(){ setMenu(burger.getAttribute('aria-expanded') !== 'true'); });
@@ -2626,16 +2736,55 @@
       game = GAMES[i];
       [].forEach.call(list.querySelectorAll('button'), function(b, j){ b.setAttribute('aria-pressed', i === j); });
       elName.textContent = game.name; elKeys.textContent = game.keys;
+      ttl.textContent = game.name; ttl.style.setProperty('--c', i % 2 ? COL.anton : COL.pasha);
+      buildCtl();
       hidePop(); stripIn(); game.reset(); parts = []; pops = []; setState('ready'); score = 0; elScore.textContent = 0; elBest.textContent = getBest();
     }
+    // телефон: игра открывается поверх списка — сверху название и крестик, снизу кнопки управления
+    var ttl = document.getElementById('arTtl'), ctl = document.getElementById('arCtl');
+    var CTL = {
+      runner: {cls:'two', b:[['down', 'Пригнуться', '↓'], ['jump', 'Прыжок', '↑']]},
+      snake: {cls:'pad', b:[['up', '', '↑'], ['left', '', '←'], ['right', '', '→'], ['down', '', '↓']]},
+      tennis: {cls:'two', b:[['up', 'Вверх', '↑'], ['down', 'Вниз', '↓']]},
+      brick: {cls:'two', b:[['left', 'Влево', '←'], ['right', 'Вправо', '→']]},
+      whack: {hint:'Тапай по головам прямо на поле'}
+    };
+    function press(d, on){
+      if (on && state !== 'play') { start(); if (d !== 'jump') return; }
+      if (state !== 'play') return;
+      if (d === 'jump') { if (game.action) game.action(on); }
+      else if (game.key) game.key(d, on);
+    }
+    function buildCtl(){
+      var c = CTL[game.id] || {};
+      ctl.className = 'ar-ctl mono' + (c.cls ? ' ' + c.cls : '');
+      ctl.style.setProperty('--c', COL[who]);
+      if (c.hint) { ctl.innerHTML = '<p class="ar-hint">' + c.hint + '</p>'; return; }
+      ctl.innerHTML = (c.b || []).map(function(b){
+        return '<button class="ar-cb" type="button" data-d="' + b[0] + '" aria-label="' + (b[1] || b[0]) + '"><i>' + b[2] + '</i>' + (b[1] ? '<span>' + b[1] + '</span>' : '') + '</button>';
+      }).join('');
+      [].forEach.call(ctl.querySelectorAll('.ar-cb'), function(el){
+        var held = false;
+        function up(){ if (!held) return; held = false; el.classList.remove('on'); press(el.dataset.d, false); }
+        el.addEventListener('pointerdown', function(e){ e.preventDefault(); held = true; el.classList.add('on'); try { el.setPointerCapture(e.pointerId); } catch (_) {} press(el.dataset.d, true); });
+        el.addEventListener('pointerup', up); el.addEventListener('pointercancel', up); el.addEventListener('lostpointercapture', up);
+        el.addEventListener('contextmenu', function(e){ e.preventDefault(); });
+      });
+    }
+    function setFull(on){
+      box.classList.toggle('ar-full', on);
+      if (!on && state === 'play') setState('pause');
+      requestAnimationFrame(resize);
+    }
+    document.getElementById('arX').addEventListener('click', function(){ setFull(false); });
     GAMES.forEach(function(g, i){
       var li = document.createElement('li');
       li.innerHTML = '<button type="button" style="--c:' + (i % 2 ? COL.anton : COL.pasha) + '"><span class="n mono">0' + (i + 1) + '</span>'
         + '<span class="t">' + g.name + '</span><span class="d mono">' + g.desc + '</span></button>';
       li.firstChild.addEventListener('click', function(){
         select(i); this.blur();
-        // на телефоне поле ниже списка — прокручиваем к нему
-        if (innerWidth <= 800) box.querySelector('.ar-stage').scrollIntoView({behavior:'smooth', block:'end'});
+        // на телефоне игра открывается поверх списка
+        if (innerWidth <= 800) setFull(true);
       });
       list.appendChild(li);
     });
@@ -2654,9 +2803,10 @@
       ctx.fillStyle = dark ? 'rgba(11,11,12,.55)' : 'rgba(233,233,230,.72)'; ctx.fillRect(0, 0, W, H);
       // в конце игры карточка уходит наверх — снизу выскакивает попап «присылай бриф»
       var over = state === 'over', w = 480, h = over ? 236 : 176, x = (W - w) / 2, y = over && innerWidth > 800 ? 24 : (H - h) / 2, t1, hint;
-      if (state === 'ready') { t1 = game.name; hint = 'SPACE / КЛИК — СТАРТ'; }
-      else if (state === 'pause') { t1 = 'Pause'; hint = 'SPACE / КЛИК — ДАЛЬШЕ'; }
-      else { t1 = game.overText || 'Game over'; hint = 'SPACE / КЛИК — ЕЩЁ РАЗ'; }
+      var tap = innerWidth <= 800 ? 'ТАП' : 'SPACE / КЛИК';   // на телефоне клавиатуры нет
+      if (state === 'ready') { t1 = game.name; hint = tap + ' — СТАРТ'; }
+      else if (state === 'pause') { t1 = 'Pause'; hint = tap + ' — ДАЛЬШЕ'; }
+      else { t1 = game.overText || 'Game over'; hint = tap + ' — ЕЩЁ РАЗ'; }
       ctx.fillStyle = INK; ctx.fillRect(x, y, w, h);
       if (dark) { ctx.lineWidth = 2; ctx.strokeStyle = '#fff'; ctx.strokeRect(x, y, w, h); }
       [x - 4, x + w - 4].forEach(function(cx){ ctx.fillStyle = '#fff'; ctx.fillRect(cx, y - 4, 8, 8); ctx.lineWidth = 1.5; ctx.strokeStyle = INK; ctx.strokeRect(cx, y - 4, 8, 8); });
@@ -2821,7 +2971,7 @@
         });
       } else {
         if (state === 'play') setState('pause');
-        hidePop(); box.classList.remove('open'); document.body.classList.remove('lb-lock');
+        hidePop(); box.classList.remove('open', 'ar-full'); document.body.classList.remove('lb-lock');
         setTimeout(function(){ if (!isOpen) { box.hidden = true; cancelAnimationFrame(raf); raf = 0; } }, 760);
       }
     }
