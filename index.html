@@ -720,8 +720,12 @@
   .hm-h img{display:block;height:100%;width:auto;transition:filter .35s ease, opacity .35s ease, transform .25s cubic-bezier(.2,.8,.2,1)}
   .home:hover .hm-h img{transform:scale(1.12)}
   .hm-h i{position:absolute;aspect-ratio:1;border-radius:50%;transform:translate(-50%,-50%);background:radial-gradient(circle,#fff 0 14%,#ff3b2b 38%,rgba(255,30,30,.55) 52%,rgba(255,30,30,0) 72%);opacity:0;transition:opacity .35s ease;pointer-events:none}
-  html.top-dark .hm-h img,html:has(#burger[aria-expanded="true"]) .hm-h img,html:has(#arcadeBtn[aria-expanded="true"]) .hm-h img{filter:brightness(0);opacity:0}
-  html.top-dark .hm-h i,html:has(#burger[aria-expanded="true"]) .hm-h i,html:has(#arcadeBtn[aria-expanded="true"]) .hm-h i{opacity:1;animation:eyeglow 2.4s ease-in-out infinite}
+  /* на чёрном экране головы — чёрные силуэты с тонким контуром, поверх горят красные глаза */
+  html.top-dark .hm-h img{filter:brightness(0) drop-shadow(1.5px 0 0 #4a4a50) drop-shadow(-1.5px 0 0 #4a4a50) drop-shadow(0 1.5px 0 #4a4a50) drop-shadow(0 -1.5px 0 #4a4a50)}
+  html.top-dark .hm-h i{opacity:1;animation:eyeglow 2.4s ease-in-out infinite}
+  /* в меню и в автомате голов в шапке нет совсем */
+  .home{transition:opacity .25s ease,visibility .25s}
+  html:has(#burger[aria-expanded="true"]) .home,html:has(#arcadeBtn[aria-expanded="true"]) .home{opacity:0;visibility:hidden;pointer-events:none}
   @keyframes eyeglow{0%,100%{filter:brightness(1)}50%{filter:brightness(1.35) drop-shadow(0 0 3px #ff2b2b)}92%{opacity:1}95%{opacity:.15}98%{opacity:1}}
   @media (hover:none){.home{right:16px}}
   /* экран наград: навели на героя — в шапке голова второго героя чёрная, видны только красные глаза */
